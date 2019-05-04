@@ -1,0 +1,40 @@
+10
+5
+SPEC 19 21
+2
+id_spec 0 1 1 1 1
+n_spec 2 200 0 0 1
+1
+1
+n_spec 
+QUAL 254 21
+3
+id_qual 0 -1 1 1 1
+n_qual 2 200 0 0 1
+period 0 -1 0 0 0
+1
+1
+n_qual 
+YEAR 388 20
+2
+id_year 0 -1 1 1 1
+yearstart 4 1 0 0 1
+1
+1
+yearstart 
+ELEM 24 254
+2
+id_elem 2 1 1 1 1
+n_elem 2 200 0 0 1
+1
+1
+n_elem 
+GUPR 278 239
+2
+row 0 -1 1 1 1
+column 0 -1 1 1 1
+0
+3
+QUAL SPEC 1 0 0 1
+SPEC GUPR 1 1 0 2
+ELEM GUPR 1 0 0 1

@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="agregate">resources/images/agregate.bmp</file>
+        <file alias="agregate_act">resources/images/agregate_act.bmp</file>
+        <file alias="create_entity">resources/images/create_entity.bmp</file>
+        <file alias="create_entity_act">resources/images/create_entity_act.bmp</file>
+        <file alias="curs">resources/images/curs.bmp</file>
+        <file alias="curs_act">resources/images/curs_act.bmp</file>
+        <file alias="many_many">resources/images/many_many.bmp</file>
+        <file alias="many_many_act">resources/images/many_many_act.bmp</file>
+        <file alias="one_many">resources/images/one_many.bmp</file>
+        <file alias="one_many_act">resources/images/one_many_act.bmp</file>
+        <file alias="one_one">resources/images/one_one.bmp</file>
+        <file alias="one_one_act">resources/images/one_one_act.bmp</file>
+        <file alias="remove_entity">resources/images/remove_entity.bmp</file>
+        <file alias="remove_entity_act">resources/images/remove_entity_act.bmp</file>
+    </qresource>
+</RCC>
