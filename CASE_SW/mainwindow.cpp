@@ -21,8 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_groupAction.insert(MANY_TO_MANY, QSharedPointer<QAction>(ui->actionMany_To_Many));
     m_groupAction.insert(AGGREGATE, QSharedPointer<QAction>(ui->actionAggregate));
 
-    turnOffGroupActions();
-
     connect(ui->actionPointer, &QAction::triggered,
             this, [this]{triggerGroupAction(POINTER);});
     connect(ui->actionCreate_Table, &QAction::triggered,
@@ -37,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
             this, [this]{triggerGroupAction(MANY_TO_MANY);});
     connect(ui->actionAggregate, &QAction::triggered,
             this, [this]{triggerGroupAction(AGGREGATE);});
+
+    triggerGroupAction(POINTER);
+    this->setWindowTitle("CASE-SWDEP");
 }
 
 MainWindow::~MainWindow()
@@ -130,9 +131,8 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 
 void MainWindow::triggerGroupAction(groupActionType type)
 {
-    bool isChecked = m_groupAction.value(type)->isChecked();
     turnOffGroupActions();
-    m_groupAction.value(type)->setChecked(isChecked);
+    m_groupAction.value(type)->setChecked(true);
 }
 
 bool MainWindow::addModelTab(QString modelName, QString modelPath)
@@ -155,6 +155,19 @@ bool MainWindow::addModelTab(QString modelName, QString modelPath)
 
     ui->tabWidget->addTab(scroll, modelName);
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+
+    // trigger currently selected action
+    /* For user it seems that this action was allegedly triggered before any tab was open.
+     * Otherwice, user will have to trigger this action again.
+     */
+    for(int i = 0; i < m_groupAction.size(); i++)
+    {
+        if(m_groupAction.value((groupActionType)i)->isChecked())
+        {
+            m_groupAction.value((groupActionType)i)->trigger();
+            break;
+        }
+    }
 
     return true;
 }
@@ -278,4 +291,10 @@ void MainWindow::on_actionAggregate_triggered()
         return;
     CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
     widget->aggregate_tool_activate();
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    QString modelName = ui->tabWidget->tabText(index);
+    this->setWindowTitle((modelName.isNull()) ? "CASE-SWDEP" :  modelName + " - CASE-SWDEP");
 }

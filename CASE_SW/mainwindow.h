@@ -39,20 +39,14 @@ private slots:
     void on_actionClose_triggered();
     void on_tabWidget_tabCloseRequested(int index);
     void triggerGroupAction(groupActionType type);
-
     void on_actionPointer_triggered();
-
     void on_actionCreate_Table_triggered();
-
     void on_actionDelete_triggered();
-
     void on_actionOne_To_One_triggered();
-
     void on_actionOne_To_Many_triggered();
-
     void on_actionMany_To_Many_triggered();
-
     void on_actionAggregate_triggered();
+    void on_tabWidget_currentChanged(int index);
 
 private:
     Ui::MainWindow *ui;
@@ -82,7 +76,7 @@ private:
 
     QMap<groupActionType, QSharedPointer<QAction>> m_groupAction;
 
-    //! \brief Neat counter for newly created models.
+    //! \brief Simple counter for newly created models.
     //! Value increases only when new model is created.
     uint m_countCreatedModels;
 
