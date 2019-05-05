@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowState(Qt::WindowMaximized);
     m_countCreatedModels = 0;
 
     m_groupAction.insert(POINTER, QSharedPointer<QAction>(ui->actionPointer));
@@ -297,4 +298,22 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     QString modelName = ui->tabWidget->tabText(index);
     this->setWindowTitle((modelName.isNull()) ? "CASE-SWDEP" :  modelName + " - CASE-SWDEP");
+}
+
+void MainWindow::on_actionTo_PDM_triggered()
+{
+    QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+        return;
+    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
+    widget->convert_to_query_event();
+}
+
+void MainWindow::on_actionScript_triggered()
+{
+    QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+        return;
+    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
+    widget->to_script_event();
 }

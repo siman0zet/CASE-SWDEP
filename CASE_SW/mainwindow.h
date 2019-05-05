@@ -48,6 +48,10 @@ private slots:
     void on_actionAggregate_triggered();
     void on_tabWidget_currentChanged(int index);
 
+    void on_actionTo_PDM_triggered();
+
+    void on_actionScript_triggered();
+
 private:
     Ui::MainWindow *ui;
 

@@ -1399,7 +1399,7 @@ void CViewModel::load_CDM_event()
 
 void CViewModel::to_script_event()
 {
-    ScriptGen = new CScriptGenerator(this->data_model, app);
+    ScriptGen = new CScriptGenerator(data_model->convertToPDM(), app);
     ScriptGen->loadPlugins(LIB_PATH);
     ScriptGen->show();
 }

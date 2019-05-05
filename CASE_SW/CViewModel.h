@@ -127,11 +127,14 @@ public slots:
     void remove_selected_connection();
     void show_connection_detail();
 
+    void convert_to_query_event();
+    void to_script_event();
+
 private slots:
 
     void detailed_view_destroyed(CDetailedEntityWidget* wid);
     void add_new_entity_event();
-    void convert_to_query_event();
+
 
     void load_and_save_view_destroyed();
     void conn_view_destroyed(CConnectionViewWidget* wid);
@@ -139,7 +142,7 @@ private slots:
     void save_CDM_as_event();
     void load_CDM_event();
 
-    void to_script_event();
+
 
     void showContextMenu(const QPoint &pos, bool isEnabled);
     void showTableContextMenu(const QPoint &pos, QString tableName);
