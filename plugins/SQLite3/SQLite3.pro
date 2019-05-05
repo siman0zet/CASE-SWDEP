@@ -8,21 +8,23 @@ QT       -= gui
 
 TARGET = SQLite3
 TEMPLATE = lib
+CONFIG += static
 
-DLLDESTDIR = $$PWD/../../build/lib/
 INCLUDEPATH += ../../CASE_SW/
 
-SOURCES += SQLite3.cpp
+SOURCES += \
+        SQLite3.cpp
 
-HEADERS += SQLite3.h
+HEADERS += \
+        SQLite3.h
 
 unix {
     target.path = /usr/lib
-    headers.files = include/*
-    headers.path = /usr/include
     INSTALLS += headers target
+    DESTDIR = $$PWD/../../build/lib/
 }
 
 win32 {
-    CONFIG += dll static
+    CONFIG += dll
+    DLLDESTDIR = $$PWD/../../build/lib/
 }

@@ -8,21 +8,23 @@ QT       -= gui
 
 TARGET = Postgresql
 TEMPLATE = lib
+CONFIG += static
 
-DLLDESTDIR = $$PWD/../../build/lib/
 INCLUDEPATH += ../../CASE_SW/
 
-SOURCES += postgresql.cpp
+SOURCES += \
+        postgresql.cpp
 
-HEADERS += postgresql.h
+HEADERS += \
+        postgresql.h
 
 unix {
     target.path = /usr/lib
-    headers.files = include/*
-    headers.path = /usr/include
     INSTALLS += headers target
+    DESTDIR = $$PWD/../../build/lib/
 }
 
 win32 {
-    CONFIG += dll static
+    CONFIG += dll
+    DLLDESTDIR = $$PWD/../../build/lib/
 }

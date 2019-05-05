@@ -12,11 +12,9 @@ class SQLite : public CPluginInterface
 public:
     SQLite();
 
-    QString getName();
-    QString getVersion();
-    QString getQuery(CDataModel *model);
-
-    ~SQLite() {}
+    QString getName() override;
+    QString getVersion() override;
+    QString getQuery(CDataModel *model) override;
 };
 
 #endif // POSTGRESQL_H

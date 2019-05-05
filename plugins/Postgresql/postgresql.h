@@ -1,7 +1,6 @@
 #ifndef POSTGRESQL_H
 #define POSTGRESQL_H
 
-//#include <../../src/CASE_SW/CPluginInterface.h>
 #include <CPluginInterface.h>
 
 class Postgresql : public CPluginInterface
@@ -13,11 +12,9 @@ class Postgresql : public CPluginInterface
 public:
     Postgresql();
 
-    QString getName();
-    QString getVersion();
-    QString getQuery(CDataModel *model);
-
-    ~Postgresql() {}
+    QString getName() override;
+    QString getVersion() override;
+    QString getQuery(CDataModel *model) override;
 };
 
 #endif // POSTGRESQL_H
