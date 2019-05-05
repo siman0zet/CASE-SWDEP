@@ -141,6 +141,11 @@ private slots:
 
     void to_script_event();
 
+    void showContextMenu(const QPoint &pos, bool isEnabled);
+    void showTableContextMenu(const QPoint &pos, QString tableName);
+    void showTableRelationshipContextMenu(const QPoint &pos);
+    void showRelationshipContextMenu(const QPoint &pos);
+
 signals:
 
     void closing();

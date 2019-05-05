@@ -1,5 +1,4 @@
 #include "CViewModel.h"
-
 #include "mainwindow.h"
 
 CViewModel::CViewModel(QWidget *w, QApplication* _app): QWidget(w), app(_app)
@@ -432,8 +431,7 @@ void CViewModel::move_entity(int id, QPoint point)
 
 void CViewModel::mousePressEvent(QMouseEvent *me)
 {
-    me->accept();
-    if (cursor_tool)
+    if(cursor_tool)
     {
         if (me->button() == Qt::LeftButton)
         {
@@ -443,34 +441,68 @@ void CViewModel::mousePressEvent(QMouseEvent *me)
             rect_selection = true;
             rect_point = rect_curr_point = me->pos();
         }
-        if (me->button() == Qt::RightButton)
+        if(me->button() == Qt::RightButton)
         {
-            QWidget* wid = this->childAt(me->pos());
-
-            if (!wid)
-                clear_entity_selection();
-
-            for (int i = 0; i < connection_vec.size(); ++i)
+            CEntityView *hovered = (CEntityView *)this->childAt(me->pos());
+            selected_connection = NULL;
+            for(int i = 0; i < connection_vec.size(); i++)
             {
-                if (connection_vec.at(i)->isPointInside(me->pos()) != -1)
+                if(connection_vec.at(i)->isPointInside(me->pos()) != -1)
                 {
                     selected_connection = connection_vec.at(i);
-                    connection_context_menu_request(me->globalPos());
-                    return;
+                    break;
                 }
             }
-
-            if (!selected_entityes.size())
+            if(hovered)
             {
-                context_menu_request(me->globalPos());
+                if(selected_entityes.size() > 2)
+                {
+                    showContextMenu(me->pos(), true);
+                    return;
+                }
+                if(selected_entityes.size() == 2)
+                {
+                    showTableRelationshipContextMenu(me->pos());
+                    return;
+                }
+
+                QString selectedName = hovered->getEntity()->getName();
+                showTableContextMenu(me->pos(), selectedName);
+                return;
             }
             else
             {
-                entity_context_menu_request(me->globalPos());
+                if(selected_connection != NULL)
+                {
+                    clear_entity_selection();
+                    showRelationshipContextMenu(me->pos());
+                    return;
+                }
+                else
+                {
+                    if(selected_entityes.size() == 2)
+                    {
+                        showTableRelationshipContextMenu(me->pos());
+                        return;
+                    }
+                    if(selected_entityes.size() == 1)
+                    {
+                        QString selectedName = selected_entityes.last()->getEntity()->getName();
+                        showTableContextMenu(me->pos(), selectedName);
+                        return;
+                    }
+                    if(selected_entityes.size() == 0)
+                    {
+                        showContextMenu(me->pos(), false);
+                        return;
+                    }
+
+                    showContextMenu(me->pos(), true);
+                    return;
+                }
             }
         }
     }
-    else
     if (create_entity_tool)
     {
         if (me->button() == Qt::LeftButton)
@@ -506,7 +538,6 @@ void CViewModel::mousePressEvent(QMouseEvent *me)
                 }
             }
     }
-    else
     if (remove_entity_tool)
     {
         if (me->button() == Qt::LeftButton)
@@ -564,7 +595,6 @@ void CViewModel::mousePressEvent(QMouseEvent *me)
             }
         }
     }
-    else
     if (one_one_tool || one_many_tool || many_many_tool || agregate_tool)
     {
         if (me->button() == Qt::LeftButton)
@@ -623,6 +653,7 @@ void CViewModel::mousePressEvent(QMouseEvent *me)
         }
 
     }
+    me->accept();
 }
 
 void CViewModel::mouseDoubleClickEvent(QMouseEvent *me)
@@ -1035,8 +1066,6 @@ void CViewModel::pre_saveInFile(QString _name)
     this->setWindowTitle("CASE_SW - " + currFileName);
 }
 
-
-
 bool CViewModel::pre_loadFromFile(QString _name)
 {
     QFile file(_name + QString(".cdmod"));
@@ -1329,8 +1358,6 @@ void CViewModel::save_CDM_event()
     }
 }
 
-
-
 void CViewModel::save_CDM_as_event()
 {
     if (entity_vec.size() != 0)
@@ -1355,8 +1382,6 @@ void CViewModel::save_CDM_as_event()
     }
 }
 
-
-
 void CViewModel::load_CDM_event()
 {
     if (!w_opened)
@@ -1379,7 +1404,62 @@ void CViewModel::to_script_event()
     ScriptGen->show();
 }
 
+void CViewModel::showContextMenu(const QPoint &pos, bool isEnabled)
+{
+    QMenu contextMenu(tr("Context menu"), this);
 
+    QAction actionDelete("Delete", this);
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    actionDelete.setEnabled(isEnabled);
+    contextMenu.addAction(&actionDelete);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void CViewModel::showTableContextMenu(const QPoint &pos, QString tableName)
+{
+    QMenu contextMenu(tr("Context menu"), this);
+
+    QAction actionEdit(QString("Edit '%1'").arg(tableName), this);
+    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_entity_detail()));
+    contextMenu.addAction(&actionEdit);
+
+    QAction actionDelete("Delete", this);
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    contextMenu.addAction(&actionDelete);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void CViewModel::showTableRelationshipContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu(tr("Context menu"), this);
+
+    QAction actionRelate("Create Relationship", this);
+    connect(&actionRelate, SIGNAL(triggered(bool)), this, SLOT(connect_selected_entityes()));
+    contextMenu.addAction(&actionRelate);
+
+    QAction actionDelete("Delete", this);
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    contextMenu.addAction(&actionDelete);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void CViewModel::showRelationshipContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu(tr("Context menu"), this);
+
+    QAction actionEdit("Edit Relationship", this);
+    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_connection_detail()));
+    contextMenu.addAction(&actionEdit);
+
+    QAction actionDelete("Delete", this);
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_connection()));
+    contextMenu.addAction(&actionDelete);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
 // LOOK INTO
 void CViewModel::loadFromFile(QString file_name)
 {
@@ -1536,7 +1616,6 @@ void CViewModel::loadFromFile(QString file_name)
 
     checkSize();
 }
-
 // LOOK INTO
 void CViewModel::saveInFile(QString file_name)
 {
