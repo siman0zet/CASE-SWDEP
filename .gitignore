@@ -35,11 +35,6 @@ Makefile
 *.out
 *.app
 
-# Build Path
-#build/*
-#build
-#build*/*
-
 # Qt Project files and templates
 *.pro.user
 *.pro.autosave
@@ -49,5 +44,4 @@ Makefile
 *.Release
 
 # Other files
-*.svg
-*.xlsx
+*.sql
