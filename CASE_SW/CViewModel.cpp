@@ -3,6 +3,9 @@
 
 CViewModel::CViewModel(QWidget *w, QApplication* _app): QWidget(w), app(_app)
 {
+    this->setFocusPolicy(Qt::StrongFocus);
+    /* */
+
     mw = NULL;
 
     rect_selection = clear_selection = false;
