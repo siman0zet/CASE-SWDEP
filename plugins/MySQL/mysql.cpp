@@ -46,13 +46,20 @@ QString MySQL::getQuery(CDataModel *model)
                     .arg(tables[i]->getRow(j)->getName())
                     .arg(tables[i]->getRow(j)->getStringType())
                     .arg(indicators);
-        }
-        primaryKey.remove(primaryKey.size() - 2, 2);
-        if(columnList != "" || primaryKey != "")
+        }        
+        if(primaryKey != "")
         {
-            script += QString("CREATE TABLE IF NOT EXIST `%1`(\n"
+            primaryKey.remove(primaryKey.size() - 2, 2);
+            columnList += QString("    PRIMARY KEY (%1)\n")
+                    .arg(primaryKey);
+        }
+        else
+            columnList.remove(columnList.size() - 2, 1);
+
+        if(columnList != "")
+        {
+            script += QString("CREATE TABLE IF NOT EXIST `%1` (\n"
                       "%2"
-                      "    PRIMARY KEY (%3)\n"
                       ") ENGINE = InnoDB;\n\n")
                     .arg(tables[i]->getName())
                     .arg(columnList)
