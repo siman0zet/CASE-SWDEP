@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "CViewModel.h"
-#include "CScrollArea.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -12,32 +10,32 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowState(Qt::WindowMaximized);
-    m_countCreatedModels = 0;
+    _countCreatedModels = 0;
 
-    m_groupAction.insert(POINTER, QSharedPointer<QAction>(ui->actionPointer));
-    m_groupAction.insert(CREATE, QSharedPointer<QAction>(ui->actionCreate_Table));
-    m_groupAction.insert(DELETE, QSharedPointer<QAction>(ui->actionDelete));
-    m_groupAction.insert(ONE_TO_ONE, QSharedPointer<QAction>(ui->actionOne_To_One));
-    m_groupAction.insert(ONE_TO_MANY, QSharedPointer<QAction>(ui->actionOne_To_Many));
-    m_groupAction.insert(MANY_TO_MANY, QSharedPointer<QAction>(ui->actionMany_To_Many));
-    m_groupAction.insert(AGGREGATE, QSharedPointer<QAction>(ui->actionAggregate));
+    _editActions.insert(CModelView::POINTER, QSharedPointer<QAction>(ui->actionPointer));
+    _editActions.insert(CModelView::CREATE, QSharedPointer<QAction>(ui->actionCreate_Table));
+    _editActions.insert(CModelView::DELETE, QSharedPointer<QAction>(ui->actionDelete));
+    _editActions.insert(CModelView::ONE_ONE, QSharedPointer<QAction>(ui->actionOne_One));
+    _editActions.insert(CModelView::ONE_MANY, QSharedPointer<QAction>(ui->actionOne_Many));
+    _editActions.insert(CModelView::MANY_MANY, QSharedPointer<QAction>(ui->actionMany_Many));
+    _editActions.insert(CModelView::AGGREGATE, QSharedPointer<QAction>(ui->actionAggregate));
 
     connect(ui->actionPointer, &QAction::triggered,
-            this, [this]{triggerGroupAction(POINTER);});
+            this, [this]{activateEditAction(CModelView::POINTER);});
     connect(ui->actionCreate_Table, &QAction::triggered,
-            this, [this]{triggerGroupAction(CREATE);});
+            this, [this]{activateEditAction(CModelView::CREATE);});
     connect(ui->actionDelete, &QAction::triggered,
-            this, [this]{triggerGroupAction(DELETE);});
-    connect(ui->actionOne_To_One, &QAction::triggered,
-            this, [this]{triggerGroupAction(ONE_TO_ONE);});
-    connect(ui->actionOne_To_Many, &QAction::triggered,
-            this, [this]{triggerGroupAction(ONE_TO_MANY);});
-    connect(ui->actionMany_To_Many, &QAction::triggered,
-            this, [this]{triggerGroupAction(MANY_TO_MANY);});
+            this, [this]{activateEditAction(CModelView::DELETE);});
+    connect(ui->actionOne_One, &QAction::triggered,
+            this, [this]{activateEditAction(CModelView::ONE_ONE);});
+    connect(ui->actionOne_Many, &QAction::triggered,
+            this, [this]{activateEditAction(CModelView::ONE_MANY);});
+    connect(ui->actionMany_Many, &QAction::triggered,
+            this, [this]{activateEditAction(CModelView::MANY_MANY);});
     connect(ui->actionAggregate, &QAction::triggered,
-            this, [this]{triggerGroupAction(AGGREGATE);});
+            this, [this]{activateEditAction(CModelView::AGGREGATE);});
 
-    triggerGroupAction(POINTER);
+    activateEditAction(CModelView::POINTER);
     this->setWindowTitle("CASE-SWDEP");
 }
 
@@ -48,7 +46,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
-    QString modelName = "New " + QString::number(++m_countCreatedModels);
+    QString modelName = "New " + QString::number(++_countCreatedModels);
 
     if(!addModelTab(modelName, ""))
         qDebug() << "ERROR: MainWIndow::addModelTab";
@@ -74,7 +72,7 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    QString modelPath = m_workspaceModels.value(modelName)->getPath();
+    QString modelPath = _workspaceModels.value(modelName)->getPath();
 
     // can't save model if no path specified
     if(modelPath.isEmpty())
@@ -83,8 +81,8 @@ void MainWindow::on_actionSave_triggered()
     }
     else
     {
-        CViewModel* modelWidget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-        modelWidget->saveInFile(modelPath);
+//        CViewModel* modelWidget = (CViewModel*)_workspaceModels.value(modelName)->getView();
+//        modelWidget->saveInFile(modelPath);
     }
 }
 
@@ -105,8 +103,8 @@ void MainWindow::on_actionSave_as_triggered()
 
     QString oldModelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
 
-    CViewModel* modelWidget = (CViewModel*)m_workspaceModels.value(oldModelName)->getWidget();
-    modelWidget->saveInFile(newModelPath);
+//    CViewModel* modelWidget = (CViewModel*)_workspaceModels.value(oldModelName)->getView();
+//    modelWidget->saveInFile(newModelPath);
 
     ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
     addModelTab(newModelName, newModelPath);
@@ -130,29 +128,28 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     closeTab(index);
 }
 
-void MainWindow::triggerGroupAction(groupActionType type)
+void MainWindow::activateEditAction(CModelView::cursorToolType type)
 {
-    turnOffGroupActions();
-    m_groupAction.value(type)->setChecked(true);
+    deactivateEditActions();
+    _editActions.value(type)->setChecked(true);
 }
 
 bool MainWindow::addModelTab(QString modelName, QString modelPath)
 {
-    CViewModel *modelWidget = new CViewModel((QWidget *)ui->tabWidget, app);
-    if(!modelPath.isEmpty())
-        modelWidget->loadFromFile(modelPath); // add return statement to load
-
-    modelWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    modelWidget->setMinimumSize(300, 400);
+    CModelView *modelView = new CModelView();
+//    if(!modelPath.isEmpty())
+//        modelView->loadFromFile(modelPath); // add return statement to load
+    modelView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QScrollArea* scroll = new QScrollArea();
     scroll->setWidgetResizable(true);
-    scroll->setWidget(modelWidget);
+    scroll->setWidget(modelView);
+    modelView->changeSize(1280, 720);
 
     QSharedPointer<ModelInfo> model =
-            QSharedPointer<ModelInfo>(new ModelInfo(modelName, modelPath, modelWidget));
+            QSharedPointer<ModelInfo>(new ModelInfo(modelName, modelPath, modelView));
 
-    m_workspaceModels.insert(modelName, model);
+    _workspaceModels.insert(modelName, model);
 
     ui->tabWidget->addTab(scroll, modelName);
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
@@ -161,11 +158,11 @@ bool MainWindow::addModelTab(QString modelName, QString modelPath)
     /* For user it seems that this action was allegedly triggered before any tab was open.
      * Otherwice, user will have to trigger this action again.
      */
-    for(int i = 0; i < m_groupAction.size(); i++)
+    for(int i = 0; i < _editActions.size(); i++)
     {
-        if(m_groupAction.value((groupActionType)i)->isChecked())
+        if(_editActions.value((CModelView::cursorToolType)i)->isChecked())
         {
-            m_groupAction.value((groupActionType)i)->trigger();
+            _editActions.value((CModelView::cursorToolType)i)->trigger();
             break;
         }
     }
@@ -179,26 +176,26 @@ void MainWindow::closeTab(int index)
 
     ui->tabWidget->removeTab(index);
 
-    m_workspaceModels.remove(modelName);
+    _workspaceModels.remove(modelName);
 }
 
-void MainWindow::turnOffGroupActions()
+void MainWindow::deactivateEditActions()
 {
-    for(int i = 0; i < m_groupAction.size(); i++)
-        m_groupAction.value((groupActionType)i)->setChecked(false);
+    for(int i = 0; i < _editActions.size(); i++)
+        _editActions.value((CModelView::cursorToolType)i)->setChecked(false);
 }
 
-MainWindow::ModelInfo::ModelInfo(QString name, QString path, QWidget* widget)
+MainWindow::ModelInfo::ModelInfo(QString name, QString path, CModelView *widget)
 {
     setName(name);
     setPath(path);
-    setWidget(widget);
+    setView(widget);
 }
 
 MainWindow::ModelInfo::~ModelInfo()
 {
-    if(widget != NULL)
-        delete widget;
+    if(view != NULL)
+        delete view;
 }
 
 void MainWindow::ModelInfo::setName(QString name)
@@ -211,9 +208,9 @@ void MainWindow::ModelInfo::setPath(QString path)
     this->path = path;
 }
 
-void MainWindow::ModelInfo::setWidget(QWidget *widget)
+void MainWindow::ModelInfo::setView(CModelView *widget)
 {
-    this->widget = widget;
+    this->view = widget;
 }
 
 QString MainWindow::ModelInfo::getName()
@@ -226,72 +223,65 @@ QString MainWindow::ModelInfo::getPath()
     return path;
 }
 
-QWidget *MainWindow::ModelInfo::getWidget()
+CModelView *MainWindow::ModelInfo::getView()
 {
-    return widget;
+    return view;
 }
 
 void MainWindow::on_actionPointer_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->cursor_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::POINTER);
 }
 
 void MainWindow::on_actionCreate_Table_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->create_entity_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::CREATE);
 }
 
 void MainWindow::on_actionDelete_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->remove_entity_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::DELETE);
 }
 
-void MainWindow::on_actionOne_To_One_triggered()
+void MainWindow::on_actionOne_One_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->one_one_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::ONE_ONE);
 }
 
-void MainWindow::on_actionOne_To_Many_triggered()
+void MainWindow::on_actionOne_Many_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->one_many_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::ONE_MANY);
 }
 
-void MainWindow::on_actionMany_To_Many_triggered()
+void MainWindow::on_actionMany_Many_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->many_many_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::MANY_MANY);
 }
 
 void MainWindow::on_actionAggregate_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->aggregate_tool_activate();
+    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::AGGREGATE);
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -303,17 +293,22 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 void MainWindow::on_actionTo_PDM_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->convert_to_query_event();
+
 }
 
 void MainWindow::on_actionScript_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    if(m_workspaceModels.find(modelName) == m_workspaceModels.end())
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    CViewModel* widget = (CViewModel*)m_workspaceModels.value(modelName)->getWidget();
-    widget->to_script_event();
+}
+
+void MainWindow::on_actionChange_Size_triggered()
+{
+    QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    if(_workspaceModels.find(modelName) == _workspaceModels.end())
+        return;
+    _workspaceModels.value(modelName)->getView()->showResizeDialog();
 }

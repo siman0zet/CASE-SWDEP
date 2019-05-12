@@ -69,6 +69,8 @@
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
+    <addaction name="actionOptions"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -79,12 +81,13 @@
      <property name="title">
       <string>Create Relationship</string>
      </property>
-     <addaction name="actionOne_To_One"/>
-     <addaction name="actionOne_To_Many"/>
-     <addaction name="actionMany_To_Many"/>
+     <addaction name="actionOne_One"/>
+     <addaction name="actionOne_Many"/>
+     <addaction name="actionMany_Many"/>
      <addaction name="actionAggregate"/>
     </widget>
     <addaction name="actionPointer"/>
+    <addaction name="separator"/>
     <addaction name="actionCreate_Table"/>
     <addaction name="menuCreate_line"/>
     <addaction name="separator"/>
@@ -92,12 +95,12 @@
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>Model</string>
     </property>
     <addaction name="actionTo_PDM"/>
     <addaction name="actionScript"/>
     <addaction name="separator"/>
-    <addaction name="actionSettings"/>
+    <addaction name="actionChange_Size"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -114,7 +117,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>Standard Tools</string>
+    <string>Standard</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -131,7 +134,7 @@
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
-    <string>Edit Tools</string>
+    <string>Edit</string>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -140,13 +143,14 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionPointer"/>
+   <addaction name="separator"/>
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
    <addaction name="actionCreate_Table"/>
    <addaction name="separator"/>
-   <addaction name="actionOne_To_One"/>
-   <addaction name="actionOne_To_Many"/>
-   <addaction name="actionMany_To_Many"/>
+   <addaction name="actionOne_One"/>
+   <addaction name="actionOne_Many"/>
+   <addaction name="actionMany_Many"/>
    <addaction name="actionAggregate"/>
   </widget>
   <action name="actionNew">
@@ -156,6 +160,12 @@
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
   </action>
   <action name="actionOpen">
    <property name="text">
@@ -163,6 +173,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSave">
@@ -172,6 +185,9 @@
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSave_as">
    <property name="text">
@@ -179,6 +195,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionClose">
@@ -188,6 +207,9 @@
    <property name="shortcut">
     <string>Ctrl+W</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="text">
@@ -195,6 +217,9 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionCreate_Table">
@@ -208,33 +233,43 @@
    <property name="text">
     <string>Create Table</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionTo_PDM">
    <property name="text">
-    <string>Convert to Physical Model</string>
+    <string>Convert to Physical Model...</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionScript">
    <property name="text">
-    <string>Generate SQL CREATE Script</string>
+    <string>Generate SQL CREATE Script...</string>
    </property>
-  </action>
-  <action name="actionSettings">
-   <property name="text">
-    <string>Settings</string>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionUser_Manual">
    <property name="text">
-    <string>User Manual</string>
+    <string>User Manual...</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>About...</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
-  <action name="actionOne_To_One">
+  <action name="actionOne_One">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -246,10 +281,16 @@
      <normaloff>:/one_one</normaloff>:/one_one</iconset>
    </property>
    <property name="text">
-    <string>One To One</string>
+    <string>One to One</string>
+   </property>
+   <property name="toolTip">
+    <string>One to One</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
-  <action name="actionOne_To_Many">
+  <action name="actionOne_Many">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -258,10 +299,16 @@
      <normaloff>:/one_many</normaloff>:/one_many</iconset>
    </property>
    <property name="text">
-    <string>One To Many</string>
+    <string>One to Many</string>
+   </property>
+   <property name="toolTip">
+    <string>One to Many</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
-  <action name="actionMany_To_Many">
+  <action name="actionMany_Many">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -270,7 +317,13 @@
      <normaloff>:/many_many</normaloff>:/many_many</iconset>
    </property>
    <property name="text">
-    <string>Many To Many</string>
+    <string>Many to Many</string>
+   </property>
+   <property name="toolTip">
+    <string>Many to Many</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionAggregate">
@@ -283,6 +336,9 @@
    </property>
    <property name="text">
     <string>Aggregate</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionPointer">
@@ -297,7 +353,10 @@
      <normaloff>:/curs</normaloff>:/curs</iconset>
    </property>
    <property name="text">
-    <string>Pointer</string>
+    <string>Pointer tool</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionDelete">
@@ -313,6 +372,22 @@
    </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options...</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionChange_Size">
+   <property name="text">
+    <string>Change Canvas Size...</string>
    </property>
   </action>
  </widget>

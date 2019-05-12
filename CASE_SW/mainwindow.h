@@ -5,12 +5,15 @@
 #include <QMap>
 #include <QSharedPointer>
 
+#include "CModelView.h"
+
 namespace Ui {
 class MainWindow;
 }
 
 class CViewModel;
 class QScrollArea;
+class CModelView;
 
 class MainWindow : public QMainWindow
 {
@@ -20,16 +23,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum groupActionType {
-        POINTER = 0,
-        CREATE,
-        DELETE,
-        ONE_TO_ONE,
-        ONE_TO_MANY,
-        MANY_TO_MANY,
-        AGGREGATE
-    };
-
 private slots:
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
@@ -38,55 +31,53 @@ private slots:
     void on_actionSave_as_triggered();
     void on_actionClose_triggered();
     void on_tabWidget_tabCloseRequested(int index);
-    void triggerGroupAction(groupActionType type);
+    void activateEditAction(CModelView::cursorToolType type);
     void on_actionPointer_triggered();
     void on_actionCreate_Table_triggered();
     void on_actionDelete_triggered();
-    void on_actionOne_To_One_triggered();
-    void on_actionOne_To_Many_triggered();
-    void on_actionMany_To_Many_triggered();
+    void on_actionOne_One_triggered();
+    void on_actionOne_Many_triggered();
+    void on_actionMany_Many_triggered();
     void on_actionAggregate_triggered();
     void on_tabWidget_currentChanged(int index);
-
     void on_actionTo_PDM_triggered();
-
     void on_actionScript_triggered();
+
+    void on_actionChange_Size_triggered();
 
 private:
     Ui::MainWindow *ui;
 
-    QApplication* app;
-
     class ModelInfo
     {
     private:
-        QString name;
-        QString path;
-        QWidget* widget;
+        QString     name;
+        QString     path;
+        CModelView *view;
 
     public:
-        ModelInfo(QString name = "", QString path = "", QWidget* widget = NULL);
+        ModelInfo(QString name = "", QString path = "", CModelView* view = NULL);
         ~ModelInfo();
         void        setName(QString name);
         void        setPath(QString path);
-        void        setWidget(QWidget* widget);
+        void        setView(CModelView *view);
         QString     getName();
         QString     getPath();
-        QWidget*    getWidget();
+        CModelView *getView();
     };
 
     //! \brief Track down models/files currently open in application workspace.
-    QMap<QString, QSharedPointer<ModelInfo>> m_workspaceModels;
+    QMap<QString, QSharedPointer<ModelInfo>> _workspaceModels;
 
-    QMap<groupActionType, QSharedPointer<QAction>> m_groupAction;
+    QMap<CModelView::cursorToolType, QSharedPointer<QAction>> _editActions;
 
     //! \brief Simple counter for newly created models.
     //! Value increases only when new model is created.
-    uint m_countCreatedModels;
+    uint _countCreatedModels;
 
     bool addModelTab(QString modelName, QString modelPath);
     void closeTab(int index);
-    void turnOffGroupActions();
+    void deactivateEditActions();
 };
 
 #endif // MAINWINDOW_H
