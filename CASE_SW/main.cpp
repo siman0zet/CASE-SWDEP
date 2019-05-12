@@ -1,10 +1,10 @@
-#include "mainwindow.h"
+#include "rework/mainwindow.h"
 #include <QApplication>
 #include <QTranslator>
 #include <QDebug>
 #include <QDir>
 
-#include "CViewModel.h"
+//#include "CViewModel.h"
 
 int main(int argc, char *argv[])
 {

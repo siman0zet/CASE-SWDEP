@@ -1,5 +1,5 @@
 #include "CViewModel.h"
-#include "mainwindow.h"
+//#include "mainwindow.h"
 
 CViewModel::CViewModel(QWidget *w, QApplication* _app): QWidget(w), app(_app)
 {
@@ -1463,7 +1463,7 @@ void CViewModel::showRelationshipContextMenu(const QPoint &pos)
 
     contextMenu.exec(mapToGlobal(pos));
 }
-// LOOK INTO
+
 void CViewModel::loadFromFile(QString file_name)
 {
     QFile file(file_name);
@@ -1619,7 +1619,7 @@ void CViewModel::loadFromFile(QString file_name)
 
     checkSize();
 }
-// LOOK INTO
+
 void CViewModel::saveInFile(QString file_name)
 {
     QFile file(file_name);
@@ -1800,11 +1800,11 @@ void CViewModel::checkSize()
     }
     else
     {
-        if (mw)
-        {
-            mwidth = mw->width();
-            mheight = mw->height();
-        }
+//        if (mw)
+//        {
+//            mwidth = mw->width();
+//            mheight = mw->height();
+//        }
     }
 
     if (mwidth == -1 || mheight == -1)

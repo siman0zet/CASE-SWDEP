@@ -35,10 +35,10 @@ SOURCES += \
     CLangWidget.cpp \
     CScrollArea.cpp \
     CUniquesEditorWidget.cpp \
-    mainwindow.cpp \
-    CModelView.cpp \
-    CEntityItem.cpp \
-    resizedialog.cpp
+    rework/mainwindow.cpp \
+    rework/CModelView.cpp \
+    rework/CEntityItem.cpp \
+    rework/resizedialog.cpp
 
 HEADERS  += \
     CDataModel.h \
@@ -59,14 +59,14 @@ HEADERS  += \
     CLangWidget.h \
     CScrollArea.h \
     CUniquesEditorWidget.h \
-    mainwindow.h \
-    CModelView.h \
-    CEntityItem.h \
-    resizedialog.h
+    rework/mainwindow.h \
+    rework/CModelView.h \
+    rework/CEntityItem.h \
+    rework/resizedialog.h
 
 FORMS    += \
-    mainwindow.ui \
-    resizedialog.ui
+    rework/mainwindow.ui \
+    rework/resizedialog.ui
 
 RESOURCES += \
     images.qrc

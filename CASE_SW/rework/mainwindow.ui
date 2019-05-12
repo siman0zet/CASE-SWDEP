@@ -227,7 +227,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/create_entity</normaloff>:/create_entity</iconset>
    </property>
    <property name="text">
@@ -277,7 +277,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/one_one</normaloff>:/one_one</iconset>
    </property>
    <property name="text">
@@ -295,7 +295,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/one_many</normaloff>:/one_many</iconset>
    </property>
    <property name="text">
@@ -313,7 +313,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/many_many</normaloff>:/many_many</iconset>
    </property>
    <property name="text">
@@ -331,7 +331,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/agregate</normaloff>:/agregate</iconset>
    </property>
    <property name="text">
@@ -349,7 +349,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/curs</normaloff>:/curs</iconset>
    </property>
    <property name="text">
@@ -367,7 +367,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/remove_entity</normaloff>:/remove_entity</iconset>
    </property>
    <property name="text">
@@ -393,7 +393,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

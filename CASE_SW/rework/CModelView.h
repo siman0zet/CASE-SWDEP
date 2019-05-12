@@ -4,6 +4,8 @@
 #include <QGraphicsView>
 #include <QMap>
 
+class CDataModel;
+
 class CModelView : public QGraphicsView
 {
     Q_OBJECT
@@ -38,6 +40,7 @@ protected:
 
 private:
     QGraphicsScene *_scene;
+    CDataModel *_dataModel;
     int   _width;
     int   _height;
 
