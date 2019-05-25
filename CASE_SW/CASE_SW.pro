@@ -38,7 +38,8 @@ SOURCES += \
     rework/mainwindow.cpp \
     rework/CModelView.cpp \
     rework/CEntityItem.cpp \
-    rework/resizedialog.cpp
+    rework/resizedialog.cpp \
+    rework/CRelationshipItem.cpp
 
 HEADERS  += \
     CDataModel.h \
@@ -62,7 +63,8 @@ HEADERS  += \
     rework/mainwindow.h \
     rework/CModelView.h \
     rework/CEntityItem.h \
-    rework/resizedialog.h
+    rework/resizedialog.h \
+    rework/CRelationshipItem.h
 
 FORMS    += \
     rework/mainwindow.ui \

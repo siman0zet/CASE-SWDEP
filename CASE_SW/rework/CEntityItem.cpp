@@ -1,14 +1,72 @@
 #include "CEntityItem.h"
+#include "CRelationshipItem.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsScene>
 
 CEntityItem::CEntityItem() :
     _width(100),
-    _height(90)
+    _height(90),
+    _color(Qt::lightGray)
 {
-    this->setFlags(ItemIsSelectable | ItemIsMovable);
+    this->setFlags(ItemIsSelectable |
+                   ItemIsMovable |
+                   ItemSendsGeometryChanges);
     this->setAcceptHoverEvents(true);
+
+    _polygon << QPointF(0, 0) << QPointF(_width, 0)
+              << QPointF(_width, _height) << QPointF(0, _height)
+              << QPointF(0, 0);
+    setPolygon(_polygon);
+}
+
+int CEntityItem::width() const
+{
+    return _width;
+}
+
+int CEntityItem::height() const
+{
+    return _height;
+}
+
+QPolygonF CEntityItem::polygon() const
+{
+    return _polygon;
+}
+
+void CEntityItem::removeRelationship(CRelationshipItem *relationship)
+{
+    int index = _relationships.indexOf(relationship);
+    if(index != -1)
+        _relationships.removeAt(index);
+}
+
+void CEntityItem::removeRelationships()
+{
+    foreach (CRelationshipItem *relationship, _relationships)
+    {
+        relationship->startItem()->removeRelationship(relationship);
+        relationship->endItem()->removeRelationship(relationship);
+        this->scene()->removeItem(relationship);
+        delete relationship;
+    }
+}
+
+void CEntityItem::addRelationship(CRelationshipItem *relationship)
+{
+    _relationships.append(relationship);
+}
+
+void CEntityItem::setColor(const QColor &color)
+{
+    _color = color;
+}
+
+int CEntityItem::type() const
+{
+    return Type;
 }
 
 QRectF CEntityItem::boundingRect() const
@@ -30,6 +88,7 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
 
+    // gray outline of selected item
     if(option->state & QStyle::State_Selected)
     {
         QPen selectPen(QBrush(QColor(Qt::gray)), 5);
@@ -37,9 +96,11 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->setPen(selectPen);
         painter->setBrush(Qt::NoBrush);
 
-        painter->drawRect(0, 0, _width, _height);
+        painter->drawRect(-1, -1, _width + 2, _height + 2);
     }
 
+    // main outline of item
+    // changes color if item is selected, mouseovered or not
     QColor penColor = QColor(Qt::black);
     if(option->state & QStyle::State_Selected)
         penColor = QColor(61, 141, 253);
@@ -52,14 +113,19 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     painter->drawRect(-1, -1, _width + 2, _height + 2);
 
-    //content
-    QBrush titleBrush(QColor(225, 225, 225));
+    // title rect
+    // changes color brightness if item is selected, mouseovered or not
+    QBrush titleBrush(_color);
+    if(option->state & QStyle::State_Selected)
+        titleBrush.setColor(_color.dark(120));
+    if(option->state & QStyle::State_MouseOver)
+        titleBrush.setColor(_color.light(120));
     painter->setPen(Qt::NoPen);
     painter->setBrush(titleBrush);
 
     painter->drawRect(0, 0, _width, 30);
 
-    //title
+    // title text
     painter->setPen(oldPen);
     painter->setBrush(oldBrush);
     QFont font("Calibri", 12);
@@ -69,7 +135,7 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     painter->drawText(QRect(2, 5, _width - 2, 25), "table @");
 
-    //rows
+    // rows text
     font.setBold(false);
     painter->setFont(font);
     int textHeight = 30;
@@ -78,4 +144,15 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] row %1").arg(i));
         textHeight += 20;
     }
+}
+
+QVariant CEntityItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    if(change == QGraphicsItem::ItemPositionChange)
+    {
+        foreach (CRelationshipItem *relationship, _relationships) {
+            relationship->updatePosition();
+        }
+    }
+    return value;
 }
