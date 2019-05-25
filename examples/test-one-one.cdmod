@@ -1,0 +1,47 @@
+15
+8
+person11 20 13
+2
+id_person 0 1 1 1 1
+name_person 2 200 0 0 0
+0
+passport11 243 18
+2
+id_passport 0 1 1 1 1
+num_passport 0 1 0 0 1
+0
+person01 344 18
+2
+id_person 0 1 1 1 1
+name_person 2 200 0 0 0
+0
+passport01 599 19
+2
+id_passport 0 1 1 1 1
+num_passport 0 1 0 0 1
+0
+person00 350 235
+2
+id_person 0 1 1 1 1
+name_person 2 200 0 0 0
+0
+passport00 602 234
+2
+id_passport 0 1 1 1 1
+num_passport 0 1 0 0 1
+0
+person10 20 233
+2
+id_person 0 1 1 1 1
+name_person 2 200 0 0 0
+0
+passport10 243 234
+2
+id_passport 0 1 1 1 1
+num_passport 0 1 0 0 1
+0
+4
+person11 passport11 1 1 0 0
+person01 passport01 0 1 0 0
+person00 passport00 0 0 0 0
+person10 passport10 1 0 0 0

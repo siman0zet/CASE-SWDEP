@@ -1,0 +1,47 @@
+31
+8
+student11 19 13
+2
+id_student 0 1 1 1 1
+name_student 2 200 0 0 0
+0
+group11 243 18
+2
+id_group 0 1 1 1 1
+title_group 2 100 0 0 1
+0
+student01 344 18
+2
+id_student 0 1 1 1 1
+name_student 2 200 0 0 0
+0
+group01 599 19
+2
+id_group 0 1 1 1 1
+title_group 2 100 0 0 1
+0
+student00 350 235
+2
+id_student 0 1 1 1 1
+name_student 2 200 0 0 0
+0
+group00 602 234
+2
+id_group 0 1 1 1 1
+title_group 2 100 0 0 1
+0
+student10 20 233
+2
+id_student 0 1 1 1 1
+name_student 2 200 0 0 0
+0
+group10 243 234
+2
+id_group 0 1 1 1 1
+title_group 2 100 0 0 1
+0
+4
+student11 group11 1 1 1 1
+student01 group01 0 1 1 1
+student00 group00 0 0 1 1
+student10 group10 1 0 1 1

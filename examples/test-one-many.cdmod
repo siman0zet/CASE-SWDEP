@@ -1,0 +1,47 @@
+23
+8
+author11 19 13
+2
+id_author 0 1 1 1 1
+name_author 2 200 0 0 1
+0
+book11 243 18
+2
+id_book 0 1 1 1 1
+title_book 2 200 0 0 0
+0
+author01 344 18
+2
+id_author 0 1 1 1 1
+name_author 2 200 0 0 1
+0
+book01 599 19
+2
+id_book 0 1 1 1 1
+title_book 2 200 0 0 0
+0
+author00 350 235
+2
+id_author 0 1 1 1 1
+name_author 2 200 0 0 1
+0
+book00 602 234
+2
+id_book 0 1 1 1 1
+title_book 2 200 0 0 0
+0
+author10 20 233
+2
+id_author 0 1 1 1 1
+name_author 2 200 0 0 1
+0
+book10 243 234
+2
+id_book 0 1 1 1 1
+title_book 2 200 0 0 0
+0
+4
+author11 book11 1 1 0 1
+author01 book01 0 1 0 1
+author00 book00 0 0 0 1
+author10 book10 1 0 0 1

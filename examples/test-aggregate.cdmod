@@ -1,0 +1,27 @@
+19
+4
+spec11 20 14
+2
+id_spec 0 1 1 1 1
+title_spec 2 200 0 0 0
+0
+gupr11 243 18
+3
+row 0 1 1 1 1
+column 0 1 1 1 1
+cell 0 -1 0 0 0
+0
+spec10 344 18
+2
+id_spec 0 1 1 1 1
+title_spec 2 200 0 0 0
+0
+gupr10 599 19
+3
+row 0 1 1 1 1
+column 0 1 1 1 1
+cell 0 -1 0 0 0
+0
+2
+spec11 gupr11 1 1 0 2
+spec10 gupr10 1 0 0 2
