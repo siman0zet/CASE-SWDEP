@@ -7,6 +7,8 @@ class CTable;
 class CRelationship : public CObject
 {
 public:
+    enum { Type = USER_TYPE + 12 };
+
     enum RELATIONSHIP_MAX_TYPE
     {
         ONE,
@@ -22,6 +24,9 @@ public:
     };
 
     CRelationship(int id, CTable *startTable, CTable *endTable);
+    ~CRelationship();
+
+    int type() override;
 
     RELATIONSHIP_MAX_TYPE startMaxType() const;
     void setStartMaxType(const RELATIONSHIP_MAX_TYPE &startMaxType);
@@ -34,6 +39,9 @@ public:
 
     RELATIONSHIP_MIN_TYPE endMinType() const;
     void setEndMinType(const RELATIONSHIP_MIN_TYPE &endMinType);
+
+    CTable *startTable() const;
+    CTable *endTable() const;
 
 private:
     CTable *_startTable;

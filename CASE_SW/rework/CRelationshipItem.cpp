@@ -141,6 +141,11 @@ void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->drawPolygon(_endPolygon);
 }
 
+CRelationship *CRelationshipItem::relationship() const
+{
+    return _relationship;
+}
+
 QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const QGraphicsPolygonItem *item)
 {
     QLineF centerLine(line);

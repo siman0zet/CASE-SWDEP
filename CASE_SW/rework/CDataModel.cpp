@@ -27,6 +27,16 @@ CRelationship *CDataModel::addRelationship(int startId, int endId)
     return relationship;
 }
 
+void CDataModel::removeObjects(const QList<CObject *> &objects)
+{
+    foreach (CObject *object, objects) {
+        if(CRelationship::Type == object->type())
+            removeRelationship(object->id());
+        if(CTable::Type == object->type())
+            removeTable(object->id());
+    }
+}
+
 CDataModel *CDataModel::convertToPdm()
 {
 
@@ -35,4 +45,21 @@ CDataModel *CDataModel::convertToPdm()
 bool CDataModel::isPhysical()
 {
     return _physical;
+}
+
+void CDataModel::removeTable(int id)
+{
+    CTable *table = _tables.value(id);
+    foreach (CRelationship *relationship, table->relationships()) {
+        removeRelationship(relationship->id());
+    }
+    delete _tables.value(id);
+    _tables.remove(id);
+}
+
+void CDataModel::removeRelationship(int id)
+{
+    delete _relationships.value(id);
+    _relationships.remove(id);
+    emit relationshipRemoved(id);
 }

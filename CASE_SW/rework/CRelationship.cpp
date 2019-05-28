@@ -1,4 +1,5 @@
 #include "CRelationship.h"
+#include "CTable.h"
 
 CRelationship::CRelationship(int id, CTable *startTable, CTable *endTable) :
     CObject(id),
@@ -9,6 +10,21 @@ CRelationship::CRelationship(int id, CTable *startTable, CTable *endTable) :
     _endMaxType(ONE),
     _endMinType(MANDATORY)
 {
+    _startTable->addRelationship(this);
+    _endTable->addRelationship(this);
+}
+
+CRelationship::~CRelationship()
+{
+    _startTable->removeRelationship(this);
+    _endTable->removeRelationship(this);
+    _startTable = nullptr;
+    _endTable = nullptr;
+}
+
+int CRelationship::type()
+{
+    return Type;
 }
 
 CRelationship::RELATIONSHIP_MAX_TYPE CRelationship::startMaxType() const
@@ -49,4 +65,14 @@ CRelationship::RELATIONSHIP_MIN_TYPE CRelationship::endMinType() const
 void CRelationship::setEndMinType(const RELATIONSHIP_MIN_TYPE &endMinType)
 {
     _endMinType = endMinType;
+}
+
+CTable *CRelationship::startTable() const
+{
+    return _startTable;
+}
+
+CTable *CRelationship::endTable() const
+{
+    return _endTable;
 }

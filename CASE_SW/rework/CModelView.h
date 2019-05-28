@@ -6,7 +6,8 @@
 
 class MainWindow;
 class CDataModel;
-class CEntityItem;
+class CTableItem;
+class CRelationshipItem;
 
 class CModelView : public QGraphicsView
 {
@@ -31,6 +32,7 @@ public:
 
 public slots:
     void changeSize(int w, int h);
+    void removeRelationship(int id);
 
 protected:
     // QWidget interface
@@ -48,20 +50,23 @@ private:
     int   _height;    
 
     QMap<cursorToolType, bool> _tools;
-    QMap<int, CEntityItem *> _entities;
-    QMap<int, QGraphicsItem *> _relationships;
-    QList<int> _entitiesToRelate;
+    QMap<int, CTableItem *> _tables;
+    QMap<int, CRelationshipItem *> _relationships;
+    QList<int> _tablesToRelate;
 
-    void addEntity(const QPoint &pos);
+    void addTable(const QPoint &pos);
     void addRelationship(int startId, int endId);
+    void removeItem(const QPoint &pos);
+    void removeItems(QList<QGraphicsItem *> items);
     void deactivateTools();
-    int countSelectedEntities();
-    void showContextMenu(const QPoint &pos, bool isEnabled, bool isTwoEntities = false);
+    void showContextMenu(const QPoint &pos, bool isEnabled,  bool colorOption = false, bool relationOption = false);
     void showTableContextMenu(const QPoint &pos, QString tableName);
+    void showRelationshipContextMenu(const QPoint &pos);
     void returnToPointer();
 
 private slots:
     void addRelationship();
+    void removeItems();
 
 };
 

@@ -1,10 +1,10 @@
 #include "CModelView.h"
 #include "mainwindow.h"
-#include "CEntityItem.h"
+#include "CTableItem.h"
 #include "CRelationshipItem.h"
 #include "resizedialog.h"
 #include "CDataModel.h"
-#include "CEntity.h"
+#include "CTable.h"
 #include "CRelationship.h"
 
 #include <QMouseEvent>
@@ -30,6 +30,8 @@ CModelView::CModelView(QWidget *parent) :
     this->setScene(_scene);
     QBrush brush (Qt::white, Qt::SolidPattern);
     _scene->setBackgroundBrush(brush);
+
+    connect(_dataModel, SIGNAL(relationshipRemoved(int)), this, SLOT(removeRelationship(int)));
 }
 
 CModelView::~CModelView()
@@ -44,14 +46,14 @@ void CModelView::activateTool(CModelView::cursorToolType type)
     _tools.insert(type, true);
 }
 
-void CModelView::addEntity(const QPoint &pos)
+void CModelView::addTable(const QPoint &pos)
 {
-    CEntity *entity = _dataModel->addEntity();
-    CEntityItem *entityItem = new CEntityItem(entity);
-    _entities.insert(entity->id(), entityItem);
+    CTable *table = _dataModel->addTable();
+    CTableItem *tableItem = new CTableItem(table);
+    _tables.insert(table->id(), tableItem);
 
-    entityItem->setPos(pos);
-    _scene->addItem(entityItem);
+    tableItem->setPos(pos);
+    _scene->addItem(tableItem);
 
     returnToPointer();
 }
@@ -63,15 +65,53 @@ void CModelView::addRelationship(int startId, int endId)
     CRelationship *relationship = _dataModel->addRelationship(startId, endId);
     if(relationship != NULL)
     {
-        CRelationshipItem *relationshipItem = new CRelationshipItem(_entities.value(startId),
-                                                                    _entities.value(endId));
+        CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startId),
+                                                                    _tables.value(endId),
+                                                                    relationship);
         _relationships.insert(relationship->id(), relationshipItem);
         _scene->addItem(relationshipItem);
     }
 
-    _entities.value(startId)->setSelectedForRelation(false);
-    _entities.value(endId)->setSelectedForRelation(false);
-    _entitiesToRelate.clear();
+    _tables.value(startId)->setSelectedForRelation(false);
+    _tables.value(endId)->setSelectedForRelation(false);
+    _tablesToRelate.clear();
+    returnToPointer();
+}
+
+void CModelView::removeItem(const QPoint &pos)
+{
+    QList<QGraphicsItem *> items;
+    QGraphicsItem *item = _scene->itemAt(pos, this->transform());
+    if(item)
+    {
+        items.append(item);
+        removeItems(items);
+    }
+}
+
+void CModelView::removeItems(QList<QGraphicsItem *> items)
+{
+    // slightly sorting thru items in here
+    // so as not to drag QGraphicsItem to CDataModel
+    QList<CObject *> objects;
+    foreach (QGraphicsItem *item, items) {
+        switch (item->type()) {
+        case CTableItem::Type:
+            {
+                objects.append(dynamic_cast<CTableItem *>(item)->table());
+                _tables.remove(dynamic_cast<CTableItem *>(item)->id());
+                break;
+            }
+        case CRelationshipItem::Type:
+            {
+                objects.append(dynamic_cast<CRelationshipItem *>(item)->relationship());
+                _relationships.remove(dynamic_cast<CRelationshipItem *>(item)->id());
+                break;
+            }
+        }
+        _dataModel->removeObjects(objects);
+        _scene->removeItem(item);
+    }
     returnToPointer();
 }
 
@@ -90,70 +130,96 @@ void CModelView::changeSize(int w, int h)
     this->setSceneRect(0, 0, _width, _height);
 }
 
+void CModelView::removeRelationship(int id)
+{
+    foreach (CTableItem *tableItem, _tables) {
+        tableItem->removeRelationship(_relationships.value(id));
+    }
+    _scene->removeItem(_relationships.value(id));
+    delete _relationships.value(id);
+    _relationships.remove(id);
+}
+
 void CModelView::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::RightButton)
     {
         auto target = this->_scene->itemAt(event->pos(), QTransform());
-        CEntityItem *targetEntity = dynamic_cast<CEntityItem *>(target);
-        int count = countSelectedEntities();
-        if(!targetEntity)
+        if(target)
         {
-            qDebug() << "empty space";
-
-            if(count > 2)
+            _scene->clearSelection();
+            target->setSelected(true);
+            if(target->type() == CTableItem::Type)
             {
-                qDebug() << "selected > 2";
-                showContextMenu(event->pos(), true);
+                CTableItem *targetTable = dynamic_cast<CTableItem *>(target);
+                showTableContextMenu(event->pos(), targetTable->name());
                 return;
             }
-            if(count == 2)
+            if(target->type() == CRelationshipItem::Type)
             {
-                qDebug() << "selected = 2";
-                showContextMenu(event->pos(), true, true);
+                showRelationshipContextMenu(event->pos());
                 return;
             }
-            if(count == 1)
-            {
-                qDebug() << "selected = 1";
-                showTableContextMenu(event->pos(), "some table");
-                return;
-            }
-            qDebug() << "selected = 0";
-            showContextMenu(event->pos(), false);
-            return;
         }
         else
         {
-            qDebug() << "some target";
-            if(targetEntity->isSelected())
-            {
-                if(count > 2)
+            //empty space
+            QList<QGraphicsItem *> items = _scene->selectedItems();
+            int selectedItemsCount = items.size();
+            switch (selectedItemsCount) {
+            case 0:
                 {
-                    qDebug() << "selected > 2";
-                    showContextMenu(event->pos(), true);
-                    return;
+                    showContextMenu(event->pos(), false);
+                    break;
                 }
-                if(count == 2)
+            case 1:
                 {
-                    qDebug() << "selected = 2";
-                    showContextMenu(event->pos(), true, true);
-                    return;
+                    if(items.last()->type() == CRelationshipItem::Type)
+                    {
+                        showRelationshipContextMenu(event->pos());
+                    }
+                    else
+                    {
+                        CTableItem *selectedTable = dynamic_cast<CTableItem *>
+                                (items.last());
+                        showTableContextMenu(event->pos(), selectedTable->name());
+                    }
+                    break;
                 }
-                if(count == 1)
+            case 2:
                 {
-                    qDebug() << "selected = 1";
-                    showTableContextMenu(event->pos(), "some table");
-                    return;
+                    if(CTableItem::Type == items.first()->type() && CTableItem::Type == items.last()->type())
+                        showContextMenu(event->pos(), true, true, true);
+                    else
+                        showContextMenu(event->pos(), true);
+                    break;
                 }
-            }
-            else
-            {
-                _scene->clearSelection();
-                targetEntity->setSelected(true);
-                qDebug() << "selected = 1";
-                showTableContextMenu(event->pos(), "some table");
-                return;
+            default:
+                {
+                    bool sameItems = true;
+                    foreach (QGraphicsItem *item, _scene->selectedItems()) {
+                        if(item->type() == CRelationshipItem::Type)
+                        {
+                            sameItems = false;
+                            break;
+                        }
+                    }
+                    if(!sameItems)
+                    {
+                        int tableCount = 0;
+                        foreach (QGraphicsItem *item, items) {
+                            if(CTableItem::Type == item->type())
+                                tableCount++;
+                        }
+                        if(tableCount == 2)
+                        {
+                            showContextMenu(event->pos(), true, false, true);
+                            return;
+                        }
+                    }
+                    showContextMenu(event->pos(), true, sameItems);
+                    break;
+                }
             }
         }
     }
@@ -166,7 +232,12 @@ void CModelView::mousePressEvent(QMouseEvent *event)
         }
         if(_tools.value(CREATE))
         {
-            this->addEntity(event->pos());
+            this->addTable(event->pos());
+            return;
+        }
+        if(_tools.value(DELETE))
+        {
+            this->removeItem(event->pos());
             return;
         }
         if(_tools.value(ONE_ONE) ||
@@ -177,13 +248,13 @@ void CModelView::mousePressEvent(QMouseEvent *event)
             QGraphicsItem *item = _scene->itemAt(event->pos(), this->transform());
             if(item)
             {
-                if(item->type() == CEntityItem::Type)
+                if(item->type() == CTableItem::Type)
                 {
-                    CEntityItem *entityItem = dynamic_cast<CEntityItem *>(item);
-                    if(entityItem)
+                    CTableItem *tableItem = dynamic_cast<CTableItem *>(item);
+                    if(tableItem)
                     {
-                        _entitiesToRelate.append(entityItem->id());
-                        entityItem->setSelectedForRelation(true);
+                        _tablesToRelate.append(tableItem->id());
+                        tableItem->setSelectedForRelation(true);
                         return;
                     }
                 }
@@ -199,9 +270,9 @@ void CModelView::mouseReleaseEvent(QMouseEvent *event)
        _tools.value(MANY_MANY) ||
        _tools.value(AGGREGATE))
     {
-        if(_entitiesToRelate.size() == 2)
+        if(_tablesToRelate.size() == 2)
         {
-            addRelationship(_entitiesToRelate.first(), _entitiesToRelate.last());
+            addRelationship(_tablesToRelate.first(), _tablesToRelate.last());
             return;
         }
     }
@@ -227,25 +298,15 @@ void CModelView::deactivateTools()
     {
         _tools.insert(static_cast<cursorToolType>(i), false);
     }
-    _entitiesToRelate.clear();
+    _tablesToRelate.clear();
 }
 
-int CModelView::countSelectedEntities()
-{
-    int count = 0;
-    foreach (CEntityItem *entity, _entities) {
-        if(entity->isSelected())
-            count++;
-    }
-    return count;
-}
-
-void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool relationshipOption)
+void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool colorOption, bool relationOption)
 {
     QMenu contextMenu(tr("Context menu"), this);
 
     QAction actionRelate("Create Relationship", this);
-    if(relationshipOption)
+    if(relationOption)
     {
         actionRelate.setEnabled(isEnabled);
         connect(&actionRelate, SIGNAL(triggered(bool)), this, SLOT(addRelationship()));
@@ -253,12 +314,15 @@ void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool relatio
     }
 
     QAction actionChangeColor("[TODO] Change color", this);
-    actionChangeColor.setEnabled(false);
-//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
-    contextMenu.addAction(&actionChangeColor);
+    if(colorOption)
+    {
+        actionChangeColor.setEnabled(false);
+//        connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+        contextMenu.addAction(&actionChangeColor);
+    }
 
     QAction actionDelete("Delete", this);
-//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(removeItems()));
     actionDelete.setEnabled(isEnabled);
     contextMenu.addAction(&actionDelete);
 
@@ -267,7 +331,7 @@ void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool relatio
 
 void CModelView::showTableContextMenu(const QPoint &pos, QString tableName)
 {
-    QMenu contextMenu(tr("Context menu"), this);
+    QMenu contextMenu(tr("Table context menu"), this);
 
     QAction actionEdit(QString("Edit '%1'").arg(tableName), this);
 //    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_entity_detail()));
@@ -279,7 +343,22 @@ void CModelView::showTableContextMenu(const QPoint &pos, QString tableName)
     contextMenu.addAction(&actionChangeColor);
 
     QAction actionDelete("Delete", this);
-//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(removeItems()));
+    contextMenu.addAction(&actionDelete);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void CModelView::showRelationshipContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu(tr("Relationship context menu"), this);
+
+    QAction actionEdit("Edit relationship");
+//    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_entity_detail()));
+    contextMenu.addAction(&actionEdit);
+
+    QAction actionDelete("Delete", this);
+    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(removeItems()));
     contextMenu.addAction(&actionDelete);
 
     contextMenu.exec(mapToGlobal(pos));
@@ -294,12 +373,18 @@ void CModelView::returnToPointer()
 
 void CModelView::addRelationship()
 {
-    CEntityItem *startItem = dynamic_cast<CEntityItem *>(_scene->selectedItems().first());
-    CEntityItem *endItem = dynamic_cast<CEntityItem *>(_scene->selectedItems().last());
+    CTableItem *startItem = dynamic_cast<CTableItem *>(_scene->selectedItems().first());
+    CTableItem *endItem = dynamic_cast<CTableItem *>(_scene->selectedItems().last());
     if(startItem && endItem && startItem != endItem)
     {
         int startId = startItem->id();
         int endId = endItem->id();
         addRelationship(startId, endId);
     }
+}
+
+void CModelView::removeItems()
+{
+    if(_scene->selectedItems().size())
+        removeItems(_scene->selectedItems());
 }

@@ -10,3 +10,8 @@ int CObject::id() const
 {
     return _id;
 }
+
+int CObject::type()
+{
+    return Type;
+}

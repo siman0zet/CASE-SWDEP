@@ -24,6 +24,8 @@ public:
     void updatePosition();
     void updatePolygons();
 
+    CRelationship *relationship() const;
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 

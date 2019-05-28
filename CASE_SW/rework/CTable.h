@@ -13,10 +13,18 @@ class CForeignRow;
 class CTable : public CObject
 {
 public:
-    CTable(int id);
+    enum { Type = USER_TYPE + 11 };
 
+    explicit CTable(int id);
+    ~CTable();
+
+    int type() override;
     QString name() const;
     void setName(const QString &name);
+
+    void addRelationship(CRelationship *relationship);
+    void removeRelationship(CRelationship *relationship);
+    void removeRelationships();
 
     int addRow();
     void removeRow(int row);
@@ -27,10 +35,12 @@ public:
     int foreignRowCount();
     int totalRowCount();
 
+    QList<CRelationship *> relationships() const;
+
 private:
     QString _name;
 
-    QMap<int, CRelationship *> _relationships;
+    QList<CRelationship *> _relationships;
     QMap<int, CRow *> _rows;
     QMap<int, CForeignRow *> _foreingRows;
 };
