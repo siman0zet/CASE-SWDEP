@@ -1,14 +1,17 @@
 #include "CEntityItem.h"
 #include "CRelationshipItem.h"
+#include "CEntity.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsScene>
 
-CEntityItem::CEntityItem() :
+CEntityItem::CEntityItem(CEntity *entity) :
     _width(100),
     _height(90),
-    _color(Qt::lightGray)
+    _color(Qt::lightGray),
+    _entity(entity),
+    _selectedForRelation(false)
 {
     this->setFlags(ItemIsSelectable |
                    ItemIsMovable |
@@ -64,9 +67,22 @@ void CEntityItem::setColor(const QColor &color)
     _color = color;
 }
 
+void CEntityItem::setSelectedForRelation(bool selectedForRelation)
+{
+    _selectedForRelation = selectedForRelation;
+}
+
 int CEntityItem::type() const
 {
     return Type;
+}
+
+int CEntityItem::id()
+{
+    if(_entity != 0)
+        return _entity->id();
+    else
+        return -1;
 }
 
 QRectF CEntityItem::boundingRect() const
@@ -89,7 +105,7 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QBrush oldBrush = painter->brush();
 
     // gray outline of selected item
-    if(option->state & QStyle::State_Selected)
+    if((option->state & QStyle::State_Selected) || _selectedForRelation)
     {
         QPen selectPen(QBrush(QColor(Qt::gray)), 5);
 
@@ -104,7 +120,7 @@ void CEntityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QColor penColor = QColor(Qt::black);
     if(option->state & QStyle::State_Selected)
         penColor = QColor(61, 141, 253);
-    if(option->state & QStyle::State_MouseOver)
+    if((option->state & QStyle::State_MouseOver) || _selectedForRelation)
         penColor = QColor(206, 70, 72);
     QPen pen(penColor, 1);
     QBrush brush(QColor(Qt::white));

@@ -4,13 +4,14 @@
 #include <QGraphicsPolygonItem>
 
 class CRelationshipItem;
+class CEntity;
 
 class CEntityItem : public QGraphicsPolygonItem
 {
 public:
     enum { Type = UserType + 1 };
 
-    CEntityItem();
+    explicit CEntityItem(CEntity *entity);
 
     int width() const;
     int height() const;
@@ -20,13 +21,17 @@ public:
     void removeRelationships();
     void addRelationship(CRelationshipItem *relationship);
     void setColor(const QColor &color);
+    void setSelectedForRelation(bool selectedForRelation);
 
     int type() const override;
+    int id();
 
     // QGraphicsItem interface
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+
 
 
 
@@ -37,9 +42,12 @@ private:
     int   _width;
     int   _height;
 
+    bool _selectedForRelation;
     QColor _color;
     QPolygonF _polygon;
     QList<CRelationshipItem *> _relationships;
+
+    CEntity *_entity;
 
 };
 

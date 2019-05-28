@@ -4,7 +4,9 @@
 #include <QGraphicsView>
 #include <QMap>
 
+class MainWindow;
 class CDataModel;
+class CEntityItem;
 
 class CModelView : public QGraphicsView
 {
@@ -25,7 +27,6 @@ public:
     };
 
     void activateTool(cursorToolType type);
-    void addEntity();
     void showResizeDialog();
 
 public slots:
@@ -39,19 +40,28 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    MainWindow *_parent;
     QGraphicsScene *_scene;
     CDataModel *_dataModel;
+
     int   _width;
-    int   _height;
+    int   _height;    
 
     QMap<cursorToolType, bool> _tools;
-    QMap<int, QGraphicsItem *> _entities;
+    QMap<int, CEntityItem *> _entities;
+    QMap<int, QGraphicsItem *> _relationships;
+    QList<int> _entitiesToRelate;
 
+    void addEntity(const QPoint &pos);
+    void addRelationship(int startId, int endId);
     void deactivateTools();
     int countSelectedEntities();
-    void showContextMenu(const QPoint &pos, bool isEnabled);
+    void showContextMenu(const QPoint &pos, bool isEnabled, bool isTwoEntities = false);
     void showTableContextMenu(const QPoint &pos, QString tableName);
-    void showTableRelationshipContextMenu(const QPoint &pos);
+    void returnToPointer();
+
+private slots:
+    void addRelationship();
 
 };
 

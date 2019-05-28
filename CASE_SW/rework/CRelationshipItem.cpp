@@ -6,14 +6,18 @@
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
 
-CRelationshipItem::CRelationshipItem(CEntityItem *startItem, CEntityItem *endItem)
+CRelationshipItem::CRelationshipItem(CEntityItem *startItem, CEntityItem *endItem) :
+    _startItem(startItem),
+    _endItem(endItem)
 {
-    _startItem = startItem;
-    _endItem = endItem;
-    setFlag(QGraphicsItem::ItemIsSelectable, true);
+    setFlags(ItemIsSelectable |
+             ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     setZValue(-1000.0);
 
+    _startItem->addRelationship(this);
+    _endItem->addRelationship(this);
+    updatePosition();
     updatePolygons();
 }
 
@@ -61,6 +65,8 @@ void CRelationshipItem::updatePosition()
     if (_startItem->collidesWithItem(_endItem))
         return;
 
+    prepareGeometryChange();
+
     // find start and end points
     QLineF line(mapFromItem(_startItem, _startItem->width() / 2, _startItem->height() / 2),
                 mapFromItem(_endItem, _endItem->width() / 2, _endItem->height() / 2));
@@ -86,14 +92,17 @@ void CRelationshipItem::updatePosition()
 
 void CRelationshipItem::updatePolygons()
 {
-    _startPolygon = createAggregatePolygon(this->line(), _startItem);
-    _endPolygon = createManyPolygon(this->line(), _endItem);
+    prepareGeometryChange();
+//    _startPolygon = createAggregatePolygon(this->line(), _startItem);
+//    _endPolygon = createManyPolygon(this->line(), _endItem);
 }
 
 void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     if (_startItem->collidesWithItem(_endItem))
         return;
+
+    prepareGeometryChange();
 
     // colored outline if selected or mouseovered
     if((option->state & QStyle::State_Selected) ||

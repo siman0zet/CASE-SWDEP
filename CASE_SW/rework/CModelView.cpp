@@ -1,6 +1,11 @@
 #include "CModelView.h"
+#include "mainwindow.h"
 #include "CEntityItem.h"
+#include "CRelationshipItem.h"
 #include "resizedialog.h"
+#include "CDataModel.h"
+#include "CEntity.h"
+#include "CRelationship.h"
 
 #include <QMouseEvent>
 #include <QDebug>
@@ -8,9 +13,12 @@
 
 CModelView::CModelView(QWidget *parent) :
     QGraphicsView(parent),
+    _parent((MainWindow *)parent),
     _scene(new QGraphicsScene(this)),
+    _dataModel(new CDataModel()),
     _width(400),
     _height(300)
+
 {
     this->setFocusPolicy(Qt::StrongFocus);
     this->setRenderHint(QPainter::Antialiasing, true);
@@ -22,13 +30,12 @@ CModelView::CModelView(QWidget *parent) :
     this->setScene(_scene);
     QBrush brush (Qt::white, Qt::SolidPattern);
     _scene->setBackgroundBrush(brush);
-
-    addEntity();
 }
 
 CModelView::~CModelView()
 {
     delete _scene;
+    delete _dataModel;
 }
 
 void CModelView::activateTool(CModelView::cursorToolType type)
@@ -37,22 +44,35 @@ void CModelView::activateTool(CModelView::cursorToolType type)
     _tools.insert(type, true);
 }
 
-void CModelView::addEntity()
+void CModelView::addEntity(const QPoint &pos)
 {
-    QGraphicsItem *item = new CEntityItem();
-    item->setPos(20, 20);
-    _scene->addItem(item);
-    _entities.insert(1, item);
+    CEntity *entity = _dataModel->addEntity();
+    CEntityItem *entityItem = new CEntityItem(entity);
+    _entities.insert(entity->id(), entityItem);
 
-    QGraphicsItem *item2 = new CEntityItem();
-    item2->setPos(100, 250);
-    _scene->addItem(item2);
-    _entities.insert(2, item2);
+    entityItem->setPos(pos);
+    _scene->addItem(entityItem);
 
-    QGraphicsItem *item3 = new CEntityItem();
-    item3->setPos(200, 15);
-    _scene->addItem(item3);
-    _entities.insert(3, item3);
+    returnToPointer();
+}
+
+void CModelView::addRelationship(int startId, int endId)
+{
+    // Here somewhere should be stated with relationship we create
+    // either 1, 2, 3, 4 or default (from context menu action)
+    CRelationship *relationship = _dataModel->addRelationship(startId, endId);
+    if(relationship != NULL)
+    {
+        CRelationshipItem *relationshipItem = new CRelationshipItem(_entities.value(startId),
+                                                                    _entities.value(endId));
+        _relationships.insert(relationship->id(), relationshipItem);
+        _scene->addItem(relationshipItem);
+    }
+
+    _entities.value(startId)->setSelectedForRelation(false);
+    _entities.value(endId)->setSelectedForRelation(false);
+    _entitiesToRelate.clear();
+    returnToPointer();
 }
 
 void CModelView::showResizeDialog()
@@ -90,7 +110,7 @@ void CModelView::mousePressEvent(QMouseEvent *event)
             if(count == 2)
             {
                 qDebug() << "selected = 2";
-                showTableRelationshipContextMenu(event->pos());
+                showContextMenu(event->pos(), true, true);
                 return;
             }
             if(count == 1)
@@ -117,7 +137,7 @@ void CModelView::mousePressEvent(QMouseEvent *event)
                 if(count == 2)
                 {
                     qDebug() << "selected = 2";
-                    showTableRelationshipContextMenu(event->pos());
+                    showContextMenu(event->pos(), true, true);
                     return;
                 }
                 if(count == 1)
@@ -137,12 +157,58 @@ void CModelView::mousePressEvent(QMouseEvent *event)
             }
         }
     }
-    QGraphicsView::mousePressEvent(event);
+    else
+    {
+        if(_tools.value(POINTER))
+        {
+            QGraphicsView::mousePressEvent(event);
+            return;
+        }
+        if(_tools.value(CREATE))
+        {
+            this->addEntity(event->pos());
+            return;
+        }
+        if(_tools.value(ONE_ONE) ||
+           _tools.value(ONE_MANY) ||
+           _tools.value(MANY_MANY) ||
+           _tools.value(AGGREGATE))
+        {
+            QGraphicsItem *item = _scene->itemAt(event->pos(), this->transform());
+            if(item)
+            {
+                if(item->type() == CEntityItem::Type)
+                {
+                    CEntityItem *entityItem = dynamic_cast<CEntityItem *>(item);
+                    if(entityItem)
+                    {
+                        _entitiesToRelate.append(entityItem->id());
+                        entityItem->setSelectedForRelation(true);
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void CModelView::mouseReleaseEvent(QMouseEvent *event)
 {
-    QGraphicsView::mouseReleaseEvent(event);
+    if(_tools.value(ONE_ONE) ||
+       _tools.value(ONE_MANY) ||
+       _tools.value(MANY_MANY) ||
+       _tools.value(AGGREGATE))
+    {
+        if(_entitiesToRelate.size() == 2)
+        {
+            addRelationship(_entitiesToRelate.first(), _entitiesToRelate.last());
+            return;
+        }
+    }
+    else
+    {
+        QGraphicsView::mouseReleaseEvent(event);
+    }
 }
 
 void CModelView::mouseDoubleClickEvent(QMouseEvent *event)
@@ -161,21 +227,35 @@ void CModelView::deactivateTools()
     {
         _tools.insert(static_cast<cursorToolType>(i), false);
     }
+    _entitiesToRelate.clear();
 }
 
 int CModelView::countSelectedEntities()
 {
     int count = 0;
-    foreach (QGraphicsItem *entity, _entities) {
+    foreach (CEntityItem *entity, _entities) {
         if(entity->isSelected())
             count++;
     }
     return count;
 }
 
-void CModelView::showContextMenu(const QPoint &pos, bool isEnabled)
+void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool relationshipOption)
 {
     QMenu contextMenu(tr("Context menu"), this);
+
+    QAction actionRelate("Create Relationship", this);
+    if(relationshipOption)
+    {
+        actionRelate.setEnabled(isEnabled);
+        connect(&actionRelate, SIGNAL(triggered(bool)), this, SLOT(addRelationship()));
+        contextMenu.addAction(&actionRelate);
+    }
+
+    QAction actionChangeColor("[TODO] Change color", this);
+    actionChangeColor.setEnabled(false);
+//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    contextMenu.addAction(&actionChangeColor);
 
     QAction actionDelete("Delete", this);
 //    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
@@ -193,6 +273,11 @@ void CModelView::showTableContextMenu(const QPoint &pos, QString tableName)
 //    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_entity_detail()));
     contextMenu.addAction(&actionEdit);
 
+    QAction actionChangeColor("[TODO] Change color", this);
+    actionChangeColor.setEnabled(false);
+//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
+    contextMenu.addAction(&actionChangeColor);
+
     QAction actionDelete("Delete", this);
 //    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
     contextMenu.addAction(&actionDelete);
@@ -200,17 +285,21 @@ void CModelView::showTableContextMenu(const QPoint &pos, QString tableName)
     contextMenu.exec(mapToGlobal(pos));
 }
 
-void CModelView::showTableRelationshipContextMenu(const QPoint &pos)
+void CModelView::returnToPointer()
 {
-    QMenu contextMenu(tr("Context menu"), this);
+    activateTool(POINTER);
+    if(_parent != 0)
+        _parent->activateEditAction(POINTER);
+}
 
-    QAction actionRelate("Create Relationship", this);
-//    connect(&actionRelate, SIGNAL(triggered(bool)), this, SLOT(connect_selected_entityes()));
-    contextMenu.addAction(&actionRelate);
-
-    QAction actionDelete("Delete", this);
-//    connect(&actionDelete, SIGNAL(triggered(bool)), this, SLOT(remove_selected_entityes()));
-    contextMenu.addAction(&actionDelete);
-
-    contextMenu.exec(mapToGlobal(pos));
+void CModelView::addRelationship()
+{
+    CEntityItem *startItem = dynamic_cast<CEntityItem *>(_scene->selectedItems().first());
+    CEntityItem *endItem = dynamic_cast<CEntityItem *>(_scene->selectedItems().last());
+    if(startItem && endItem && startItem != endItem)
+    {
+        int startId = startItem->id();
+        int endId = endItem->id();
+        addRelationship(startId, endId);
+    }
 }

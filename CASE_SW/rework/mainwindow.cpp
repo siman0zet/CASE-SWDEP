@@ -136,7 +136,7 @@ void MainWindow::activateEditAction(CModelView::cursorToolType type)
 
 bool MainWindow::addModelTab(QString modelName, QString modelPath)
 {
-    CModelView *modelView = new CModelView();
+    CModelView *modelView = new CModelView(this);
 //    if(!modelPath.isEmpty())
 //        modelView->loadFromFile(modelPath); // add return statement to load
     modelView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

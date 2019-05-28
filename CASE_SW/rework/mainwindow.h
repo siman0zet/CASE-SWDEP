@@ -23,6 +23,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void activateEditAction(CModelView::cursorToolType type);
+
 private slots:
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
@@ -31,7 +34,6 @@ private slots:
     void on_actionSave_as_triggered();
     void on_actionClose_triggered();
     void on_tabWidget_tabCloseRequested(int index);
-    void activateEditAction(CModelView::cursorToolType type);
     void on_actionPointer_triggered();
     void on_actionCreate_Table_triggered();
     void on_actionDelete_triggered();

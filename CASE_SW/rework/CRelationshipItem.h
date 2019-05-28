@@ -42,7 +42,7 @@ private:
     int findIntersectionSide(const QLineF &line, const QGraphicsPolygonItem *item);
     QPolygonF createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item);
     QPolygonF createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item);
-
+//    QPolygonF createPhysicalPolygon(const QLineF &line, const QGraphicsPolygonItem *item);
 };
 
 #endif // CRELATIONSHIPITEM_H
