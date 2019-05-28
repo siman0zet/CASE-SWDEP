@@ -1,14 +1,16 @@
 #include "CRelationshipItem.h"
-#include "CEntityItem.h"
+#include "CTableItem.h"
+#include "CRelationship.h"
 
 #include <QPainter>
 #include <qmath.h>
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
 
-CRelationshipItem::CRelationshipItem(CEntityItem *startItem, CEntityItem *endItem) :
+CRelationshipItem::CRelationshipItem(CTableItem *startItem, CTableItem *endItem, CRelationship *relationship) :
     _startItem(startItem),
-    _endItem(endItem)
+    _endItem(endItem),
+    _relationship(relationship)
 {
     setFlags(ItemIsSelectable |
              ItemSendsGeometryChanges);
@@ -26,6 +28,14 @@ int CRelationshipItem::type() const
     return Type;
 }
 
+int CRelationshipItem::id()
+{
+    if(_relationship != 0)
+        return _relationship->id();
+    else
+        return -1;
+}
+
 QRectF CRelationshipItem::boundingRect() const
 {
     qreal extra = (pen().width() + 20) / 2.0;
@@ -41,8 +51,8 @@ QPainterPath CRelationshipItem::shape() const
     QPainterPath path;
     path.addPolygon(_startPolygon);
     path.addPolygon(_endPolygon);
-    path.addRect(QRectF(QPointF(_startPoint.x(), _startPoint.y()),
-                        QPointF(_midPoint1.x(), _midPoint1.y())));
+    path.addRect(QRectF(QPointF(_startPoint.x() - 1, _startPoint.y() - 1),
+                        QPointF(_midPoint1.x() + 1, _midPoint1.y() + 1)));
     path.addRect(QRectF(QPointF(_midPoint1.x() - 1, _midPoint1.y() - 1),
                         QPointF(_midPoint2.x() + 1, _midPoint2.y() + 1)));
     path.addRect(QRectF(QPointF(_midPoint2.x() - 1, _midPoint2.y() - 1),
@@ -50,12 +60,12 @@ QPainterPath CRelationshipItem::shape() const
     return path;
 }
 
-CEntityItem *CRelationshipItem::startItem() const
+CTableItem *CRelationshipItem::startItem() const
 {
     return _startItem;
 }
 
-CEntityItem *CRelationshipItem::endItem() const
+CTableItem *CRelationshipItem::endItem() const
 {
     return _endItem;
 }

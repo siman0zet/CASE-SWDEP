@@ -23,14 +23,15 @@ SOURCES += \
     CLangWidget.cpp \
     rework/mainwindow.cpp \
     rework/CModelView.cpp \
-    rework/CEntityItem.cpp \
     rework/resizedialog.cpp \
     rework/CRelationshipItem.cpp \
     rework/CDataModel.cpp \
-    rework/CEntity.cpp \
     rework/CRelationship.cpp \
     rework/CRow.cpp \
-    rework/CForeignRow.cpp
+    rework/CForeignRow.cpp \
+    rework/CTable.cpp \
+    rework/CTableItem.cpp \
+    rework/CObject.cpp
 
 HEADERS  += \
     CDataModelException.h \
@@ -39,14 +40,15 @@ HEADERS  += \
     CLangWidget.h \
     rework/mainwindow.h \
     rework/CModelView.h \
-    rework/CEntityItem.h \
     rework/resizedialog.h \
     rework/CRelationshipItem.h \
     rework/CDataModel.h \
-    rework/CEntity.h \
     rework/CRelationship.h \
     rework/CRow.h \
-    rework/CForeignRow.h
+    rework/CForeignRow.h \
+    rework/CTable.h \
+    rework/CTableItem.h \
+    rework/CObject.h
 
 FORMS    += \
     rework/mainwindow.ui \

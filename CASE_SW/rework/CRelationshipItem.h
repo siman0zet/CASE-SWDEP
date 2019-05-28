@@ -3,21 +3,23 @@
 
 #include <QGraphicsLineItem>
 
-class CEntityItem;
+class CTableItem;
+class CRelationship;
 
 class CRelationshipItem : public QGraphicsLineItem
 {
 public:
     enum { Type = UserType + 2 };
 
-    CRelationshipItem(CEntityItem *startItem, CEntityItem *endItem);
+    CRelationshipItem(CTableItem *startItem, CTableItem *endItem, CRelationship *relationship);
 
     int type() const override;
+    int id();
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
 
-    CEntityItem *startItem() const;
-    CEntityItem *endItem() const;
+    CTableItem *startItem() const;
+    CTableItem *endItem() const;
 
     void updatePosition();
     void updatePolygons();
@@ -25,9 +27,10 @@ public:
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 
-private:    
-    CEntityItem *_startItem;
-    CEntityItem *_endItem;
+private:
+    CTableItem *_startItem;
+    CTableItem *_endItem;
+    CRelationship *_relationship;
 
     QPointF _startPoint;
     QPointF _endPoint;

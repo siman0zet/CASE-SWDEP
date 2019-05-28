@@ -16,8 +16,8 @@ QString SQLite::getName()
 
 QString SQLite::getQuery(CDataModel *model)
 {
-    QVector<CEntity*> tables = model->getTables();
-    QVector<CEntity*> tablesf;
+    QVector<CTable*> tables = model->getTables();
+    QVector<CTable*> tablesf;
     QString script = "";
 
     bool is_foreign_keys = false;
@@ -153,7 +153,7 @@ QString SQLite::getQuery(CDataModel *model)
 
         for(int j = 0; j < tables[i]->getForeignRowCount(); j++)
         {
-            CEntity *table = NULL;
+            CTable *table = NULL;
             for (int k = 0; k < tablesf.size(); ++k)
             {
                 if (tablesf[k]->getId() == tables[i]->getForeignRow(j)->getForeignTable())

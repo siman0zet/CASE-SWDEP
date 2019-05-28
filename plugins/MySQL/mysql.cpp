@@ -17,7 +17,7 @@ QString MySQL::getVersion()
 
 QString MySQL::getQuery(CDataModel *model)
 {
-    QVector<CEntity*> tables = model->getTables();
+    QVector<CTable*> tables = model->getTables();
     QString script = "";
 
     /*
