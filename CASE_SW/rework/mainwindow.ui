@@ -233,6 +233,9 @@
    <property name="text">
     <string>Create Table</string>
    </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
@@ -286,6 +289,9 @@
    <property name="toolTip">
     <string>One to One</string>
    </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
@@ -303,6 +309,9 @@
    </property>
    <property name="toolTip">
     <string>One to Many</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -322,6 +331,9 @@
    <property name="toolTip">
     <string>Many to Many</string>
    </property>
+   <property name="shortcut">
+    <string>3</string>
+   </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
@@ -336,6 +348,9 @@
    </property>
    <property name="text">
     <string>Aggregate</string>
+   </property>
+   <property name="shortcut">
+    <string>4</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -355,6 +370,9 @@
    <property name="text">
     <string>Pointer tool</string>
    </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
    <property name="autoRepeat">
     <bool>false</bool>
    </property>
@@ -372,6 +390,9 @@
    </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>D</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
