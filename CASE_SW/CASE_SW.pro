@@ -18,53 +18,35 @@ DEFINES += \
 
 SOURCES += \
     main.cpp \
-    CDataModel.cpp \
-    CRow.cpp \
-    CEntity.cpp \
-    CConnection.cpp \
-    CForeignRow.cpp \
     CDataModelException.cpp \
-    CViewModel.cpp \
-    CConnectionView.cpp \
-    CEntityView.cpp \
-    CDetailedEntityView.cpp \
-    CDetailedEntityWidget.cpp \
-    CConnectionViewWidget.cpp \
-    CLoadAndSaveWidget.cpp \
     CScriptGenerator.cpp \
     CLangWidget.cpp \
-    CScrollArea.cpp \
-    CUniquesEditorWidget.cpp \
     rework/mainwindow.cpp \
     rework/CModelView.cpp \
     rework/CEntityItem.cpp \
     rework/resizedialog.cpp \
-    rework/CRelationshipItem.cpp
+    rework/CRelationshipItem.cpp \
+    rework/CDataModel.cpp \
+    rework/CEntity.cpp \
+    rework/CRelationship.cpp \
+    rework/CRow.cpp \
+    rework/CForeignRow.cpp
 
 HEADERS  += \
-    CDataModel.h \
-    CRow.h \
-    CEntity.h \
-    CConnection.h \
-    CForeignRow.h \
     CDataModelException.h \
-    CViewModel.h \
-    CConnectionView.h \
-    CEntityView.h \
-    CDetailedEntityView.h \
-    CDetailedEntityWidget.h \
-    CConnectionViewWidget.h \
-    CLoadAndSaveWidget.h \
     CPluginInterface.h \
     CScriptGenerator.h \
     CLangWidget.h \
-    CScrollArea.h \
-    CUniquesEditorWidget.h \
     rework/mainwindow.h \
     rework/CModelView.h \
     rework/CEntityItem.h \
     rework/resizedialog.h \
-    rework/CRelationshipItem.h
+    rework/CRelationshipItem.h \
+    rework/CDataModel.h \
+    rework/CEntity.h \
+    rework/CRelationship.h \
+    rework/CRow.h \
+    rework/CForeignRow.h
 
 FORMS    += \
     rework/mainwindow.ui \

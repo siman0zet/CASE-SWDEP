@@ -1,7 +1,7 @@
 #ifndef CENTITY_H
 #define CENTITY_H
 
-#include "CRow.h"
+//#include "CRow.h"
 #include "CForeignRow.h"
 
 class QApplication;
