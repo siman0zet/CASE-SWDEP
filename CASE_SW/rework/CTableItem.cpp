@@ -39,19 +39,17 @@ QPolygonF CTableItem::polygon() const
     return _polygon;
 }
 
-void CTableItem::removeRelationship(CRelationshipItem *relationship)
+void CTableItem::removeRelationship(int id)
 {
-    int index = _relationships.indexOf(relationship);
-    if(index != -1)
-        _relationships.removeAt(index);
+    _relationships.remove(id);
 }
 
 void CTableItem::removeRelationships()
 {
     foreach (CRelationshipItem *relationship, _relationships)
     {
-        relationship->startItem()->removeRelationship(relationship);
-        relationship->endItem()->removeRelationship(relationship);
+        relationship->startItem()->removeRelationship(relationship->id());
+        relationship->endItem()->removeRelationship(relationship->id());
         this->scene()->removeItem(relationship);
         delete relationship;
     }
@@ -59,7 +57,7 @@ void CTableItem::removeRelationships()
 
 void CTableItem::addRelationship(CRelationshipItem *relationship)
 {
-    _relationships.append(relationship);
+    _relationships.insert(relationship->id(), relationship);
 }
 
 void CTableItem::setColor(const QColor &color)

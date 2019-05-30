@@ -17,7 +17,7 @@ public:
     int height() const;
     QPolygonF polygon() const;
 
-    void removeRelationship(CRelationshipItem *relationship);
+    void removeRelationship(int id);
     void removeRelationships();
     void addRelationship(CRelationshipItem *relationship);
     void setColor(const QColor &color);
@@ -44,7 +44,7 @@ private:
     bool _selectedForRelation;
     QColor _color;
     QPolygonF _polygon;
-    QList<CRelationshipItem *> _relationships;
+    QMap<int, CRelationshipItem *> _relationships;
 };
 
 #endif // CTABLEITEM_H

@@ -65,13 +65,40 @@ void CModelView::addRelationship(int startId, int endId)
     CRelationship *relationship = _dataModel->addRelationship(startId, endId);
     if(relationship != NULL)
     {
+        if(_tools.value(ONE_ONE))
+        {
+            relationship->setStartMaxType(CRelationship::ONE);
+            relationship->setStartMinType(CRelationship::MANDATORY);
+            relationship->setEndMaxType(CRelationship::ONE);
+            relationship->setEndMinType(CRelationship::MANDATORY);
+        }
+        if(_tools.value(ONE_MANY))
+        {
+            relationship->setStartMaxType(CRelationship::ONE);
+            relationship->setStartMinType(CRelationship::MANDATORY);
+            relationship->setEndMaxType(CRelationship::MANY);
+            relationship->setEndMinType(CRelationship::MANDATORY);
+        }
+        if(_tools.value(MANY_MANY))
+        {
+            relationship->setStartMaxType(CRelationship::MANY);
+            relationship->setStartMinType(CRelationship::MANDATORY);
+            relationship->setEndMaxType(CRelationship::MANY);
+            relationship->setEndMinType(CRelationship::MANDATORY);
+        }
+        if(_tools.value(AGGREGATE))
+        {
+            relationship->setStartMaxType(CRelationship::ONE);
+            relationship->setStartMinType(CRelationship::MANDATORY);
+            relationship->setEndMaxType(CRelationship::AGGREGATE);
+            relationship->setEndMinType(CRelationship::MANDATORY);
+        }
         CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startId),
                                                                     _tables.value(endId),
                                                                     relationship);
         _relationships.insert(relationship->id(), relationshipItem);
         _scene->addItem(relationshipItem);
     }
-
     _tables.value(startId)->setSelectedForRelation(false);
     _tables.value(endId)->setSelectedForRelation(false);
     _tablesToRelate.clear();
@@ -109,9 +136,9 @@ void CModelView::removeItems(QList<QGraphicsItem *> items)
                 break;
             }
         }
-        _dataModel->removeObjects(objects);
         _scene->removeItem(item);
     }
+    _dataModel->removeObjects(objects);
     returnToPointer();
 }
 
@@ -133,7 +160,7 @@ void CModelView::changeSize(int w, int h)
 void CModelView::removeRelationship(int id)
 {
     foreach (CTableItem *tableItem, _tables) {
-        tableItem->removeRelationship(_relationships.value(id));
+        tableItem->removeRelationship(id);
     }
     _scene->removeItem(_relationships.value(id));
     delete _relationships.value(id);
@@ -298,7 +325,13 @@ void CModelView::deactivateTools()
     {
         _tools.insert(static_cast<cursorToolType>(i), false);
     }
-    _tablesToRelate.clear();
+    if(_tablesToRelate.size())
+    {
+        foreach (int id, _tablesToRelate) {
+            _tables.value(id)->setSelectedForRelation(false);
+        }
+        _tablesToRelate.clear();
+    }
 }
 
 void CModelView::showContextMenu(const QPoint &pos, bool isEnabled, bool colorOption, bool relationOption)
