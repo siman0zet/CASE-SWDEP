@@ -105,7 +105,7 @@ void CRelationshipItem::updatePolygons()
 {
     prepareGeometryChange();
     qreal delta = 6;
-    switch (_relationship->startMaxType()) {
+    switch (_relationship->startType()) {
     case CRelationship::MANY:
         _startMaxPolygon = createManyPolygon(this->line(), _startItem, delta);
         break;
@@ -115,7 +115,7 @@ void CRelationshipItem::updatePolygons()
     default:
         break;
     }
-    switch (_relationship->endMaxType()) {
+    switch (_relationship->endType()) {
     case CRelationship::MANY:
         _endMaxPolygon = createManyPolygon(this->line(), _endItem, delta);
         break;
@@ -165,31 +165,27 @@ void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
     qreal d = 3;
     painter->setBrush(Qt::white);
-    switch (_relationship->startMinType()) {
-    case CRelationship::MANDATORY:
+    if(_relationship->startMandatory())
+    {
         painter->drawLine(QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() - d),
                           QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() + d));
         painter->drawLine(QPointF(_startMinCenterPoint.x() - d, _startMinCenterPoint.y()),
                           QPointF(_startMinCenterPoint.x() + d, _startMinCenterPoint.y()));
-        break;
-    case CRelationship::OPTIONAL:
-        painter->drawEllipse(_startMinCenterPoint, d, d);
-        break;
-    default:
-        break;
     }
-    switch (_relationship->endMinType()) {
-    case CRelationship::MANDATORY:
+    else
+    {
+        painter->drawEllipse(_startMinCenterPoint, d, d);
+    }
+    if(_relationship->endMandatory())
+    {
         painter->drawLine(QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() - d),
                           QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() + d));
         painter->drawLine(QPointF(_endMinCenterPoint.x() - d, _endMinCenterPoint.y()),
                           QPointF(_endMinCenterPoint.x() + d, _endMinCenterPoint.y()));
-        break;
-    case CRelationship::OPTIONAL:
+    }
+    else
+    {
         painter->drawEllipse(_endMinCenterPoint, d, d);
-        break;
-    default:
-        break;
     }
 }
 

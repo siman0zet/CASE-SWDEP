@@ -9,7 +9,7 @@ class CRelationship : public CObject
 public:
     enum { Type = USER_TYPE + 12 };
 
-    enum RELATIONSHIP_MAX_TYPE
+    enum RELATIONSHIP_TYPE
     {
         ONE,
         MANY,
@@ -17,40 +17,35 @@ public:
         PHYSICAL
     };
 
-    enum RELATIONSHIP_MIN_TYPE
-    {
-        OPTIONAL,
-        MANDATORY
-    };
-
     CRelationship(int id, CTable *startTable, CTable *endTable);
     ~CRelationship();
 
     int type() override;
 
-    RELATIONSHIP_MAX_TYPE startMaxType() const;
-    void setStartMaxType(const RELATIONSHIP_MAX_TYPE &startMaxType);
+    RELATIONSHIP_TYPE startType() const;
+    void setStartType(const RELATIONSHIP_TYPE &startType);
 
-    RELATIONSHIP_MIN_TYPE startMinType() const;
-    void setStartMinType(const RELATIONSHIP_MIN_TYPE &startMinType);
-
-    RELATIONSHIP_MAX_TYPE endMaxType() const;
-    void setEndMaxType(const RELATIONSHIP_MAX_TYPE &endMaxType);
-
-    RELATIONSHIP_MIN_TYPE endMinType() const;
-    void setEndMinType(const RELATIONSHIP_MIN_TYPE &endMinType);
+    RELATIONSHIP_TYPE endType() const;
+    void setEndType(const RELATIONSHIP_TYPE &endType);
 
     CTable *startTable() const;
     CTable *endTable() const;
+
+    bool startMandatory() const;
+    void setStartMandatory(bool startMandatory);
+
+    bool endMandatory() const;
+    void setEndMandatory(bool endMandatory);
 
 private:
     CTable *_startTable;
     CTable *_endTable;
 
-    RELATIONSHIP_MAX_TYPE _startMaxType;
-    RELATIONSHIP_MIN_TYPE _startMinType;
-    RELATIONSHIP_MAX_TYPE _endMaxType;
-    RELATIONSHIP_MIN_TYPE _endMinType;
+    RELATIONSHIP_TYPE _startType;
+    RELATIONSHIP_TYPE _endType;
+
+    bool _startMandatory;
+    bool _endMandatory;
 };
 
 #endif // CRELATIONSHIP_H

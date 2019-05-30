@@ -67,31 +67,31 @@ void CModelView::addRelationship(int startId, int endId)
     {
         if(_tools.value(ONE_ONE))
         {
-            relationship->setStartMaxType(CRelationship::ONE);
-            relationship->setStartMinType(CRelationship::MANDATORY);
-            relationship->setEndMaxType(CRelationship::ONE);
-            relationship->setEndMinType(CRelationship::MANDATORY);
+            relationship->setStartType(CRelationship::ONE);
+            relationship->setEndType(CRelationship::ONE);
+            relationship->setStartMandatory(true);
+            relationship->setEndMandatory(true);
         }
         if(_tools.value(ONE_MANY))
         {
-            relationship->setStartMaxType(CRelationship::ONE);
-            relationship->setStartMinType(CRelationship::MANDATORY);
-            relationship->setEndMaxType(CRelationship::MANY);
-            relationship->setEndMinType(CRelationship::MANDATORY);
+            relationship->setStartType(CRelationship::ONE);
+            relationship->setEndType(CRelationship::MANY);
+            relationship->setStartMandatory(true);
+            relationship->setEndMandatory(true);
         }
         if(_tools.value(MANY_MANY))
         {
-            relationship->setStartMaxType(CRelationship::MANY);
-            relationship->setStartMinType(CRelationship::MANDATORY);
-            relationship->setEndMaxType(CRelationship::MANY);
-            relationship->setEndMinType(CRelationship::MANDATORY);
+            relationship->setStartType(CRelationship::MANY);
+            relationship->setEndType(CRelationship::MANY);
+            relationship->setStartMandatory(true);
+            relationship->setEndMandatory(true);
         }
         if(_tools.value(AGGREGATE))
         {
-            relationship->setStartMaxType(CRelationship::ONE);
-            relationship->setStartMinType(CRelationship::MANDATORY);
-            relationship->setEndMaxType(CRelationship::AGGREGATE);
-            relationship->setEndMinType(CRelationship::MANDATORY);
+            relationship->setStartType(CRelationship::ONE);
+            relationship->setEndType(CRelationship::AGGREGATE);
+            relationship->setStartMandatory(true);
+            relationship->setEndMandatory(true);
         }
         CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startId),
                                                                     _tables.value(endId),

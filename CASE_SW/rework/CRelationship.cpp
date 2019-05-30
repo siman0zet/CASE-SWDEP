@@ -5,10 +5,10 @@ CRelationship::CRelationship(int id, CTable *startTable, CTable *endTable) :
     CObject(id),
     _startTable(startTable),
     _endTable(endTable),
-    _startMaxType(ONE),
-    _startMinType(MANDATORY),
-    _endMaxType(ONE),
-    _endMinType(MANDATORY)
+    _startType(ONE),
+    _endType(ONE),
+    _startMandatory(true),
+    _endMandatory(true)
 {
     _startTable->addRelationship(this);
     _endTable->addRelationship(this);
@@ -27,44 +27,24 @@ int CRelationship::type()
     return Type;
 }
 
-CRelationship::RELATIONSHIP_MAX_TYPE CRelationship::startMaxType() const
+CRelationship::RELATIONSHIP_TYPE CRelationship::startType() const
 {
-    return _startMaxType;
+    return _startType;
 }
 
-void CRelationship::setStartMaxType(const RELATIONSHIP_MAX_TYPE &startMaxType)
+void CRelationship::setStartType(const RELATIONSHIP_TYPE &startMaxType)
 {
-    _startMaxType = startMaxType;
+    _startType = startMaxType;
 }
 
-CRelationship::RELATIONSHIP_MIN_TYPE CRelationship::startMinType() const
+CRelationship::RELATIONSHIP_TYPE CRelationship::endType() const
 {
-    return _startMinType;
+    return _endType;
 }
 
-void CRelationship::setStartMinType(const RELATIONSHIP_MIN_TYPE &startMinType)
+void CRelationship::setEndType(const RELATIONSHIP_TYPE &endMaxType)
 {
-    _startMinType = startMinType;
-}
-
-CRelationship::RELATIONSHIP_MAX_TYPE CRelationship::endMaxType() const
-{
-    return _endMaxType;
-}
-
-void CRelationship::setEndMaxType(const RELATIONSHIP_MAX_TYPE &endMaxType)
-{
-    _endMaxType = endMaxType;
-}
-
-CRelationship::RELATIONSHIP_MIN_TYPE CRelationship::endMinType() const
-{
-    return _endMinType;
-}
-
-void CRelationship::setEndMinType(const RELATIONSHIP_MIN_TYPE &endMinType)
-{
-    _endMinType = endMinType;
+    _endType = endMaxType;
 }
 
 CTable *CRelationship::startTable() const
@@ -75,4 +55,24 @@ CTable *CRelationship::startTable() const
 CTable *CRelationship::endTable() const
 {
     return _endTable;
+}
+
+bool CRelationship::startMandatory() const
+{
+    return _startMandatory;
+}
+
+void CRelationship::setStartMandatory(bool startMandatory)
+{
+    _startMandatory = startMandatory;
+}
+
+bool CRelationship::endMandatory() const
+{
+    return _endMandatory;
+}
+
+void CRelationship::setEndMandatory(bool endMandatory)
+{
+    _endMandatory = endMandatory;
 }

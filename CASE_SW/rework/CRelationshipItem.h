@@ -51,7 +51,6 @@ private:
     QPolygonF createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
     QPolygonF createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
     QPointF findMinCenterPoint(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
-//    QPointF createOptionalShape(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
 //    QPolygonF createPhysicalPolygon(const QLineF &line, const QGraphicsPolygonItem *item);
 };
 
