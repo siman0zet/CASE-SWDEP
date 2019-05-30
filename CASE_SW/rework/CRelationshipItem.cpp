@@ -20,7 +20,6 @@ CRelationshipItem::CRelationshipItem(CTableItem *startItem, CTableItem *endItem,
     _startItem->addRelationship(this);
     _endItem->addRelationship(this);
     updatePosition();
-    updatePolygons();
 }
 
 int CRelationshipItem::type() const
@@ -49,8 +48,8 @@ QRectF CRelationshipItem::boundingRect() const
 QPainterPath CRelationshipItem::shape() const
 {
     QPainterPath path;
-    path.addPolygon(_startPolygon);
-    path.addPolygon(_endPolygon);
+    path.addPolygon(_startMaxPolygon);
+    path.addPolygon(_endMaxPolygon);
     path.addRect(QRectF(QPointF(_startPoint.x() - 1, _startPoint.y() - 1),
                         QPointF(_midPoint1.x() + 1, _midPoint1.y() + 1)));
     path.addRect(QRectF(QPointF(_midPoint1.x() - 1, _midPoint1.y() - 1),
@@ -98,13 +97,37 @@ void CRelationshipItem::updatePosition()
         _midPoint1 = QPointF(rect.topLeft().x(), rect.topLeft().y() + rect.height() / 2);
         _midPoint2 = QPointF(rect.bottomRight().x(), rect.topLeft().y() + rect.height() / 2);
     }
+
+    updatePolygons();
 }
 
 void CRelationshipItem::updatePolygons()
 {
     prepareGeometryChange();
-//    _startPolygon = createAggregatePolygon(this->line(), _startItem);
-//    _endPolygon = createManyPolygon(this->line(), _endItem);
+    qreal delta = 6;
+    switch (_relationship->startMaxType()) {
+    case CRelationship::MANY:
+        _startMaxPolygon = createManyPolygon(this->line(), _startItem, delta);
+        break;
+    case CRelationship::AGGREGATE:
+        _startMaxPolygon = createAggregatePolygon(this->line(), _startItem, delta);
+        break;
+    default:
+        break;
+    }
+    switch (_relationship->endMaxType()) {
+    case CRelationship::MANY:
+        _endMaxPolygon = createManyPolygon(this->line(), _endItem, delta);
+        break;
+    case CRelationship::AGGREGATE:
+        _endMaxPolygon = createAggregatePolygon(this->line(), _endItem, delta);
+        break;
+    default:
+        break;
+    }
+
+    _startMinCenterPoint = findMinCenterPoint(this->line(), _startItem, delta);
+    _endMinCenterPoint = findMinCenterPoint(this->line(), _endItem, delta);
 }
 
 void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
@@ -136,9 +159,38 @@ void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->drawLine(_midPoint1, _midPoint2);
     painter->drawLine(_midPoint2, _endPoint);
 
-    // endline polygons
-    painter->drawPolygon(_startPolygon);
-    painter->drawPolygon(_endPolygon);
+    // endline shapes
+    painter->drawPolygon(_startMaxPolygon);
+    painter->drawPolygon(_endMaxPolygon);
+
+    qreal d = 3;
+    painter->setBrush(Qt::white);
+    switch (_relationship->startMinType()) {
+    case CRelationship::MANDATORY:
+        painter->drawLine(QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() - d),
+                          QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() + d));
+        painter->drawLine(QPointF(_startMinCenterPoint.x() - d, _startMinCenterPoint.y()),
+                          QPointF(_startMinCenterPoint.x() + d, _startMinCenterPoint.y()));
+        break;
+    case CRelationship::OPTIONAL:
+        painter->drawEllipse(_startMinCenterPoint, d, d);
+        break;
+    default:
+        break;
+    }
+    switch (_relationship->endMinType()) {
+    case CRelationship::MANDATORY:
+        painter->drawLine(QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() - d),
+                          QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() + d));
+        painter->drawLine(QPointF(_endMinCenterPoint.x() - d, _endMinCenterPoint.y()),
+                          QPointF(_endMinCenterPoint.x() + d, _endMinCenterPoint.y()));
+        break;
+    case CRelationship::OPTIONAL:
+        painter->drawEllipse(_endMinCenterPoint, d, d);
+        break;
+    default:
+        break;
+    }
 }
 
 CRelationship *CRelationshipItem::relationship() const
@@ -186,10 +238,9 @@ int CRelationshipItem::findIntersectionSide(const QLineF &line, const QGraphicsP
     return -1;
 }
 
-QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item)
+QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
 {
     QPolygonF polygon;
-    qreal d = 6;
     QPointF p1, p2, p3;
 
     QPointF intersectionPoint = findIntersectionPoint(line, item);
@@ -198,27 +249,27 @@ QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphi
     switch (intersectionSide) {
     case 1:
         //top
-        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - 3 * d);
-        p2 = QPointF(intersectionPoint.x() + d, intersectionPoint.y());
-        p3 = QPointF(intersectionPoint.x() - d, intersectionPoint.y());
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - 3 * delta);
+        p2 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y());
+        p3 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y());
         break;
     case 2:
         //right
-        p1 = QPointF(intersectionPoint.x() + 3 * d, intersectionPoint.y());
-        p2 = QPointF(intersectionPoint.x(), intersectionPoint.y() + d);
-        p3 = QPointF(intersectionPoint.x(), intersectionPoint.y() - d);
+        p1 = QPointF(intersectionPoint.x() + 3 * delta, intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x(), intersectionPoint.y() + delta);
+        p3 = QPointF(intersectionPoint.x(), intersectionPoint.y() - delta);
         break;
     case 3:
         //bot
-        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + 3 * d);
-        p2 = QPointF(intersectionPoint.x() - d, intersectionPoint.y());
-        p3 = QPointF(intersectionPoint.x() + d, intersectionPoint.y());
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + 3 * delta);
+        p2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y());
+        p3 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y());
         break;
     case 4:
         //left
-        p1 = QPointF(intersectionPoint.x() - 3 * d, intersectionPoint.y());
-        p2 = QPointF(intersectionPoint.x(), intersectionPoint.y() - d);
-        p3 = QPointF(intersectionPoint.x(), intersectionPoint.y() + d);
+        p1 = QPointF(intersectionPoint.x() - 3 * delta, intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x(), intersectionPoint.y() - delta);
+        p3 = QPointF(intersectionPoint.x(), intersectionPoint.y() + delta);
         break;
     default:
         break;
@@ -227,10 +278,9 @@ QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphi
     return polygon;
 }
 
-QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item)
+QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
 {
     QPolygonF polygon;
-    qreal d = 6;
     QPointF p1, p2, p3, l1, l2;
 
     QPointF intersectionPoint = findIntersectionPoint(line, item);
@@ -239,39 +289,69 @@ QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const QG
     switch (intersectionSide) {
     case 1:
         //top
-        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - 3 * d);
-        p2 = QPointF(intersectionPoint.x() - d, intersectionPoint.y() - d);
-        p3 = QPointF(intersectionPoint.x() + d, intersectionPoint.y() - d);
-        l1 = QPointF(intersectionPoint.x() - d, intersectionPoint.y());
-        l2 = QPointF(intersectionPoint.x() + d, intersectionPoint.y());
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - 3 * delta);
+        p2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() - delta);
+        p3 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() - delta);
+        l1 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y());
+        l2 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y());
         break;
     case 2:
         //right
-        p1 = QPointF(intersectionPoint.x() + 3 * d, intersectionPoint.y());
-        p2 = QPointF(intersectionPoint.x() + d, intersectionPoint.y() - d);
-        p3 = QPointF(intersectionPoint.x() + d, intersectionPoint.y() + d);
-        l1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - d);
-        l2 = QPointF(intersectionPoint.x(), intersectionPoint.y() + d);
+        p1 = QPointF(intersectionPoint.x() + 3 * delta, intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() - delta);
+        p3 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() + delta);
+        l1 = QPointF(intersectionPoint.x(), intersectionPoint.y() - delta);
+        l2 = QPointF(intersectionPoint.x(), intersectionPoint.y() + delta);
         break;
     case 3:
         //bot
-        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + 3 * d);
-        p2 = QPointF(intersectionPoint.x() + d, intersectionPoint.y() + d);
-        p3 = QPointF(intersectionPoint.x() - d, intersectionPoint.y() + d);
-        l1 = QPointF(intersectionPoint.x() + d, intersectionPoint.y());
-        l2 = QPointF(intersectionPoint.x() - d, intersectionPoint.y());
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + 3 * delta);
+        p2 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() + delta);
+        p3 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() + delta);
+        l1 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y());
+        l2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y());
         break;
     case 4:
         //left
-        p1 = QPointF(intersectionPoint.x() - 3 * d, intersectionPoint.y());
-        p2 = QPointF(intersectionPoint.x() - d, intersectionPoint.y() + d);
-        p3 = QPointF(intersectionPoint.x() - d, intersectionPoint.y() - d);
-        l1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + d);
-        l2 = QPointF(intersectionPoint.x(), intersectionPoint.y() - d);
+        p1 = QPointF(intersectionPoint.x() - 3 * delta, intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() + delta);
+        p3 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() - delta);
+        l1 = QPointF(intersectionPoint.x(), intersectionPoint.y() + delta);
+        l2 = QPointF(intersectionPoint.x(), intersectionPoint.y() - delta);
         break;
     default:
         break;
     }
     polygon << p2 << p3 << p1 << p2 << l1 << l2 << p3;
     return polygon;
+}
+
+QPointF CRelationshipItem::findMinCenterPoint(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
+{
+    QPointF centerPoint;
+
+    QPointF intersectionPoint = findIntersectionPoint(line, item);
+    int intersectionSide = findIntersectionSide(line, item);
+
+    switch (intersectionSide) {
+    case 1:
+        //top
+        centerPoint = QPointF(intersectionPoint.x(), intersectionPoint.y() - 4 * delta);
+        break;
+    case 2:
+        //right
+        centerPoint = QPointF(intersectionPoint.x() + 4 * delta, intersectionPoint.y());
+        break;
+    case 3:
+        //bot
+        centerPoint = QPointF(intersectionPoint.x(), intersectionPoint.y() + 4 * delta);
+        break;
+    case 4:
+        //left
+        centerPoint = QPointF(intersectionPoint.x() - 4 * delta, intersectionPoint.y());
+        break;
+    default:
+        break;
+    }
+    return centerPoint;
 }

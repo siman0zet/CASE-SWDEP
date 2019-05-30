@@ -40,13 +40,18 @@ private:
     QPointF _midPoint1;
     QPointF _midPoint2;
 
-    QPolygonF _startPolygon;
-    QPolygonF _endPolygon;
+    QPolygonF _startMaxPolygon;
+    QPolygonF _endMaxPolygon;
+
+    QPointF _startMinCenterPoint;
+    QPointF _endMinCenterPoint;
 
     QPointF findIntersectionPoint(const QLineF &line, const QGraphicsPolygonItem *item);
     int findIntersectionSide(const QLineF &line, const QGraphicsPolygonItem *item);
-    QPolygonF createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item);
-    QPolygonF createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item);
+    QPolygonF createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
+    QPolygonF createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
+    QPointF findMinCenterPoint(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
+//    QPointF createOptionalShape(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta = 6);
 //    QPolygonF createPhysicalPolygon(const QLineF &line, const QGraphicsPolygonItem *item);
 };
 
