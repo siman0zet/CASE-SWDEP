@@ -32,6 +32,8 @@ private:
     int _tablesCount;
     int _relationshipsCount;
 
+    QList<CObject *> _objectsToRemove;
+
     void removeTable(int id);
     void removeRelationship(int id);
 

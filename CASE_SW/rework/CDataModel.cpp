@@ -20,6 +20,15 @@ CTable *CDataModel::addTable()
 CRelationship *CDataModel::addRelationship(int startId, int endId)
 {
     // primary key existant in end table (?) check
+    foreach (CRelationship *relationship, _relationships.values()) {
+        if((relationship->startTable()->id() == startId ||
+            relationship->endTable()->id() == startId) &&
+           (relationship->startTable()->id() == endId ||
+            relationship->endTable()->id() == endId))
+        {
+            return NULL;    //relationship between this tables already exist
+        }
+    }
     CRelationship *relationship = new CRelationship(++_relationshipsCount,
                                                     _tables.value(startId),
                                                     _tables.value(endId));
@@ -29,12 +38,26 @@ CRelationship *CDataModel::addRelationship(int startId, int endId)
 
 void CDataModel::removeObjects(const QList<CObject *> &objects)
 {
-    foreach (CObject *object, objects) {
-        if(CRelationship::Type == object->type())
-            removeRelationship(object->id());
-        if(CTable::Type == object->type())
-            removeTable(object->id());
+    // Cycle counter gets reset after removing an object
+    // since when table is removed, all relationships to it are removed in cascade
+    // leading to pointer to deleted object appearing in the list
+    _objectsToRemove = objects;
+    for(int i = 0; i < _objectsToRemove.size(); i++)
+    {
+        if(CRelationship::Type == _objectsToRemove[i]->type())
+        {
+            removeRelationship(_objectsToRemove[i]->id());
+            i = 0;
+            continue;
+        }
+        if(CTable::Type == _objectsToRemove[i]->type())
+        {
+            removeTable(_objectsToRemove[i]->id());
+            i = 0;
+            continue;
+        }
     }
+    _objectsToRemove.clear();
 }
 
 CDataModel *CDataModel::convertToPdm()
@@ -49,6 +72,10 @@ bool CDataModel::isPhysical()
 
 void CDataModel::removeTable(int id)
 {
+    int index = _objectsToRemove.indexOf(_tables.value(id));
+    if(index != -1)
+        _objectsToRemove.removeAt(index);
+
     CTable *table = _tables.value(id);
     foreach (CRelationship *relationship, table->relationships()) {
         removeRelationship(relationship->id());
@@ -59,6 +86,10 @@ void CDataModel::removeTable(int id)
 
 void CDataModel::removeRelationship(int id)
 {
+    int index = _objectsToRemove.indexOf(_relationships.value(id));
+    if(index != -1)
+        _objectsToRemove.removeAt(index);
+
     delete _relationships.value(id);
     _relationships.remove(id);
     emit relationshipRemoved(id);
