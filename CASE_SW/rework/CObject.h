@@ -1,10 +1,13 @@
 #ifndef COBJECT_H
 #define COBJECT_H
 
+#include <QString>
+
 class CObject
 {
 protected:
     int _id;
+    QString _name;
     static const int USER_TYPE = 65536;
 
 public:
@@ -14,6 +17,8 @@ public:
     virtual ~CObject() {}
     int id() const;
     virtual int type();
+    QString name() const;
+    void setName(const QString &name);
 };
 
 #endif // COBJECT_H

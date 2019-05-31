@@ -19,8 +19,6 @@ public:
     ~CTable();
 
     int type() override;
-    QString name() const;
-    void setName(const QString &name);
 
     void addRelationship(CRelationship *relationship);
     void removeRelationship(CRelationship *relationship);
@@ -38,8 +36,6 @@ public:
     QList<CRelationship *> relationships() const;
 
 private:
-    QString _name;
-
     QList<CRelationship *> _relationships;
     QMap<int, CRow *> _rows;
     QMap<int, CForeignRow *> _foreingRows;

@@ -4,9 +4,9 @@
 #include "CRelationship.h"
 
 CTable::CTable(int id) :
-    CObject(id),
-    _name(QString("Table %1").arg(id))
+    CObject(id)
 {
+    this->setName(QString("Table %1").arg(id));
 }
 
 CTable::~CTable()
@@ -25,16 +25,6 @@ CTable::~CTable()
 int CTable::type()
 {
     return Type;
-}
-
-QString CTable::name() const
-{
-    return _name;
-}
-
-void CTable::setName(const QString &name)
-{
-    _name = name;
 }
 
 void CTable::addRelationship(CRelationship *relationship)

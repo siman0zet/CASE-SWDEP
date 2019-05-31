@@ -1,9 +1,10 @@
 #include "CObject.h"
 
 CObject::CObject(int id) :
-    _id(id)
+    _id(id),
+    _name("")
 {
-
+    
 }
 
 int CObject::id() const
@@ -14,4 +15,14 @@ int CObject::id() const
 int CObject::type()
 {
     return Type;
+}
+
+QString CObject::name() const
+{
+    return _name;
+}
+
+void CObject::setName(const QString &name)
+{
+    _name = name;
 }
