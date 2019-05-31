@@ -32,6 +32,7 @@ SOURCES += \
     rework/CTable.cpp \
     rework/CTableItem.cpp \
     rework/CObject.cpp \
+    rework/CRelationshipEditor.cpp \
     rework/CObjectItem.cpp
 
 HEADERS  += \
@@ -50,11 +51,13 @@ HEADERS  += \
     rework/CTable.h \
     rework/CTableItem.h \
     rework/CObject.h \
+    rework/CRelationshipEditor.h \
     rework/CObjectItem.h
 
 FORMS    += \
     rework/mainwindow.ui \
-    rework/resizedialog.ui
+    rework/resizedialog.ui \
+    rework/crelationshipeditor.ui
 
 RESOURCES += \
     images.qrc

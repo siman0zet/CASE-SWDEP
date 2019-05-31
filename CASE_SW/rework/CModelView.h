@@ -8,6 +8,7 @@ class MainWindow;
 class CDataModel;
 class CTableItem;
 class CRelationshipItem;
+class CObjectItem;
 
 class CModelView : public QGraphicsView
 {
@@ -63,10 +64,12 @@ private:
     void showTableContextMenu(const QPoint &pos, QString tableName);
     void showRelationshipContextMenu(const QPoint &pos);
     void returnToPointer();
+    void showObjectEditor(CObjectItem *objectItem);
 
 private slots:
     void addRelationship();
     void removeItems();
+    void showObjectEditor();
 
 };
 

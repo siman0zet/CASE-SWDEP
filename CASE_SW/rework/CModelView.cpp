@@ -6,6 +6,7 @@
 #include "CDataModel.h"
 #include "CTable.h"
 #include "CRelationship.h"
+#include "CRelationshipEditor.h"
 
 #include <QMouseEvent>
 #include <QMenu>
@@ -299,6 +300,9 @@ void CModelView::mouseReleaseEvent(QMouseEvent *event)
 
 void CModelView::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    CObjectItem *target = (CObjectItem *)this->_scene->itemAt(event->pos(), QTransform());
+    if(target)
+        showObjectEditor(target);
     QGraphicsView::mouseDoubleClickEvent(event);
 }
 
@@ -355,7 +359,7 @@ void CModelView::showTableContextMenu(const QPoint &pos, QString tableName)
     QMenu contextMenu(tr("Table context menu"), this);
 
     QAction actionEdit(QString("Edit '%1'").arg(tableName), this);
-//    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(show_entity_detail()));
+    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(showObjectEditor()));
     contextMenu.addAction(&actionEdit);
 
     QAction actionChangeColor("[TODO] Change Color", this);
@@ -375,7 +379,7 @@ void CModelView::showRelationshipContextMenu(const QPoint &pos)
     QMenu contextMenu(tr("Relationship context menu"), this);
 
     QAction actionEdit("Edit Relationship");
-//    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT());
+    connect(&actionEdit, SIGNAL(triggered(bool)), this, SLOT(showObjectEditor()));
     contextMenu.addAction(&actionEdit);
 
     QAction actionDelete("Delete", this);
@@ -390,6 +394,33 @@ void CModelView::returnToPointer()
     activateTool(POINTER);
     if(_parent != 0)
         _parent->activateEditAction(POINTER);
+}
+
+void CModelView::showObjectEditor(CObjectItem *objectItem)
+{
+    if(objectItem->editor() != NULL)
+    {
+        objectItem->editor()->show();
+        objectItem->editor()->raise();
+        objectItem->editor()->activateWindow();
+    }
+    else
+    {
+        switch (objectItem->type()) {
+        case CTableItem::Type:
+            {
+                break;
+            }
+        case CRelationshipItem::Type:
+            {
+                CRelationshipEditor *editor = new CRelationshipEditor((CRelationship *)objectItem->object(), this);
+                connect(editor, SIGNAL(dataChanged()), this, SLOT(update()));
+                objectItem->setEditor((QWidget *)editor);
+                editor->show();
+                break;
+            }
+        }
+    }
 }
 
 void CModelView::addRelationship()
@@ -408,4 +439,13 @@ void CModelView::removeItems()
 {
     if(_scene->selectedItems().size())
         removeItems(_scene->selectedItems());
+}
+
+void CModelView::showObjectEditor()
+{
+    if(_scene->selectedItems().size())
+    {
+        CObjectItem *objectItem = (CObjectItem *)_scene->selectedItems().last();
+        showObjectEditor(objectItem);
+    }
 }
