@@ -31,7 +31,8 @@ SOURCES += \
     rework/CForeignRow.cpp \
     rework/CTable.cpp \
     rework/CTableItem.cpp \
-    rework/CObject.cpp
+    rework/CObject.cpp \
+    rework/CObjectItem.cpp
 
 HEADERS  += \
     CDataModelException.h \
@@ -48,7 +49,8 @@ HEADERS  += \
     rework/CForeignRow.h \
     rework/CTable.h \
     rework/CTableItem.h \
-    rework/CObject.h
+    rework/CObject.h \
+    rework/CObjectItem.h
 
 FORMS    += \
     rework/mainwindow.ui \

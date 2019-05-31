@@ -7,21 +7,33 @@
 #include <QGraphicsScene>
 
 CTableItem::CTableItem(CTable *table) :
+    CObjectItem(table),
     _table(table),
     _width(100),
-    _height(90),
+    _height(30),
     _selectedForRelation(false),
     _color(Qt::lightGray)
 {
-    this->setFlags(ItemIsSelectable |
-                   ItemIsMovable |
-                   ItemSendsGeometryChanges);
-    this->setAcceptHoverEvents(true);
+    this->setFlag(ItemIsMovable, true);
 
     _polygon << QPointF(0, 0) << QPointF(_width, 0)
               << QPointF(_width, _height) << QPointF(0, _height)
               << QPointF(0, 0);
-    setPolygon(_polygon);
+}
+
+CTableItem::~CTableItem()
+{
+    _table = NULL;
+}
+
+int CTableItem::type() const
+{
+    return Type;
+}
+
+CTable *CTableItem::table() const
+{
+    return _table;
 }
 
 int CTableItem::width() const
@@ -29,9 +41,29 @@ int CTableItem::width() const
     return _width;
 }
 
+void CTableItem::setWidth(int width)
+{
+    _width = width;
+
+    _polygon.clear();
+    _polygon << QPointF(0, 0) << QPointF(_width, 0)
+              << QPointF(_width, _height) << QPointF(0, _height)
+              << QPointF(0, 0);
+}
+
 int CTableItem::height() const
 {
     return _height;
+}
+
+void CTableItem::setHeight(int height)
+{
+    _height = height;
+
+    _polygon.clear();
+    _polygon << QPointF(0, 0) << QPointF(_width, 0)
+              << QPointF(_width, _height) << QPointF(0, _height)
+              << QPointF(0, 0);
 }
 
 QPolygonF CTableItem::polygon() const
@@ -68,32 +100,6 @@ void CTableItem::setColor(const QColor &color)
 void CTableItem::setSelectedForRelation(bool selectedForRelation)
 {
     _selectedForRelation = selectedForRelation;
-}
-
-int CTableItem::type() const
-{
-    return Type;
-}
-
-int CTableItem::id()
-{
-    if(_table != 0)
-        return _table->id();
-    else
-        return -1;
-}
-
-QString CTableItem::name()
-{
-    if(_table != 0)
-        return _table->name();
-    else
-        return "";
-}
-
-CTable *CTableItem::table() const
-{
-    return _table;
 }
 
 QRectF CTableItem::boundingRect() const
@@ -160,15 +166,20 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     font.setBold(true);
     painter->setFont(font);
 
-    painter->drawText(QRect(2, 5, _width - 2, 25), "table @");
+    painter->drawText(QRect(2, 5, _width - 2, 25), _table->name());
 
     // rows text
     font.setBold(false);
     painter->setFont(font);
     int textHeight = 30;
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < _table->rowCount(); i++)
     {
-        painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] row %1").arg(i));
+        painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] row %1 INT").arg(i));
+        textHeight += 20;
+    }
+    for(int i = 0; i < _table->foreignRowCount(); i++)
+    {
+        painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] frow %1 INT").arg(i));
         textHeight += 20;
     }
 }

@@ -8,13 +8,11 @@
 #include <QStyleOptionGraphicsItem>
 
 CRelationshipItem::CRelationshipItem(CTableItem *startItem, CTableItem *endItem, CRelationship *relationship) :
+    CObjectItem(relationship),
+    _relationship(relationship),
     _startItem(startItem),
-    _endItem(endItem),
-    _relationship(relationship)
+    _endItem(endItem)
 {
-    setFlags(ItemIsSelectable |
-             ItemSendsGeometryChanges);
-    setAcceptHoverEvents(true);
     setZValue(-1000.0);
 
     _startItem->addRelationship(this);
@@ -22,41 +20,16 @@ CRelationshipItem::CRelationshipItem(CTableItem *startItem, CTableItem *endItem,
     updatePosition();
 }
 
+CRelationshipItem::~CRelationshipItem()
+{
+    _relationship = NULL;
+    _startItem = NULL;
+    _endItem = NULL;
+}
+
 int CRelationshipItem::type() const
 {
     return Type;
-}
-
-int CRelationshipItem::id()
-{
-    if(_relationship != 0)
-        return _relationship->id();
-    else
-        return -1;
-}
-
-QRectF CRelationshipItem::boundingRect() const
-{
-    qreal extra = (pen().width() + 20) / 2.0;
-
-    return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
-                                    line().p2().y() - line().p1().y()))
-            .normalized()
-            .adjusted(-extra, -extra, extra, extra);
-}
-
-QPainterPath CRelationshipItem::shape() const
-{
-    QPainterPath path;
-    path.addPolygon(_startMaxPolygon);
-    path.addPolygon(_endMaxPolygon);
-    path.addRect(QRectF(QPointF(_startPoint.x() - 1, _startPoint.y() - 1),
-                        QPointF(_midPoint1.x() + 1, _midPoint1.y() + 1)));
-    path.addRect(QRectF(QPointF(_midPoint1.x() - 1, _midPoint1.y() - 1),
-                        QPointF(_midPoint2.x() + 1, _midPoint2.y() + 1)));
-    path.addRect(QRectF(QPointF(_midPoint2.x() - 1, _midPoint2.y() - 1),
-                        QPointF(_endPoint.x() + 1, _endPoint.y() + 1)));
-    return path;
 }
 
 CTableItem *CRelationshipItem::startItem() const
@@ -79,7 +52,7 @@ void CRelationshipItem::updatePosition()
     // find start and end points
     QLineF line(mapFromItem(_startItem, _startItem->width() / 2, _startItem->height() / 2),
                 mapFromItem(_endItem, _endItem->width() / 2, _endItem->height() / 2));
-    setLine(line);
+    _line = line;
     _startPoint = findIntersectionPoint(line, _startItem);
     _endPoint = findIntersectionPoint(line, _endItem);
 
@@ -104,30 +77,62 @@ void CRelationshipItem::updatePosition()
 void CRelationshipItem::updatePolygons()
 {
     prepareGeometryChange();
+    _startMaxPolygon.clear();
+    _endMaxPolygon.clear();
     qreal delta = 6;
     switch (_relationship->startType()) {
     case CRelationship::MANY:
-        _startMaxPolygon = createManyPolygon(this->line(), _startItem, delta);
+        _startMaxPolygon = createManyPolygon(_line, _startItem, delta);
         break;
     case CRelationship::AGGREGATE:
-        _startMaxPolygon = createAggregatePolygon(this->line(), _startItem, delta);
+        _startMaxPolygon = createAggregatePolygon(_line, _startItem, delta);
         break;
     default:
         break;
     }
     switch (_relationship->endType()) {
     case CRelationship::MANY:
-        _endMaxPolygon = createManyPolygon(this->line(), _endItem, delta);
+        _endMaxPolygon = createManyPolygon(_line, _endItem, delta);
         break;
     case CRelationship::AGGREGATE:
-        _endMaxPolygon = createAggregatePolygon(this->line(), _endItem, delta);
+        _endMaxPolygon = createAggregatePolygon(_line, _endItem, delta);
         break;
     default:
         break;
     }
 
-    _startMinCenterPoint = findMinCenterPoint(this->line(), _startItem, delta);
-    _endMinCenterPoint = findMinCenterPoint(this->line(), _endItem, delta);
+    _startMinCenterPoint = findMinCenterPoint(_line, _startItem, delta);
+    _endMinCenterPoint = findMinCenterPoint(_line, _endItem, delta);
+}
+
+QRectF CRelationshipItem::boundingRect() const
+{
+    qreal extra = (2 + 20) / 2.0;
+
+    return QRectF(_line.p1(), QSizeF(_line.p2().x() - _line.p1().x(),
+                                    _line.p2().y() - _line.p1().y()))
+            .normalized()
+            .adjusted(-extra, -extra, extra, extra);
+}
+
+QPainterPath CRelationshipItem::shape() const
+{
+    QPainterPath path;
+    path.addPolygon(_startMaxPolygon);
+    path.addPolygon(_endMaxPolygon);
+    path.addRect(QRectF(_startPoint, QSizeF(_midPoint1.x() - _startPoint.x(),
+                                           _midPoint1.y() - _startPoint.y()))
+                 .normalized()
+                 .adjusted(-5, -5, 5, 5));
+    path.addRect(QRectF(_midPoint1, QSizeF(_midPoint2.x() - _midPoint1.x(),
+                                           _midPoint2.y() - _midPoint1.y()))
+                 .normalized()
+                 .adjusted(-5, -5, 5, 5));
+    path.addRect(QRectF(_midPoint2, QSizeF(_endPoint.x() - _midPoint2.x(),
+                                           _endPoint.y() - _midPoint2.y()))
+                 .normalized()
+                 .adjusted(-5, -5, 5, 5));
+    return path;
 }
 
 void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
@@ -136,6 +141,7 @@ void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         return;
 
     prepareGeometryChange();
+    updatePolygons();
 
     // colored outline if selected or mouseovered
     if((option->state & QStyle::State_Selected) ||
@@ -194,7 +200,7 @@ CRelationship *CRelationshipItem::relationship() const
     return _relationship;
 }
 
-QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const QGraphicsPolygonItem *item)
+QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const CTableItem *item)
 {
     QLineF centerLine(line);
     QPolygonF polygon = item->polygon();
@@ -214,7 +220,7 @@ QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const QGrap
     return intersectPoint;
 }
 
-int CRelationshipItem::findIntersectionSide(const QLineF &line, const QGraphicsPolygonItem *item)
+int CRelationshipItem::findIntersectionSide(const QLineF &line, const CTableItem *item)
 {
     QLineF centerLine(line);
     QPolygonF polygon = item->polygon();
@@ -234,7 +240,7 @@ int CRelationshipItem::findIntersectionSide(const QLineF &line, const QGraphicsP
     return -1;
 }
 
-QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
+QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const CTableItem *item, qreal delta)
 {
     QPolygonF polygon;
     QPointF p1, p2, p3;
@@ -274,7 +280,7 @@ QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const QGraphi
     return polygon;
 }
 
-QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
+QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const CTableItem *item, qreal delta)
 {
     QPolygonF polygon;
     QPointF p1, p2, p3, l1, l2;
@@ -322,7 +328,7 @@ QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const QG
     return polygon;
 }
 
-QPointF CRelationshipItem::findMinCenterPoint(const QLineF &line, const QGraphicsPolygonItem *item, qreal delta)
+QPointF CRelationshipItem::findMinCenterPoint(const QLineF &line, const CTableItem *item, qreal delta)
 {
     QPointF centerPoint;
 

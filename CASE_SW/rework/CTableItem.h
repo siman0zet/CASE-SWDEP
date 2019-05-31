@@ -2,19 +2,26 @@
 #define CTABLEITEM_H
 
 #include <QGraphicsPolygonItem>
+#include "CObjectItem.h"
 
 class CRelationshipItem;
 class CTable;
 
-class CTableItem : public QGraphicsPolygonItem
+class CTableItem : public CObjectItem
 {
 public:
     enum { Type = UserType + 1 };
 
     explicit CTableItem(CTable *table);
+    ~CTableItem();
 
+    int type() const override;
+
+    CTable *table() const;
     int width() const;
+    void setWidth(int width);
     int height() const;
+    void setHeight(int height);
     QPolygonF polygon() const;
 
     void removeRelationship(int id);
@@ -22,11 +29,6 @@ public:
     void addRelationship(CRelationshipItem *relationship);
     void setColor(const QColor &color);
     void setSelectedForRelation(bool selectedForRelation);
-
-    int type() const override;
-    int id();
-    QString name();
-    CTable *table() const;
 
 protected:
     // QGraphicsItem interface
