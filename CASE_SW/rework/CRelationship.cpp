@@ -51,10 +51,19 @@ CTable *CRelationship::startTable() const
 {
     return _startTable;
 }
+void CRelationship::setStartTable(CTable *startTable)
+{
+    _startTable = startTable;
+}
 
 CTable *CRelationship::endTable() const
 {
     return _endTable;
+}
+
+void CRelationship::setEndTable(CTable *endTable)
+{
+    _endTable = endTable;
 }
 
 bool CRelationship::startMandatory() const
@@ -75,4 +84,15 @@ bool CRelationship::endMandatory() const
 void CRelationship::setEndMandatory(bool endMandatory)
 {
     _endMandatory = endMandatory;
+}
+
+void CRelationship::flip()
+{
+    CRelationship::RELATIONSHIP_TYPE startType = _startType;
+    _startType = _endType;
+    _endType = startType;
+
+    bool startMandatory = _startMandatory;
+    _startMandatory = _endMandatory;
+    _endMandatory = startMandatory;
 }

@@ -30,6 +30,7 @@ public:
 
     void activateTool(cursorToolType type);
     void showResizeDialog();
+    void flipTables(int id);
 
 public slots:
     void changeSize(int w, int h);

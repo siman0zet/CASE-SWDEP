@@ -7,7 +7,6 @@ CDataModel::CDataModel() :
     _tablesCount(0),
     _relationshipsCount(0)
 {
-
 }
 
 CTable *CDataModel::addTable()
@@ -58,6 +57,15 @@ void CDataModel::removeObjects(const QList<CObject *> &objects)
         }
     }
     _objectsToRemove.clear();
+}
+
+void CDataModel::flipTables(int id)
+{
+    _relationships.value(id)->flip();
+
+    CTable *table = _relationships.value(id)->startTable();
+    _relationships.value(id)->setStartTable(_relationships.value(id)->endTable());
+    _relationships.value(id)->setEndTable(table);
 }
 
 CDataModel *CDataModel::convertToPdm()

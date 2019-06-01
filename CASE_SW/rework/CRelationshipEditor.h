@@ -22,16 +22,12 @@ public:
 
 private slots:
     void on_radioOneOne_toggled(bool checked);
-
     void on_radioOneMany_toggled(bool checked);
-
     void on_radioManyMany_toggled(bool checked);
-
     void on_radioAggregate_toggled(bool checked);
-
     void on_starTableMandatory_toggled(bool checked);
-
     void on_endTableMandatory_toggled(bool checked);
+    void on_flipTables_clicked();
 
 private:
     Ui::CRelationshipEditor *ui;

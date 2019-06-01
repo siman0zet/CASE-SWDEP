@@ -141,6 +141,17 @@ void CModelView::showResizeDialog()
     dialog->exec();
 }
 
+void CModelView::flipTables(int id)
+{
+    _dataModel->flipTables(id);
+
+    CTableItem *startItem = _relationships.value(id)->startItem();
+    _relationships.value(id)->setStartItem(_relationships.value(id)->endItem());
+    _relationships.value(id)->setStartItem(startItem);
+
+    _relationships.value(id)->updatePosition();
+}
+
 void CModelView::changeSize(int w, int h)
 {
     _width = w;

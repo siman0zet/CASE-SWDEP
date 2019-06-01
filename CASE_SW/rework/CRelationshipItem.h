@@ -20,7 +20,9 @@ public:
     CRelationship *relationship() const;
 
     CTableItem *startItem() const;
+    void setStartItem(CTableItem *startItem);
     CTableItem *endItem() const;
+    void setEndItem(CTableItem *endItem);
 
     void updatePosition();
     void updatePolygons();

@@ -37,9 +37,19 @@ CTableItem *CRelationshipItem::startItem() const
     return _startItem;
 }
 
+void CRelationshipItem::setStartItem(CTableItem *startItem)
+{
+    _startItem = startItem;
+}
+
 CTableItem *CRelationshipItem::endItem() const
 {
     return _endItem;
+}
+
+void CRelationshipItem::setEndItem(CTableItem *endItem)
+{
+    _endItem = endItem;
 }
 
 void CRelationshipItem::updatePosition()

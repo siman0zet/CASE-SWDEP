@@ -29,13 +29,17 @@ public:
     void setEndType(const RELATIONSHIP_TYPE &endType);
 
     CTable *startTable() const;
+    void setStartTable(CTable *startTable);
     CTable *endTable() const;
+    void setEndTable(CTable *endTable);
 
     bool startMandatory() const;
     void setStartMandatory(bool startMandatory);
 
     bool endMandatory() const;
     void setEndMandatory(bool endMandatory);
+
+    void flip();
 
 private:
     CTable *_startTable;

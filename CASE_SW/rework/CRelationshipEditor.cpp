@@ -1,6 +1,7 @@
 #include "CRelationship.h"
 #include "CRelationshipEditor.h"
 #include "CTable.h"
+#include "CModelView.h"
 #include "ui_crelationshipeditor.h"
 
 #include <QDebug>
@@ -47,10 +48,8 @@ void CRelationshipEditor::synchronizeData()
     ui->startTableName->setText(_relationship->startTable()->name());
     ui->endTableName->setText(_relationship->endTable()->name());
 
-    if(_relationship->startMandatory())
-        ui->starTableMandatory->setChecked(true);
-    if(_relationship->endMandatory())
-        ui->endTableMandatory->setChecked(true);
+    ui->starTableMandatory->setChecked(_relationship->startMandatory());
+    ui->endTableMandatory->setChecked(_relationship->endMandatory());
 }
 
 void CRelationshipEditor::on_radioOneOne_toggled(bool checked)
@@ -103,4 +102,10 @@ void CRelationshipEditor::on_endTableMandatory_toggled(bool checked)
 {
     _relationship->setEndMandatory(checked);
     emit dataChanged();
+}
+
+void CRelationshipEditor::on_flipTables_clicked()
+{
+    _modelView->flipTables(_relationship->id());
+    synchronizeData();
 }
