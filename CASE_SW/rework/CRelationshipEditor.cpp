@@ -109,3 +109,15 @@ void CRelationshipEditor::on_flipTables_clicked()
     _modelView->flipTables(_relationship->id());
     synchronizeData();
 }
+
+void CRelationshipEditor::on_startTableChange_clicked()
+{
+    _modelView->showChangeTableDialog(_relationship->id(), true);
+    synchronizeData();
+}
+
+void CRelationshipEditor::on_endTableChange_clicked()
+{
+    _modelView->showChangeTableDialog(_relationship->id(), false);
+    synchronizeData();
+}

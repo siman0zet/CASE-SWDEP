@@ -39,7 +39,13 @@ CTableItem *CRelationshipItem::startItem() const
 
 void CRelationshipItem::setStartItem(CTableItem *startItem)
 {
+    if(_startItem)
+    {
+        _startItem->removeRelationship(this);
+    }
     _startItem = startItem;
+    _startItem->addRelationship(this);
+    updatePosition();
 }
 
 CTableItem *CRelationshipItem::endItem() const
@@ -49,7 +55,13 @@ CTableItem *CRelationshipItem::endItem() const
 
 void CRelationshipItem::setEndItem(CTableItem *endItem)
 {
+    if(_endItem)
+    {
+        _endItem->removeRelationship(this);
+    }
     _endItem = endItem;
+    _endItem->addRelationship(this);
+    updatePosition();
 }
 
 void CRelationshipItem::updatePosition()
@@ -117,7 +129,7 @@ void CRelationshipItem::updatePolygons()
 
 QRectF CRelationshipItem::boundingRect() const
 {
-    qreal extra = (2 + 20) / 2.0;
+    qreal extra = 40;
 
     return QRectF(_line.p1(), QSizeF(_line.p2().x() - _line.p1().x(),
                                     _line.p2().y() - _line.p1().y()))
@@ -130,18 +142,22 @@ QPainterPath CRelationshipItem::shape() const
     QPainterPath path;
     path.addPolygon(_startMaxPolygon);
     path.addPolygon(_endMaxPolygon);
+    int a = 5;
     path.addRect(QRectF(_startPoint, QSizeF(_midPoint1.x() - _startPoint.x(),
                                            _midPoint1.y() - _startPoint.y()))
                  .normalized()
-                 .adjusted(-5, -5, 5, 5));
+                 .adjusted(-a, -a, a, a));
     path.addRect(QRectF(_midPoint1, QSizeF(_midPoint2.x() - _midPoint1.x(),
                                            _midPoint2.y() - _midPoint1.y()))
                  .normalized()
-                 .adjusted(-5, -5, 5, 5));
+                 .adjusted(-a, -a, a, a));
     path.addRect(QRectF(_midPoint2, QSizeF(_endPoint.x() - _midPoint2.x(),
                                            _endPoint.y() - _midPoint2.y()))
                  .normalized()
-                 .adjusted(-5, -5, 5, 5));
+                 .adjusted(-a, -a, a, a));
+    int d = 3;
+    path.addEllipse(_startMinCenterPoint, d, d);
+    path.addEllipse(_endMinCenterPoint, d, d);
     return path;
 }
 

@@ -68,6 +68,23 @@ void CDataModel::flipTables(int id)
     _relationships.value(id)->setEndTable(table);
 }
 
+void CDataModel::changeTable(int relationshipId, int tableId, bool start)
+{
+    if(start)
+    {
+        _relationships.value(relationshipId)->setStartTable(_tables.value(tableId));
+    }
+    else
+    {
+        _relationships.value(relationshipId)->setEndTable(_tables.value(tableId));
+    }
+}
+
+QList<CTable *> CDataModel::listTables()
+{
+    return _tables.values();
+}
+
 CDataModel *CDataModel::convertToPdm()
 {
 

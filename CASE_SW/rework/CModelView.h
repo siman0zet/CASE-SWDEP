@@ -30,11 +30,13 @@ public:
 
     void activateTool(cursorToolType type);
     void showResizeDialog();
-    void flipTables(int id);
+    void showChangeTableDialog(int relationshipId, bool end);
+    void flipTables(int relationshipId);
 
 public slots:
     void changeSize(int w, int h);
     void removeRelationship(int id);
+    void changeTable(int relationshipId, int tableId, bool start);
 
 protected:
     // QWidget interface

@@ -7,6 +7,7 @@
 #include "CTable.h"
 #include "CRelationship.h"
 #include "CRelationshipEditor.h"
+#include "changetabledialog.h"
 
 #include <QMouseEvent>
 #include <QMenu>
@@ -136,20 +137,27 @@ void CModelView::removeItems(QList<QGraphicsItem *> items)
 
 void CModelView::showResizeDialog()
 {
-    ResizeDialog* dialog = new ResizeDialog(_width, _height, this);
+    ResizeDialog *dialog = new ResizeDialog(_width, _height, this);
     connect(dialog, SIGNAL(dialogFinished(int,int)), this, SLOT(changeSize(int,int)));
     dialog->exec();
 }
 
-void CModelView::flipTables(int id)
+void CModelView::showChangeTableDialog(int relationshipId, bool start)
 {
-    _dataModel->flipTables(id);
+    ChangeTableDialog *dialog = new ChangeTableDialog(_dataModel->listTables(),
+                                                      (CRelationship *)_relationships.value(relationshipId)->object(),
+                                                      start);
+    connect(dialog, SIGNAL(dialogFinished(int,int,bool)), this, SLOT(changeTable(int,int,bool)));
+    dialog->exec();
+}
 
-    CTableItem *startItem = _relationships.value(id)->startItem();
-    _relationships.value(id)->setStartItem(_relationships.value(id)->endItem());
-    _relationships.value(id)->setStartItem(startItem);
+void CModelView::flipTables(int relationshipId)
+{
+    _dataModel->flipTables(relationshipId);
 
-    _relationships.value(id)->updatePosition();
+    CTableItem *startItem = _relationships.value(relationshipId)->startItem();
+    _relationships.value(relationshipId)->setStartItem(_relationships.value(relationshipId)->endItem());
+    _relationships.value(relationshipId)->setEndItem(startItem);
 }
 
 void CModelView::changeSize(int w, int h)
@@ -163,7 +171,7 @@ void CModelView::changeSize(int w, int h)
 void CModelView::removeRelationship(int id)
 {
     foreach (CTableItem *tableItem, _tables.values()) {
-        tableItem->removeRelationship(id);
+        tableItem->removeRelationship(_relationships.value(id));
     }
     // if relationship was already deleted in cascade
     if(_relationships.value(id) != 0)
@@ -171,6 +179,20 @@ void CModelView::removeRelationship(int id)
         _scene->removeItem(_relationships.value(id));
         delete _relationships.value(id);
         _relationships.remove(id);
+    }
+}
+
+void CModelView::changeTable(int relationshipId, int tableId, bool start)
+{
+    _dataModel->changeTable(relationshipId, tableId, start);
+
+    if(start)
+    {
+        _relationships.value(relationshipId)->setStartItem(_tables.value(tableId));
+    }
+    else
+    {
+        _relationships.value(relationshipId)->setEndItem(_tables.value(tableId));
     }
 }
 

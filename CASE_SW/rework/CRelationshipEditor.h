@@ -28,12 +28,14 @@ private slots:
     void on_starTableMandatory_toggled(bool checked);
     void on_endTableMandatory_toggled(bool checked);
     void on_flipTables_clicked();
+    void on_startTableChange_clicked();
+    void on_endTableChange_clicked();
 
 private:
     Ui::CRelationshipEditor *ui;
 
     CRelationship *_relationship;
-    CModelView* _modelView;
+    CModelView *_modelView;
 
     void synchronizeData();
 

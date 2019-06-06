@@ -53,7 +53,12 @@ CTable *CRelationship::startTable() const
 }
 void CRelationship::setStartTable(CTable *startTable)
 {
+    if(_startTable)
+    {
+        _startTable->removeRelationship(this);
+    }
     _startTable = startTable;
+    _startTable->addRelationship(this);
 }
 
 CTable *CRelationship::endTable() const
@@ -63,7 +68,12 @@ CTable *CRelationship::endTable() const
 
 void CRelationship::setEndTable(CTable *endTable)
 {
+    if(_endTable)
+    {
+        _endTable->removeRelationship(this);
+    }
     _endTable = endTable;
+    _endTable->addRelationship(this);
 }
 
 bool CRelationship::startMandatory() const

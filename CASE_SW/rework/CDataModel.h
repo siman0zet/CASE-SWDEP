@@ -19,6 +19,8 @@ public:
     CRelationship *addRelationship(int startId, int endId);
     void removeObjects(const QList<CObject *> &objects);
     void flipTables(int id);
+    void changeTable(int relationshipId, int tableId, bool start = false);
+    QList<CTable *> listTables();
 
     CDataModel *convertToPdm();
 
