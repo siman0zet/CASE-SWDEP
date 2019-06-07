@@ -34,7 +34,8 @@ SOURCES += \
     rework/CObject.cpp \
     rework/CRelationshipEditor.cpp \
     rework/CObjectItem.cpp \
-    rework/changetabledialog.cpp
+    rework/changetabledialog.cpp \
+    rework/CTableEditor.cpp
 
 HEADERS  += \
     CDataModelException.h \
@@ -54,13 +55,15 @@ HEADERS  += \
     rework/CObject.h \
     rework/CRelationshipEditor.h \
     rework/CObjectItem.h \
-    rework/changetabledialog.h
+    rework/changetabledialog.h \
+    rework/CTableEditor.h
 
 FORMS    += \
     rework/mainwindow.ui \
     rework/resizedialog.ui \
     rework/crelationshipeditor.ui \
-    rework/changetabledialog.ui
+    rework/changetabledialog.ui \
+    rework/CTableEditor.ui
 
 RESOURCES += \
     images.qrc

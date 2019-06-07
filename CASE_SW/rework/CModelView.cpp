@@ -8,6 +8,7 @@
 #include "CRelationship.h"
 #include "CRelationshipEditor.h"
 #include "changetabledialog.h"
+#include "CTableEditor.h"
 
 #include <QMouseEvent>
 #include <QMenu>
@@ -160,6 +161,11 @@ void CModelView::flipTables(int relationshipId)
     _relationships.value(relationshipId)->setEndItem(startItem);
 }
 
+CTableItem *CModelView::tableItem(int id)
+{
+    return _tables.value(id);
+}
+
 void CModelView::changeSize(int w, int h)
 {
     _width = w;
@@ -184,7 +190,7 @@ void CModelView::removeRelationship(int id)
 
 void CModelView::changeTable(int relationshipId, int tableId, bool start)
 {
-    _dataModel->changeTable(relationshipId, tableId, start);
+    _dataModel->changeRelationshipTable(relationshipId, tableId, start);
 
     if(start)
     {
@@ -344,6 +350,11 @@ void CModelView::mouseMoveEvent(QMouseEvent *event)
     QGraphicsView::mouseMoveEvent(event);
 }
 
+CDataModel *CModelView::dataModel() const
+{
+    return _dataModel;
+}
+
 void CModelView::deactivateTools()
 {
     for (int i = POINTER; i <= AGGREGATE; i++)
@@ -442,6 +453,10 @@ void CModelView::showObjectEditor(CObjectItem *objectItem)
         switch (objectItem->type()) {
         case CTableItem::Type:
             {
+                CTableEditor *editor = new CTableEditor((CTable *)objectItem->object(), _dataModel);
+                connect(editor, SIGNAL(dataChanged()), this, SLOT(update()));
+                objectItem->setEditor((QWidget *)editor);
+                editor->show();
                 break;
             }
         case CRelationshipItem::Type:

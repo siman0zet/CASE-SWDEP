@@ -31,7 +31,11 @@ public:
     void activateTool(cursorToolType type);
     void showResizeDialog();
     void showChangeTableDialog(int relationshipId, bool end);
+    void showObjectEditor(CObjectItem *objectItem);
     void flipTables(int relationshipId);
+
+    CTableItem *tableItem(int id);
+    CDataModel *dataModel() const;
 
 public slots:
     void changeSize(int w, int h);
@@ -67,7 +71,6 @@ private:
     void showTableContextMenu(const QPoint &pos, QString tableName);
     void showRelationshipContextMenu(const QPoint &pos);
     void returnToPointer();
-    void showObjectEditor(CObjectItem *objectItem);
 
 private slots:
     void addRelationship();

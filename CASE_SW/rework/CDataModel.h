@@ -19,9 +19,10 @@ public:
     CRelationship *addRelationship(int startId, int endId);
     void removeObjects(const QList<CObject *> &objects);
     void flipTables(int id);
-    void changeTable(int relationshipId, int tableId, bool start = false);
-    QList<CTable *> listTables();
+    void changeRelationshipTable(int relationshipId, int tableId, bool start = false);
+    QString changeTabelName(int tableId, QString name);
 
+    QList<CTable *> listTables();
     CDataModel *convertToPdm();
 
     bool isPhysical();
@@ -32,8 +33,8 @@ private:
     QMap<int, CTable *> _tables;
     QMap<int, CRelationship *> _relationships;
 
-    int _tablesCount;
-    int _relationshipsCount;
+    int _countTables;
+    int _countRelationships;
 
     QList<CObject *> _objectsToRemove;
 

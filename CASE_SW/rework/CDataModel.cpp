@@ -4,14 +4,24 @@
 
 CDataModel::CDataModel() :
     _physical(false),
-    _tablesCount(0),
-    _relationshipsCount(0)
+    _countTables(0),
+    _countRelationships(0)
 {
 }
 
 CTable *CDataModel::addTable()
 {
-    CTable *table = new CTable(++_tablesCount);
+    int id = ++_countTables;
+    for(int i = 0; i < _tables.size(); i++)
+    {
+        CTable *table = _tables.values().at(i);
+        if(table->name() == QString("Table %1").arg(id))
+        {
+            id = ++_countTables;
+            i = 0;
+        }
+    }
+    CTable *table = new CTable(id);
     _tables.insert(table->id(), table);
     return table;
 }
@@ -28,7 +38,7 @@ CRelationship *CDataModel::addRelationship(int startId, int endId)
             return NULL;    //relationship between this tables already exist
         }
     }
-    CRelationship *relationship = new CRelationship(++_relationshipsCount,
+    CRelationship *relationship = new CRelationship(++_countRelationships,
                                                     _tables.value(startId),
                                                     _tables.value(endId));
     _relationships.insert(relationship->id(), relationship);
@@ -61,14 +71,12 @@ void CDataModel::removeObjects(const QList<CObject *> &objects)
 
 void CDataModel::flipTables(int id)
 {
-    _relationships.value(id)->flip();
-
     CTable *table = _relationships.value(id)->startTable();
     _relationships.value(id)->setStartTable(_relationships.value(id)->endTable());
     _relationships.value(id)->setEndTable(table);
 }
 
-void CDataModel::changeTable(int relationshipId, int tableId, bool start)
+void CDataModel::changeRelationshipTable(int relationshipId, int tableId, bool start)
 {
     if(start)
     {
@@ -78,6 +86,17 @@ void CDataModel::changeTable(int relationshipId, int tableId, bool start)
     {
         _relationships.value(relationshipId)->setEndTable(_tables.value(tableId));
     }
+}
+
+QString CDataModel::changeTabelName(int tableId, QString name)
+{
+    foreach(CTable *table, _tables)
+    {
+        if(table->name() == name)
+            return _tables.value(tableId)->name();
+    }
+    _tables.value(tableId)->setName(name);
+    return name;
 }
 
 QList<CTable *> CDataModel::listTables()

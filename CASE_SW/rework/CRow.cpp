@@ -11,16 +11,6 @@ CRow::CRow(const QString &name) :
 
 }
 
-CRow::CRow(const QString &name, CRow::DATA_TYPE type, int size, bool primaryKey, bool notNull, bool unique)
-{
-    _name = name;
-    _type = type;
-    _size = size;
-    _primaryKey = primaryKey;
-    _notNull = notNull;
-    _unique = unique;
-}
-
 QString CRow::name() const
 {
     return _name;
@@ -34,6 +24,31 @@ void CRow::setName(const QString &name)
 CRow::DATA_TYPE CRow::type() const
 {
     return _type;
+}
+
+QString CRow::typeAsString()
+{
+    switch (_type) {
+    case INTEGER:
+        return "INTEGER";
+        break;
+    case FLOAT:
+        return "FLOAT";
+        break;
+    case VARCHAR:
+        return QString("VARCHAR(%1)").arg(_size);
+        break;
+    case BOOLEAN:
+        return "BOOLEAN";
+        break;
+    case DATE:
+        return "DATE";
+        break;
+    case BLOB:
+        return "BLOB";
+        break;
+    }
+    return "";
 }
 
 void CRow::setType(const DATA_TYPE &type)

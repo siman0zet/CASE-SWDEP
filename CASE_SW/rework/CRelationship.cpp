@@ -95,14 +95,3 @@ void CRelationship::setEndMandatory(bool endMandatory)
 {
     _endMandatory = endMandatory;
 }
-
-void CRelationship::flip()
-{
-    CRelationship::RELATIONSHIP_TYPE startType = _startType;
-    _startType = _endType;
-    _endType = startType;
-
-    bool startMandatory = _startMandatory;
-    _startMandatory = _endMandatory;
-    _endMandatory = startMandatory;
-}

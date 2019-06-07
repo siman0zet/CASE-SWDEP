@@ -39,8 +39,6 @@ public:
     bool endMandatory() const;
     void setEndMandatory(bool endMandatory);
 
-    void flip();
-
 private:
     CTable *_startTable;
     CTable *_endTable;

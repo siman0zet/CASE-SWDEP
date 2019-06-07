@@ -12,23 +12,18 @@ public:
     {
         INTEGER,
         FLOAT,
-        CHAR,
+        VARCHAR,
         BOOLEAN,
         DATE,
         BLOB
     };
 
     explicit CRow(const QString &name);
-    CRow(const QString &name,
-         DATA_TYPE type = CRow::INTEGER,
-         int size = -1,
-         bool primaryKey = false,
-         bool notNull = false,
-         bool unique = false);
 
     QString name() const;
     void setName(const QString &name);
     DATA_TYPE type() const;
+    QString typeAsString();
     void setType(const DATA_TYPE &type);
     int size() const;
     void setSize(int size);

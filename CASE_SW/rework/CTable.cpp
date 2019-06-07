@@ -14,10 +14,10 @@ CTable::~CTable()
     foreach (CRelationship *relationship, _relationships) {
         delete relationship;
     }
-    foreach (CRow *row, _rows.values()) {
+    foreach (CRow *row, _rows) {
         delete row;
     }
-    foreach (CForeignRow *foreignRow, _foreingRows.values()) {
+    foreach (CForeignRow *foreignRow, _foreingRows) {
         delete foreignRow;
     }
 }
@@ -49,8 +49,30 @@ void CTable::removeRelationships()
     }
 }
 
-int CTable::addRow()
+void CTable::addRow(CRow *row)
 {
+    _rows.append(row);
+}
+
+void CTable::removeRow(int index)
+{
+    _rows.removeAt(index);
+}
+
+CRow *CTable::row(int index)
+{
+    return _rows.at(index);
+}
+
+QString CTable::changeRowName(int index, QString name)
+{
+    foreach(CRow *row, _rows)
+    {
+        if(row->name() == name)
+            return _rows.at(index)->name();
+    }
+    _rows.at(index)->setName(name);
+    return name;
 }
 
 int CTable::rowCount()
@@ -71,4 +93,9 @@ int CTable::totalRowCount()
 QList<CRelationship *> CTable::relationships() const
 {
     return _relationships;
+}
+
+QList<CRow *> CTable::rows() const
+{
+    return _rows;
 }

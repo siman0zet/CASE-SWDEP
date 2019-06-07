@@ -1,15 +1,17 @@
 #include "CTableItem.h"
 #include "CRelationshipItem.h"
 #include "CTable.h"
+#include "CRow.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsScene>
+#include <QDebug>
 
 CTableItem::CTableItem(CTable *table) :
     CObjectItem(table),
     _table(table),
-    _width(100),
+    _width(150),
     _height(30),
     _selectedForRelation(false),
     _color(Qt::lightGray)
@@ -171,12 +173,25 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawText(QRect(2, 5, _width - 2, 25), _table->name());
 
     // rows text
+    this->setHeight(30 + _table->totalRowCount() * 20);
     font.setBold(false);
     painter->setFont(font);
     int textHeight = 30;
     for(int i = 0; i < _table->rowCount(); i++)
     {
-        painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] row %1 INT").arg(i));
+        QString constraint = "";
+        if(_table->row(i)->unique())
+            constraint = "UQ";
+        if(_table->row(i)->notNull())
+            constraint = "NN";
+        if(_table->row(i)->primaryKey())
+            constraint = "PK";
+
+        painter->drawText(QRect(2, textHeight, _width - 2, 20),
+                          QString("[%1] %2 %3")
+                          .arg(constraint)
+                          .arg(_table->row(i)->name())
+                          .arg(_table->row(i)->typeAsString()));
         textHeight += 20;
     }
     for(int i = 0; i < _table->foreignRowCount(); i++)

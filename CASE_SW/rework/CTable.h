@@ -24,8 +24,10 @@ public:
     void removeRelationship(CRelationship *relationship);
     void removeRelationships();
 
-    int addRow();
-    void removeRow(int row);
+    void addRow(CRow *row);
+    void removeRow(int index);
+    CRow *row(int index);
+    QString changeRowName(int index, QString name);
 
     void addForeignRow();
 
@@ -34,11 +36,12 @@ public:
     int totalRowCount();
 
     QList<CRelationship *> relationships() const;
+    QList<CRow *> rows() const;
 
 private:
     QList<CRelationship *> _relationships;
-    QMap<int, CRow *> _rows;
-    QMap<int, CForeignRow *> _foreingRows;
+    QList<CRow *> _rows;
+    QList<CForeignRow *> _foreingRows;
 };
 
 #endif // CTABLE_H

@@ -121,3 +121,13 @@ void CRelationshipEditor::on_endTableChange_clicked()
     _modelView->showChangeTableDialog(_relationship->id(), false);
     synchronizeData();
 }
+
+void CRelationshipEditor::on_startTableEdit_clicked()
+{
+    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->startTable()->id()));
+}
+
+void CRelationshipEditor::on_endTableEdit_clicked()
+{
+    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->endTable()->id()));
+}
