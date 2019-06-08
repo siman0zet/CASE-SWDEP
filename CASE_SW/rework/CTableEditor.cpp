@@ -6,7 +6,6 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDebug>
 
 CTableEditor::CTableEditor(CTable *table, CDataModel *dataModel, QWidget *parent) :
     QWidget(parent),
@@ -16,7 +15,9 @@ CTableEditor::CTableEditor(CTable *table, CDataModel *dataModel, QWidget *parent
     _dataModel(dataModel)
 {
     ui->setupUi(this);
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
 
     synchronizeData();
 }
@@ -46,7 +47,8 @@ void CTableEditor::addRow(CRow *row)
     ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0, item1);
 
     QComboBox *comboBox = new QComboBox();
-//    comboBox->setEditable(true);
+    comboBox->setEditable(true);
+    comboBox->setInsertPolicy(QComboBox::NoInsert);
     comboBox->addItem("INTEGER", CRow::INTEGER);
     comboBox->addItem("FLOAT", CRow::FLOAT);
     comboBox->addItem("VARCHAR()", CRow::VARCHAR);
@@ -57,7 +59,8 @@ void CTableEditor::addRow(CRow *row)
     comboBox->setProperty("col", (int) 1);
     comboBox->setCurrentIndex((int) row->type());
     connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(someIndexChanged(int)));
-//    connect(comboBox->lineEdit(), SIGNAL(editingFinished()), this, SLOT(someEditingFinished()));
+    connect(comboBox->lineEdit(), SIGNAL(editingFinished()), this, SLOT(someEditingFinished()));
+    connect(comboBox, SIGNAL(activated(int)), this, SLOT(someIndexChanged(int)));
     ui->tableWidget->setCellWidget(comboBox->property("row").toInt(),
                                    comboBox->property("col").toInt(),
                                    comboBox);
@@ -122,14 +125,34 @@ void CTableEditor::someIndexChanged(int index)
     auto type = static_cast<CRow::DATA_TYPE>(index);
     QComboBox *comboBox = (QComboBox *)QObject::sender();
     _table->row(comboBox->property("row").toInt())->setType(type);
+    comboBox->lineEdit()->setText(_table->row(comboBox->property("row").toInt())->typeAsString());
     emit dataChanged();
 }
 
 void CTableEditor::someEditingFinished()
 {
-    QComboBox *combo = (QComboBox *)ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 1);
-    qDebug() << "text changed " << "to this " << combo->currentText();
-    qDebug() << "also current data " << combo->currentData();
+    QLineEdit *line = (QLineEdit *)QObject::sender();
+    QComboBox *comboBox = (QComboBox *)line->parent();
+    QString text = line->text();
+    int size = text.size();
+    _table->row(comboBox->property("row").toInt())->setSize(10);
+    comboBox->setCurrentIndex((int)_table->row(comboBox->property("row").toInt())->type());
+    comboBox->lineEdit()->setText(_table->row(comboBox->property("row").toInt())->typeAsString());
+
+    QRegExpValidator validator;
+
+    validator.setRegExp(QRegExp("VARCHAR\\([0-9]+\\)", Qt::CaseInsensitive));
+    if(validator.validate(text, size) == QValidator::Acceptable)
+    {
+        QRegExp regExp("\\((.+)\\)", Qt::CaseInsensitive);
+        if(regExp.indexIn(text))
+        {
+            line->setText(text);
+            int value = regExp.cap(1).toInt();
+            _table->row(comboBox->property("row").toInt())->setSize(value);
+            emit dataChanged();
+        }
+    }
 }
 
 void CTableEditor::on_pushAddRow_clicked()
@@ -168,7 +191,6 @@ void CTableEditor::on_pushRemoveRow_clicked()
 
 void CTableEditor::on_pushUniques_clicked()
 {
-    qDebug() << "uniques";
 }
 
 void CTableEditor::on_lineTableName_editingFinished()
@@ -176,4 +198,12 @@ void CTableEditor::on_lineTableName_editingFinished()
     QString name = ui->lineTableName->text();
     ui->lineTableName->setText(_dataModel->changeTabelName(_table->id(), name));
     emit dataChanged();
+}
+
+void CTableEditor::resizeEvent(QResizeEvent *event)
+{
+    // First 2 columns is wider while the rest of the table still stretching in proportion to the full screen
+    ui->tableWidget->setColumnWidth(0, this->width() / 3);
+    ui->tableWidget->setColumnWidth(1, this->width() / 3);
+    QWidget::resizeEvent(event);
 }

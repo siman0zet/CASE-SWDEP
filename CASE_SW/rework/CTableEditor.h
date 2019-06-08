@@ -29,6 +29,9 @@ private slots:
     void on_pushUniques_clicked();
     void on_lineTableName_editingFinished();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private:
     Ui::CTableEditor *ui;
 
