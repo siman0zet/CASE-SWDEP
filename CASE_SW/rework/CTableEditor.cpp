@@ -59,9 +59,9 @@ void CTableEditor::addRow(CRow *row)
     comboBox->setProperty("row", (int) ui->tableWidget->rowCount() - 1);
     comboBox->setProperty("col", (int) 1);
     comboBox->setCurrentIndex((int) row->type());
-    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(someIndexChanged(int)));
-    connect(comboBox->lineEdit(), SIGNAL(editingFinished()), this, SLOT(someEditingFinished()));
-    connect(comboBox, SIGNAL(activated(int)), this, SLOT(someIndexChanged(int)));
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tableComboBoxIndexChanged(int)));
+    connect(comboBox->lineEdit(), SIGNAL(editingFinished()), this, SLOT(tableComboBoxEditingFinished()));
+    connect(comboBox, SIGNAL(activated(int)), this, SLOT(tableComboBoxIndexChanged(int)));
     ui->tableWidget->setCellWidget(comboBox->property("row").toInt(),
                                    comboBox->property("col").toInt(),
                                    comboBox);
@@ -90,7 +90,7 @@ QWidget *CTableEditor::createCheckBoxWidget(bool flag, int row, int col)
     checkBox->setChecked(flag);
     checkBox->setProperty("row", (int) row);
     checkBox->setProperty("col", (int) col);
-    connect(checkBox, SIGNAL(toggled(bool)), this, SLOT(someCheckBoxToggled(bool)));
+    connect(checkBox, SIGNAL(toggled(bool)), this, SLOT(tableCheckBoxToggled(bool)));
     return checkBoxWidget;
 }
 
@@ -102,7 +102,7 @@ void CTableEditor::on_tableWidget_cellChanged(int row, int column)
     emit dataChanged();
 }
 
-void CTableEditor::someCheckBoxToggled(bool flag)
+void CTableEditor::tableCheckBoxToggled(bool flag)
 {
     QCheckBox *checkBox = (QCheckBox *)QObject::sender();
     switch (checkBox->property("col").toInt()) {
@@ -121,7 +121,7 @@ void CTableEditor::someCheckBoxToggled(bool flag)
     emit dataChanged();
 }
 
-void CTableEditor::someIndexChanged(int index)
+void CTableEditor::tableComboBoxIndexChanged(int index)
 {
     auto type = static_cast<CRow::DATA_TYPE>(index);
     QComboBox *comboBox = (QComboBox *)QObject::sender();
@@ -131,7 +131,7 @@ void CTableEditor::someIndexChanged(int index)
     emit dataChanged();
 }
 
-void CTableEditor::someEditingFinished()
+void CTableEditor::tableComboBoxEditingFinished()
 {
     QLineEdit *line = (QLineEdit *)QObject::sender();
     QComboBox *comboBox = (QComboBox *)line->parent();

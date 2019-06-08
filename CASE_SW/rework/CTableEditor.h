@@ -21,9 +21,9 @@ public:
 
 private slots:
     void on_tableWidget_cellChanged(int row, int column);
-    void someCheckBoxToggled(bool flag);
-    void someIndexChanged(int index);
-    void someEditingFinished();
+    void tableCheckBoxToggled(bool flag);
+    void tableComboBoxIndexChanged(int index);
+    void tableComboBoxEditingFinished();
     void on_pushAddRow_clicked();
     void on_pushRemoveRow_clicked();
     void on_pushUniques_clicked();

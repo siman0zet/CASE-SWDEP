@@ -166,7 +166,6 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setPen(oldPen);
     painter->setBrush(oldBrush);
     QFont font("Calibri", 12);
-    font.setStyleStrategy(QFont::NoAntialias);
     font.setBold(true);
     painter->setFont(font);
 
@@ -174,6 +173,7 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     // rows text
     this->setHeight(30 + _table->totalRowCount() * 20);
+    font.setPointSize(10);
     font.setBold(false);
     painter->setFont(font);
     int textHeight = 30;

@@ -120,7 +120,7 @@ void MainWindow::on_actionQuit_triggered()
     for(int i = 0; i < ui->tabWidget->count(); i++)
         closeTab(i);
 
-    close();
+    QApplication::closeAllWindows();
 }
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
@@ -132,6 +132,11 @@ void MainWindow::activateEditAction(CModelView::cursorToolType type)
 {
     deactivateEditActions();
     _editActions.value(type)->setChecked(true);
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    on_actionQuit_triggered();
 }
 
 bool MainWindow::addModelTab(QString modelName, QString modelPath)

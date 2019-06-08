@@ -26,6 +26,9 @@ public:
 public slots:
     void activateEditAction(CModelView::cursorToolType type);
 
+protected:
+    void closeEvent(QCloseEvent *) override;
+
 private slots:
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
