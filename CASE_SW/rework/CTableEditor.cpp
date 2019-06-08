@@ -51,6 +51,7 @@ void CTableEditor::addRow(CRow *row)
     comboBox->setInsertPolicy(QComboBox::NoInsert);
     comboBox->addItem("INTEGER", CRow::INTEGER);
     comboBox->addItem("FLOAT", CRow::FLOAT);
+    comboBox->addItem("CHAR()", CRow::CHAR);
     comboBox->addItem("VARCHAR()", CRow::VARCHAR);
     comboBox->addItem("BOOLEAN", CRow::BOOLEAN);
     comboBox->addItem("DATE", CRow::DATE);
@@ -124,6 +125,7 @@ void CTableEditor::someIndexChanged(int index)
 {
     auto type = static_cast<CRow::DATA_TYPE>(index);
     QComboBox *comboBox = (QComboBox *)QObject::sender();
+    _table->row(comboBox->property("row").toInt())->setSize(10);
     _table->row(comboBox->property("row").toInt())->setType(type);
     comboBox->lineEdit()->setText(_table->row(comboBox->property("row").toInt())->typeAsString());
     emit dataChanged();
@@ -135,14 +137,16 @@ void CTableEditor::someEditingFinished()
     QComboBox *comboBox = (QComboBox *)line->parent();
     QString text = line->text();
     int size = text.size();
-    _table->row(comboBox->property("row").toInt())->setSize(10);
     comboBox->setCurrentIndex((int)_table->row(comboBox->property("row").toInt())->type());
     comboBox->lineEdit()->setText(_table->row(comboBox->property("row").toInt())->typeAsString());
 
-    QRegExpValidator validator;
+    QRegExpValidator validator1;
+    QRegExpValidator validator2;
 
-    validator.setRegExp(QRegExp("VARCHAR\\([0-9]+\\)", Qt::CaseInsensitive));
-    if(validator.validate(text, size) == QValidator::Acceptable)
+    validator1.setRegExp(QRegExp("CHAR\\([0-9]+\\)", Qt::CaseInsensitive));
+    validator2.setRegExp(QRegExp("VARCHAR\\([0-9]+\\)", Qt::CaseInsensitive));
+    if(validator1.validate(text, size) == QValidator::Acceptable ||
+       validator2.validate(text, size) == QValidator::Acceptable)
     {
         QRegExp regExp("\\((.+)\\)", Qt::CaseInsensitive);
         if(regExp.indexIn(text))

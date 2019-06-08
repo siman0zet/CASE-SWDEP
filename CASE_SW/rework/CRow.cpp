@@ -3,7 +3,7 @@
 CRow::CRow(const QString &name) :
     _name(name),
     _type(CRow::INTEGER),
-    _size(-1),
+    _size(10),
     _primaryKey(false),
     _notNull(false),
     _unique(false)
@@ -34,6 +34,9 @@ QString CRow::typeAsString()
         break;
     case FLOAT:
         return "FLOAT";
+        break;
+    case CHAR:
+        return QString("CHAR(%1)").arg(_size);
         break;
     case VARCHAR:
         return QString("VARCHAR(%1)").arg(_size);

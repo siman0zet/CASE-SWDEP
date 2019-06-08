@@ -12,6 +12,7 @@ public:
     {
         INTEGER,
         FLOAT,
+        CHAR,
         VARCHAR,
         BOOLEAN,
         DATE,
