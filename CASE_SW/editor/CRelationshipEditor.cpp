@@ -1,7 +1,7 @@
-#include "CRelationship.h"
+#include "../model/CRelationship.h"
 #include "CRelationshipEditor.h"
-#include "CTable.h"
-#include "CModelView.h"
+#include "../model/CTable.h"
+#include "../view/CModelView.h"
 #include "ui_crelationshipeditor.h"
 
 #include <QDebug>

@@ -1,4 +1,4 @@
-#include "resizedialog.h"
+#include "ResizeDialog.h"
 #include "ui_resizedialog.h"
 
 ResizeDialog::ResizeDialog(int width, int height, QWidget *parent) :

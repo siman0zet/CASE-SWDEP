@@ -1,9 +1,9 @@
-#include "CRow.h"
-#include "CTable.h"
+#include "../model/CRow.h"
+#include "../model/CTable.h"
 #include "CTableEditor.h"
-#include "CDataModel.h"
+#include "../model/CDataModel.h"
 #include "ui_CTableEditor.h"
-#include "CUniqueGroupEditor.h"
+#include "../dialog/CUniqueGroupDialog.h"
 
 #include <QCheckBox>
 #include <QComboBox>

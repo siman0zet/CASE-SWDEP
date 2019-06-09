@@ -18,57 +18,50 @@ DEFINES += \
 
 SOURCES += \
     main.cpp \
-    CDataModelException.cpp \
-    CScriptGenerator.cpp \
-    CLangWidget.cpp \
-    rework/mainwindow.cpp \
-    rework/CModelView.cpp \
-    rework/resizedialog.cpp \
-    rework/CRelationshipItem.cpp \
-    rework/CDataModel.cpp \
-    rework/CRelationship.cpp \
-    rework/CRow.cpp \
-    rework/CForeignRow.cpp \
-    rework/CTable.cpp \
-    rework/CTableItem.cpp \
-    rework/CObject.cpp \
-    rework/CRelationshipEditor.cpp \
-    rework/CObjectItem.cpp \
-    rework/changetabledialog.cpp \
-    rework/CTableEditor.cpp \
-    rework/CUniqueGroup.cpp \
-    rework/CUniqueGroupEditor.cpp
+    main/MainWindow.cpp \
+    model/CDataModel.cpp \
+    model/CForeignRow.cpp \
+    model/CObject.cpp \
+    model/CRelationship.cpp \
+    model/CRow.cpp \
+    model/CTable.cpp \
+    model/CUniqueGroup.cpp \
+    view/CModelView.cpp \
+    view/CObjectItem.cpp \
+    view/CRelationshipItem.cpp \
+    view/CTableItem.cpp \
+    editor/CRelationshipEditor.cpp \
+    editor/CTableEditor.cpp \
+    dialog/ChangeTableDialog.cpp \
+    dialog/CUniqueGroupDialog.cpp \
+    dialog/ResizeDialog.cpp
 
 HEADERS  += \
-    CDataModelException.h \
-    CPluginInterface.h \
-    CScriptGenerator.h \
-    CLangWidget.h \
-    rework/mainwindow.h \
-    rework/CModelView.h \
-    rework/resizedialog.h \
-    rework/CRelationshipItem.h \
-    rework/CDataModel.h \
-    rework/CRelationship.h \
-    rework/CRow.h \
-    rework/CForeignRow.h \
-    rework/CTable.h \
-    rework/CTableItem.h \
-    rework/CObject.h \
-    rework/CRelationshipEditor.h \
-    rework/CObjectItem.h \
-    rework/changetabledialog.h \
-    rework/CTableEditor.h \
-    rework/CUniqueGroup.h \
-    rework/CUniqueGroupEditor.h
+    main/MainWindow.h \
+    model/CDataModel.h \
+    model/CForeignRow.h \
+    model/CObject.h \
+    model/CRelationship.h \
+    model/CRow.h \
+    model/CTable.h \
+    model/CUniqueGroup.h \
+    view/CModelView.h \
+    view/CObjectItem.h \
+    view/CRelationshipItem.h \
+    view/CTableItem.h \
+    editor/CRelationshipEditor.h \
+    editor/CTableEditor.h \
+    dialog/ChangeTableDialog.h \
+    dialog/CUniqueGroupDialog.h \
+    dialog/ResizeDialog.h
 
 FORMS    += \
-    rework/mainwindow.ui \
-    rework/resizedialog.ui \
-    rework/crelationshipeditor.ui \
-    rework/changetabledialog.ui \
-    rework/CTableEditor.ui \
-    rework/CUniqueGroupEditor.ui
+    main/MainWindow.ui \
+    editor/CRelationshipEditor.ui \
+    editor/CTableEditor.ui \
+    dialog/ChangeTableDialog.ui \
+    dialog/CUniqueGroupDialog.ui \
+    dialog/ResizeDialog.ui
 
 RESOURCES += \
     images.qrc

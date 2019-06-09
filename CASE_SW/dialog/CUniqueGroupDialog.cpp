@@ -1,8 +1,8 @@
-#include "CUniqueGroupEditor.h"
+#include "CUniqueGroupDialog.h"
 #include "ui_CUniqueGroupEditor.h"
-#include "CTable.h"
-#include "CUniqueGroup.h"
-#include "CRow.h"
+#include "../model/CTable.h"
+#include "../model/CUniqueGroup.h"
+#include "../model/CRow.h"
 
 #include <QDebug>
 #include <QLineEdit>

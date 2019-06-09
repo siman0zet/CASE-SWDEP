@@ -7,8 +7,7 @@
 #include <QtCore/qplugin.h>
 #include <QtPlugin>
 
-#include "CDataModel.h"
-#include "CEntity.h"
+#include "model/CDataModel.h"
 
 class CPluginInterface : public QObject
 {

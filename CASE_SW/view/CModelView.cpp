@@ -1,14 +1,14 @@
 #include "CModelView.h"
-#include "mainwindow.h"
+#include "../main/MainWindow.h"
 #include "CTableItem.h"
 #include "CRelationshipItem.h"
-#include "resizedialog.h"
-#include "CDataModel.h"
-#include "CTable.h"
-#include "CRelationship.h"
-#include "CRelationshipEditor.h"
-#include "changetabledialog.h"
-#include "CTableEditor.h"
+#include "../dialog/ResizeDialog.h"
+#include "../model/CDataModel.h"
+#include "../model/CTable.h"
+#include "../model/CRelationship.h"
+#include "../editor/CRelationshipEditor.h"
+#include "../dialog/ChangeTableDialog.h"
+#include "../editor/CTableEditor.h"
 
 #include <QMouseEvent>
 #include <QMenu>

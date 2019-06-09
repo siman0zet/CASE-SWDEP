@@ -1,6 +1,6 @@
 #include "CRelationshipItem.h"
 #include "CTableItem.h"
-#include "CRelationship.h"
+#include "../model/CRelationship.h"
 
 #include <QPainter>
 #include <qmath.h>

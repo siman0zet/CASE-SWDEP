@@ -1,7 +1,7 @@
 #include "CTableItem.h"
 #include "CRelationshipItem.h"
-#include "CTable.h"
-#include "CRow.h"
+#include "../model/CTable.h"
+#include "../model/CRow.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>

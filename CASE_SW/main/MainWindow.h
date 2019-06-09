@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QSharedPointer>
 
-#include "CModelView.h"
+#include "../view/CModelView.h"
 
 namespace Ui {
 class MainWindow;

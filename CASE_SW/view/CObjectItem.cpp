@@ -1,5 +1,5 @@
 #include "CObjectItem.h"
-#include "CObject.h"
+#include "../model/CObject.h"
 
 CObjectItem::CObjectItem(CObject *object) :
     _object(object),

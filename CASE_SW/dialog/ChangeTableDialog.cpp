@@ -1,5 +1,5 @@
-#include "CRelationship.h"
-#include "CTable.h"
+#include "../model/CRelationship.h"
+#include "../model/CTable.h"
 #include "changetabledialog.h"
 #include "ui_changetabledialog.h"
 #include <QStringListModel>
