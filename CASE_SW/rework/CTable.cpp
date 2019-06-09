@@ -7,7 +7,7 @@
 CTable::CTable(int id) :
     CObject(id)
 {
-    this->setName(QString("Table %1").arg(id));
+    this->setName(QString("Table_%1").arg(id));
 }
 
 CTable::~CTable()

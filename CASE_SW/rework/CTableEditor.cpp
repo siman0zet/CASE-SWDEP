@@ -166,13 +166,13 @@ void CTableEditor::on_pushAddRow_clicked()
     for(int i = 0; i < _table->rowCount(); i++)
     {
         CRow *row = _table->row(i);
-        if(row->name() == QString("row %1").arg(id))
+        if(row->name() == QString("row_%1").arg(id))
         {
             id = ++_countRow;
             i = 0;
         }
     }
-    CRow *row = new CRow(QString("row %1").arg(id));
+    CRow *row = new CRow(QString("row_%1").arg(id));
     _table->addRow(row);
     this->addRow(row);
     emit dataChanged();

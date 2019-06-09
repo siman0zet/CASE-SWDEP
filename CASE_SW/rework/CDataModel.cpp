@@ -15,7 +15,7 @@ CTable *CDataModel::addTable()
     for(int i = 0; i < _tables.size(); i++)
     {
         CTable *table = _tables.values().at(i);
-        if(table->name() == QString("Table %1").arg(id))
+        if(table->name() == QString("Table_%1").arg(id))
         {
             id = ++_countTables;
             i = 0;
