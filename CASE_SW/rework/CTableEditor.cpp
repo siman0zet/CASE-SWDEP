@@ -3,6 +3,7 @@
 #include "CTableEditor.h"
 #include "CDataModel.h"
 #include "ui_CTableEditor.h"
+#include "CUniqueGroupEditor.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -195,6 +196,9 @@ void CTableEditor::on_pushRemoveRow_clicked()
 
 void CTableEditor::on_pushUniques_clicked()
 {
+    CUniqueGroupEditor *editor = new CUniqueGroupEditor(_table);
+    connect(editor, SIGNAL(accepted()), this, SLOT(synchronizeData()));
+    editor->show();
 }
 
 void CTableEditor::on_lineTableName_editingFinished()

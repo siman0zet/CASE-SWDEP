@@ -9,6 +9,7 @@
 class CRelationship;
 class CRow;
 class CForeignRow;
+class CUniqueGroup;
 
 class CTable : public CObject
 {
@@ -38,10 +39,14 @@ public:
     QList<CRelationship *> relationships() const;
     QList<CRow *> rows() const;
 
+    QList<CUniqueGroup *> uniqueGroups() const;
+    void setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups);
+
 private:
     QList<CRelationship *> _relationships;
     QList<CRow *> _rows;
     QList<CForeignRow *> _foreingRows;
+    QList<CUniqueGroup *> _uniqueGroups;
 };
 
 #endif // CTABLE_H

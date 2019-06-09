@@ -28,6 +28,7 @@ private slots:
     void on_pushRemoveRow_clicked();
     void on_pushUniques_clicked();
     void on_lineTableName_editingFinished();
+    void synchronizeData();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -40,7 +41,6 @@ private:
     CTable *_table;
     CDataModel *_dataModel;
 
-    void synchronizeData();
     void addRow(CRow *row);
     QWidget *createCheckBoxWidget(bool flag, int row, int col);
 

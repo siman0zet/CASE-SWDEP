@@ -2,6 +2,7 @@
 #include "CRow.h"
 #include "CForeignRow.h"
 #include "CRelationship.h"
+#include "CUniqueGroup.h"
 
 CTable::CTable(int id) :
     CObject(id)
@@ -99,3 +100,22 @@ QList<CRow *> CTable::rows() const
 {
     return _rows;
 }
+
+QList<CUniqueGroup *> CTable::uniqueGroups() const
+{
+    return _uniqueGroups;
+}
+
+void CTable::setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups)
+{
+    _uniqueGroups = uniqueGroups;
+    foreach (CUniqueGroup *ugroup, _uniqueGroups) {
+        foreach (QString name, ugroup->rows()) {
+            foreach (CRow *row, _rows) {
+                if(name == row->name())
+                    row->setUnique(true);
+            }
+        }
+    }
+}
+
