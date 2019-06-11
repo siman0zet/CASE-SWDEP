@@ -30,9 +30,6 @@ private slots:
     void on_lineTableName_editingFinished();
     void synchronizeData();
 
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-
 private:
     Ui::CTableEditor *ui;
 

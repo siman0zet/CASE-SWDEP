@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QLineEdit>
 
-CUniqueGroupEditor::CUniqueGroupEditor(CTable *table, QWidget *parent) :
+CUniqueGroupDialog::CUniqueGroupDialog(CTable *table, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CUniqueGroupEditor),
     _table(table),
@@ -18,12 +18,12 @@ CUniqueGroupEditor::CUniqueGroupEditor(CTable *table, QWidget *parent) :
     synchronizeData();
 }
 
-CUniqueGroupEditor::~CUniqueGroupEditor()
+CUniqueGroupDialog::~CUniqueGroupDialog()
 {
     delete ui;
 }
 
-void CUniqueGroupEditor::on_pushCreate_clicked()
+void CUniqueGroupDialog::on_pushCreate_clicked()
 {
     int id = ++_countUgroup;
     for(int i = 0; i < _ugroups.count(); i++)
@@ -44,7 +44,7 @@ void CUniqueGroupEditor::on_pushCreate_clicked()
     _currentUGroup = _ugroups.value(ui->comboBox->currentText());
 }
 
-void CUniqueGroupEditor::on_pushDelete_clicked()
+void CUniqueGroupDialog::on_pushDelete_clicked()
 {
     ui->listWidget->clear();
     _ugroups.remove(_currentUGroup->name());
@@ -60,7 +60,7 @@ void CUniqueGroupEditor::on_pushDelete_clicked()
         _currentUGroup = 0;
 }
 
-void CUniqueGroupEditor::on_comboBox_currentIndexChanged(const QString &arg1)
+void CUniqueGroupDialog::on_comboBox_currentIndexChanged(const QString &arg1)
 {
     int index = ui->comboBox->count() - 1;
     if(index >= 0)
@@ -80,7 +80,7 @@ void CUniqueGroupEditor::on_comboBox_currentIndexChanged(const QString &arg1)
     }
 }
 
-void CUniqueGroupEditor::synchronizeData()
+void CUniqueGroupDialog::synchronizeData()
 {
     foreach (CUniqueGroup *ugroup, _table->uniqueGroups()) {
         _ugroups.insert(ugroup->name(), ugroup);
@@ -88,7 +88,7 @@ void CUniqueGroupEditor::synchronizeData()
     }
 }
 
-void CUniqueGroupEditor::updateCurrentGroupList()
+void CUniqueGroupDialog::updateCurrentGroupList()
 {
     ui->listWidget->clear();
 
@@ -123,7 +123,7 @@ void CUniqueGroupEditor::updateCurrentGroupList()
     }
 }
 
-void CUniqueGroupEditor::on_listWidget_itemClicked(QListWidgetItem *item)
+void CUniqueGroupDialog::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     if(item->checkState() == Qt::Checked)
     {
@@ -137,7 +137,7 @@ void CUniqueGroupEditor::on_listWidget_itemClicked(QListWidgetItem *item)
     }
 }
 
-void CUniqueGroupEditor::comboBoxEditingFinished()
+void CUniqueGroupDialog::comboBoxEditingFinished()
 {
     if(ui->comboBox->currentIndex() < 0)
         return;
@@ -146,12 +146,12 @@ void CUniqueGroupEditor::comboBoxEditingFinished()
     _ugroups.insert(_currentUGroup->name(), _currentUGroup);
 }
 
-void CUniqueGroupEditor::on_buttonBox_rejected()
+void CUniqueGroupDialog::on_buttonBox_rejected()
 {
     close();
 }
 
-void CUniqueGroupEditor::on_buttonBox_accepted()
+void CUniqueGroupDialog::on_buttonBox_accepted()
 {
     _table->setUniqueGroups(_ugroups.values());
     emit accepted();

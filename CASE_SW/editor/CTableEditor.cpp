@@ -16,9 +16,9 @@ CTableEditor::CTableEditor(CTable *table, CDataModel *dataModel, QWidget *parent
     _dataModel(dataModel)
 {
     ui->setupUi(this);
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->sectionResizeMode(QHeaderView::ResizeToContents);
 
     synchronizeData();
 }
@@ -196,9 +196,9 @@ void CTableEditor::on_pushRemoveRow_clicked()
 
 void CTableEditor::on_pushUniques_clicked()
 {
-    CUniqueGroupEditor *editor = new CUniqueGroupEditor(_table);
-    connect(editor, SIGNAL(accepted()), this, SLOT(synchronizeData()));
-    editor->show();
+    CUniqueGroupDialog *dialog = new CUniqueGroupDialog(_table);
+    connect(dialog, SIGNAL(accepted()), this, SLOT(synchronizeData()));
+    dialog->show();
 }
 
 void CTableEditor::on_lineTableName_editingFinished()
@@ -206,12 +206,4 @@ void CTableEditor::on_lineTableName_editingFinished()
     QString name = ui->lineTableName->text();
     ui->lineTableName->setText(_dataModel->changeTabelName(_table->id(), name));
     emit dataChanged();
-}
-
-void CTableEditor::resizeEvent(QResizeEvent *event)
-{
-    // First 2 columns is wider while the rest of the table still stretching in proportion to the full screen
-    ui->tableWidget->setColumnWidth(0, this->width() / 3);
-    ui->tableWidget->setColumnWidth(1, this->width() / 3);
-    QWidget::resizeEvent(event);
 }

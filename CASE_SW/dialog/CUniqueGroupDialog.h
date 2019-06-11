@@ -12,13 +12,13 @@ class CTable;
 class CUniqueGroup;
 class QListWidgetItem;
 
-class CUniqueGroupEditor : public QWidget
+class CUniqueGroupDialog : public QWidget
 {
     Q_OBJECT
 
 public:
-    CUniqueGroupEditor(CTable *table, QWidget *parent = 0);
-    ~CUniqueGroupEditor();
+    CUniqueGroupDialog(CTable *table, QWidget *parent = 0);
+    ~CUniqueGroupDialog();
 
 private slots:
     void on_pushCreate_clicked();

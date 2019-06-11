@@ -109,13 +109,5 @@ QList<CUniqueGroup *> CTable::uniqueGroups() const
 void CTable::setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups)
 {
     _uniqueGroups = uniqueGroups;
-    foreach (CUniqueGroup *ugroup, _uniqueGroups) {
-        foreach (QString name, ugroup->rows()) {
-            foreach (CRow *row, _rows) {
-                if(name == row->name())
-                    row->setUnique(true);
-            }
-        }
-    }
 }
 
