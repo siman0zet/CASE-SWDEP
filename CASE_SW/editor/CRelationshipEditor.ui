@@ -16,6 +16,9 @@
   <property name="windowTitle">
    <string>Relationship Editor</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0" rowspan="2">
     <widget class="QGroupBox" name="groupBox">
