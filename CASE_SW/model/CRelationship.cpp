@@ -22,7 +22,7 @@ CRelationship::~CRelationship()
     _endTable = nullptr;
 }
 
-int CRelationship::type()
+int CRelationship::type() const
 {
     return Type;
 }

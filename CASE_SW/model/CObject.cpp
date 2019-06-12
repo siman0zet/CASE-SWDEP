@@ -12,7 +12,7 @@ int CObject::id() const
     return _id;
 }
 
-int CObject::type()
+int CObject::type() const
 {
     return Type;
 }

@@ -9,13 +9,14 @@ class CDataModel;
 class CTableItem;
 class CRelationshipItem;
 class CObjectItem;
+class QMainWindow;
 
 class CModelView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    explicit CModelView(QWidget *parent = nullptr);
+    CModelView(const QString &name, const QString &path, QWidget *parent = nullptr);
     ~CModelView();
 
     enum cursorToolType {
@@ -28,14 +29,26 @@ public:
         AGGREGATE
     };
 
-    void activateTool(cursorToolType type);
+    void activateTool(const cursorToolType &type);
     void showResizeDialog();
-    void showChangeTableDialog(int relationshipId, bool end);
+    void showChangeTableDialog(int relationshipId, bool end) const;
     void showObjectEditor(CObjectItem *objectItem);
     void flipTables(int relationshipId);
 
-    CTableItem *tableItem(int id);
+    CTableItem *tableItem(int id) const;
     CDataModel *dataModel() const;
+
+    QString name() const;
+    void setName(const QString &name);
+    QString path() const;
+    void setPath(const QString &path);
+    QMainWindow *pModelWindow() const;
+    void setPModelWindow(QMainWindow *pModelWindow);
+
+    QList<CTableItem *> tables() const;
+    QList<CRelationshipItem *> relationships() const;
+
+    QGraphicsScene *scene() const;
 
 public slots:
     void changeSize(int w, int h);
@@ -50,6 +63,10 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    QString _name;
+    QString _path;
+    QMainWindow *_pModelWindow;
+
     MainWindow *_parent;
     QGraphicsScene *_scene;
     CDataModel *_dataModel;

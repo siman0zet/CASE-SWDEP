@@ -26,7 +26,7 @@ CRow::DATA_TYPE CRow::type() const
     return _type;
 }
 
-QString CRow::typeAsString()
+QString CRow::typeAsString() const
 {
     switch (_type) {
     case INTEGER:

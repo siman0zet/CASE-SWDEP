@@ -16,7 +16,7 @@ class ChangeTableDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ChangeTableDialog(QList<CTable *> tableList, CRelationship *relationship, bool start, QWidget *parent = 0);
+    explicit ChangeTableDialog(const QList<CTable *> &tableList, CRelationship *relationship, bool start, QWidget *parent = 0);
     ~ChangeTableDialog();
 
 private:

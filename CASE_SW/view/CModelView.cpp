@@ -13,8 +13,11 @@
 #include <QMouseEvent>
 #include <QMenu>
 
-CModelView::CModelView(QWidget *parent) :
+CModelView::CModelView(const QString &name, const QString &path, QWidget *parent) :
     QGraphicsView(parent),
+    _name(name),
+    _path(path),
+    _pModelWindow(0),
     _parent((MainWindow *)parent),
     _scene(new QGraphicsScene(this)),
     _dataModel(new CDataModel()),
@@ -22,12 +25,17 @@ CModelView::CModelView(QWidget *parent) :
     _height(300)
 
 {
+    this->setCacheMode(QGraphicsView::CacheBackground);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     this->setFocusPolicy(Qt::StrongFocus);
     this->setRenderHint(QPainter::Antialiasing, true);
     this->setDragMode(QGraphicsView::RubberBandDrag);
-    this->setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    this->setOptimizationFlags(QGraphicsView::DontSavePainterState |
+                               QGraphicsView::DontAdjustForAntialiasing);
     this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     this->setScene(_scene);
     QBrush brush (Qt::white, Qt::SolidPattern);
@@ -40,9 +48,10 @@ CModelView::~CModelView()
 {
     delete _scene;
     delete _dataModel;
+    _pModelWindow = NULL;
 }
 
-void CModelView::activateTool(CModelView::cursorToolType type)
+void CModelView::activateTool(const cursorToolType &type)
 {
     deactivateTools();
     _tools.insert(type, true);
@@ -143,7 +152,7 @@ void CModelView::showResizeDialog()
     dialog->exec();
 }
 
-void CModelView::showChangeTableDialog(int relationshipId, bool start)
+void CModelView::showChangeTableDialog(int relationshipId, bool start) const
 {
     ChangeTableDialog *dialog = new ChangeTableDialog(_dataModel->listTables(),
                                                       (CRelationship *)_relationships.value(relationshipId)->object(),
@@ -161,7 +170,7 @@ void CModelView::flipTables(int relationshipId)
     _relationships.value(relationshipId)->setEndItem(startItem);
 }
 
-CTableItem *CModelView::tableItem(int id)
+CTableItem *CModelView::tableItem(int id) const
 {
     return _tables.value(id);
 }
@@ -350,6 +359,51 @@ void CModelView::mouseMoveEvent(QMouseEvent *event)
     QGraphicsView::mouseMoveEvent(event);
 }
 
+QGraphicsScene *CModelView::scene() const
+{
+    return _scene;
+}
+
+QList<CRelationshipItem *> CModelView::relationships() const
+{
+    return _relationships.values();
+}
+
+QList<CTableItem *> CModelView::tables() const
+{
+    return _tables.values();
+}
+
+QMainWindow *CModelView::pModelWindow() const
+{
+    return _pModelWindow;
+}
+
+void CModelView::setPModelWindow(QMainWindow *pModelWindow)
+{
+    _pModelWindow = pModelWindow;
+}
+
+QString CModelView::path() const
+{
+    return _path;
+}
+
+void CModelView::setPath(const QString &path)
+{
+    _path = path;
+}
+
+QString CModelView::name() const
+{
+    return _name;
+}
+
+void CModelView::setName(const QString &name)
+{
+    _name = name;
+}
+
 CDataModel *CModelView::dataModel() const
 {
     return _dataModel;
@@ -446,7 +500,6 @@ void CModelView::showObjectEditor(CObjectItem *objectItem)
     {
         objectItem->editor()->show();
         objectItem->editor()->raise();
-        objectItem->editor()->activateWindow();
     }
     else
     {

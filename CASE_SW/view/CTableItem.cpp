@@ -211,3 +211,8 @@ QVariant CTableItem::itemChange(QGraphicsItem::GraphicsItemChange change, const 
     }
     return value;
 }
+
+QList<CRelationshipItem *> CTableItem::relationships() const
+{
+    return _relationships;
+}

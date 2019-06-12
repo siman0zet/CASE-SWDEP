@@ -14,8 +14,8 @@ public:
     void setName(const QString &name);
 
     QList<QString> rows() const;
-    void addRow(QString row);
-    void removeRow(QString row);
+    void addRow(const QString &row);
+    void removeRow(const QString &row);
 
 private:
     QString _name;

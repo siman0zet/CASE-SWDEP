@@ -16,7 +16,7 @@ public:
     explicit CObject(int id);
     virtual ~CObject() {}
     int id() const;
-    virtual int type();
+    virtual int type() const;
     QString name() const;
     void setName(const QString &name);
 };

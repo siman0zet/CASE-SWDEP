@@ -24,7 +24,7 @@ public:
     QString name() const;
     void setName(const QString &name);
     DATA_TYPE type() const;
-    QString typeAsString();
+    QString typeAsString() const;
     void setType(const DATA_TYPE &type);
     int size() const;
     void setSize(int size);

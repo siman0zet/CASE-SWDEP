@@ -30,9 +30,7 @@ private slots:
     void on_flipTables_clicked();
     void on_startTableChange_clicked();
     void on_endTableChange_clicked();
-
     void on_startTableEdit_clicked();
-
     void on_endTableEdit_clicked();
 
 private:

@@ -19,7 +19,7 @@ public:
     explicit CTable(int id);
     ~CTable();
 
-    int type() override;
+    int type() const override;
 
     void addRelationship(CRelationship *relationship);
     void removeRelationship(CRelationship *relationship);
@@ -28,13 +28,13 @@ public:
     void addRow(CRow *row);
     void removeRow(int index);
     CRow *row(int index);
-    QString changeRowName(int index, QString name);
+    QString changeRowName(int index, const QString &name);
 
     void addForeignRow();
 
-    int rowCount();
-    int foreignRowCount();
-    int totalRowCount();
+    int rowCount() const;
+    int foreignRowCount() const;
+    int totalRowCount() const;
 
     QList<CRelationship *> relationships() const;
     QList<CRow *> rows() const;

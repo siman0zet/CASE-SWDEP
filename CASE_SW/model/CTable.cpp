@@ -23,7 +23,7 @@ CTable::~CTable()
     }
 }
 
-int CTable::type()
+int CTable::type() const
 {
     return Type;
 }
@@ -65,7 +65,7 @@ CRow *CTable::row(int index)
     return _rows.at(index);
 }
 
-QString CTable::changeRowName(int index, QString name)
+QString CTable::changeRowName(int index, const QString &name)
 {
     foreach(CRow *row, _rows)
     {
@@ -76,17 +76,17 @@ QString CTable::changeRowName(int index, QString name)
     return name;
 }
 
-int CTable::rowCount()
+int CTable::rowCount() const
 {
     return _rows.size();
 }
 
-int CTable::foreignRowCount()
+int CTable::foreignRowCount() const
 {
     return _foreingRows.size();
 }
 
-int CTable::totalRowCount()
+int CTable::totalRowCount() const
 {
     return _rows.size() + _foreingRows.size();
 }

@@ -22,12 +22,12 @@ QList<QString> CUniqueGroup::rows() const
     return _rows;
 }
 
-void CUniqueGroup::addRow(QString row)
+void CUniqueGroup::addRow(const QString &row)
 {
     _rows.append(row);
 }
 
-void CUniqueGroup::removeRow(QString row)
+void CUniqueGroup::removeRow(const QString &row)
 {
     int index = _rows.indexOf(row);
     if(index != -1)

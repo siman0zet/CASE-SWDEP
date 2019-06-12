@@ -20,7 +20,7 @@ public:
     CRelationship(int id, CTable *startTable, CTable *endTable);
     ~CRelationship();
 
-    int type() override;
+    int type() const override;
 
     RELATIONSHIP_TYPE startType() const;
     void setStartType(const RELATIONSHIP_TYPE &startType);

@@ -28,7 +28,6 @@ CTable *CDataModel::addTable()
 
 CRelationship *CDataModel::addRelationship(int startId, int endId)
 {
-    // primary key existant in end table (?) check
     foreach (CRelationship *relationship, _relationships.values()) {
         if((relationship->startTable()->id() == startId ||
             relationship->endTable()->id() == startId) &&
@@ -88,7 +87,7 @@ void CDataModel::changeRelationshipTable(int relationshipId, int tableId, bool s
     }
 }
 
-QString CDataModel::changeTabelName(int tableId, QString name)
+QString CDataModel::changeTabelName(int tableId, const QString &name)
 {
     foreach(CTable *table, _tables)
     {
@@ -99,19 +98,29 @@ QString CDataModel::changeTabelName(int tableId, QString name)
     return name;
 }
 
-QList<CTable *> CDataModel::listTables()
+QList<CTable *> CDataModel::listTables() const
 {
     return _tables.values();
 }
 
-CDataModel *CDataModel::convertToPdm()
-{
-
-}
-
-bool CDataModel::isPhysical()
+bool CDataModel::isPhysical() const
 {
     return _physical;
+}
+
+void CDataModel::setPhysical(bool physical)
+{
+    _physical = physical;
+}
+
+QMap<int, CTable *> CDataModel::tables() const
+{
+    return _tables;
+}
+
+QMap<int, CRelationship *> CDataModel::relationships() const
+{
+    return _relationships;
 }
 
 void CDataModel::removeTable(int id)

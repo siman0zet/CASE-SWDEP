@@ -20,12 +20,15 @@ public:
     void removeObjects(const QList<CObject *> &objects);
     void flipTables(int id);
     void changeRelationshipTable(int relationshipId, int tableId, bool start = false);
-    QString changeTabelName(int tableId, QString name);
+    QString changeTabelName(int tableId, const QString &name);
 
-    QList<CTable *> listTables();
-    CDataModel *convertToPdm();
+    QList<CTable *> listTables() const;
 
-    bool isPhysical();
+    bool isPhysical() const;
+    void setPhysical(bool physical);
+
+    QMap<int, CTable *> tables() const;
+    QMap<int, CRelationship *> relationships() const;
 
 private:
     bool _physical;

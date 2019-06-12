@@ -11,7 +11,7 @@ public:
     enum { Type = UserType };
 
     explicit CObjectItem(CObject *object);
-    virtual ~CObjectItem();
+    ~CObjectItem();
 
     int type() const override;
 
@@ -24,7 +24,6 @@ public:
 protected:
     CObject *_object;
     QWidget *_editor;
-
 };
 
 #endif // COBJECTITEM_H

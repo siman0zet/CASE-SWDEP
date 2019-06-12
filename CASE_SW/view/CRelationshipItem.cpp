@@ -226,7 +226,7 @@ CRelationship *CRelationshipItem::relationship() const
     return _relationship;
 }
 
-QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const CTableItem *item)
+QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const CTableItem *item) const
 {
     QLineF centerLine(line);
     QPolygonF polygon = item->polygon();
@@ -246,7 +246,7 @@ QPointF CRelationshipItem::findIntersectionPoint(const QLineF &line, const CTabl
     return intersectPoint;
 }
 
-int CRelationshipItem::findIntersectionSide(const QLineF &line, const CTableItem *item)
+int CRelationshipItem::findIntersectionSide(const QLineF &line, const CTableItem *item) const
 {
     QLineF centerLine(line);
     QPolygonF polygon = item->polygon();
@@ -266,7 +266,7 @@ int CRelationshipItem::findIntersectionSide(const QLineF &line, const CTableItem
     return -1;
 }
 
-QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const CTableItem *item, qreal delta)
+QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const CTableItem *item, qreal delta) const
 {
     QPolygonF polygon;
     QPointF p1, p2, p3;
@@ -306,7 +306,7 @@ QPolygonF CRelationshipItem::createManyPolygon(const QLineF &line, const CTableI
     return polygon;
 }
 
-QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const CTableItem *item, qreal delta)
+QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const CTableItem *item, qreal delta) const
 {
     QPolygonF polygon;
     QPointF p1, p2, p3, l1, l2;
@@ -354,7 +354,7 @@ QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const CT
     return polygon;
 }
 
-QPointF CRelationshipItem::findMinCenterPoint(const QLineF &line, const CTableItem *item, qreal delta)
+QPointF CRelationshipItem::findMinCenterPoint(const QLineF &line, const CTableItem *item, qreal delta) const
 {
     QPointF centerPoint;
 

@@ -30,6 +30,8 @@ public:
     void setColor(const QColor &color);
     void setSelectedForRelation(bool selectedForRelation);
 
+    QList<CRelationshipItem *> relationships() const;
+
 protected:
     // QGraphicsItem interface
     QRectF boundingRect() const override;

@@ -4,7 +4,7 @@
 #include "ui_changetabledialog.h"
 #include <QStringListModel>
 
-ChangeTableDialog::ChangeTableDialog(QList<CTable *> tableList, CRelationship *relationship, bool start, QWidget *parent) :
+ChangeTableDialog::ChangeTableDialog(const QList<CTable *> &tableList, CRelationship *relationship, bool start, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ChangeTableDialog),
     _model(new QStringListModel(this)),
@@ -15,17 +15,15 @@ ChangeTableDialog::ChangeTableDialog(QList<CTable *> tableList, CRelationship *r
     ui->setupUi(this);
 
     QString selectName = "";
-    int selectId, excludeId;
+    int excludeId;
     if(start)
     {
         selectName = _relationship->startTable()->name();
-        selectId = _relationship->startTable()->id();
         excludeId = _relationship->endTable()->id();
     }
     else
     {
         selectName = _relationship->endTable()->name();
-        selectId = _relationship->endTable()->id();
         excludeId = _relationship->startTable()->id();
     }
 
