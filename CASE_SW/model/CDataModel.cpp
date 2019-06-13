@@ -113,22 +113,15 @@ CRelationship *CDataModel::addRelationship(const QString &startName, const QStri
 
 void CDataModel::removeObjects(const QList<CObject *> &objects)
 {
-    // Cycle counter gets reset after removing an object
-    // since when table is removed, all relationships to it are removed in cascade
-    // leading to pointer to deleted object appearing in the list
     _objectsToRemove = objects;
-    for(int i = 0; i < _objectsToRemove.size(); i++)
-    {
-        if(CRelationship::Type == _objectsToRemove[i]->type())
-        {
-            removeRelationship(_objectsToRemove[i]->name());
-            i = 0;
+    foreach (CObject *object, _objectsToRemove) {
+        if(object->type() == CRelationship::Type){
+            removeRelationship(object->name());
             continue;
         }
-        if(CTable::Type == _objectsToRemove[i]->type())
+        if(object->type() == CTable::Type)
         {
-            removeTable(_objectsToRemove[i]->name());
-            i = 0;
+            removeTable(object->name());
             continue;
         }
     }
@@ -292,25 +285,12 @@ QMap<QString, CRelationship *> CDataModel::relationships() const
 
 void CDataModel::removeTable(const QString &name)
 {
-    int index = _objectsToRemove.indexOf(_tables.value(name));
-    if(index != -1)
-        _objectsToRemove.removeAt(index);
-
-    CTable *table = _tables.value(name);
-    foreach (CRelationship *relationship, table->relationships()) {
-        removeRelationship(relationship->name());
-    }
     delete _tables.value(name);
     _tables.remove(name);
 }
 
 void CDataModel::removeRelationship(const QString &name)
 {
-    int index = _objectsToRemove.indexOf(_relationships.value(name));
-    if(index != -1)
-        _objectsToRemove.removeAt(index);
-
     delete _relationships.value(name);
     _relationships.remove(name);
-    emit relationshipRemoved(name);
 }

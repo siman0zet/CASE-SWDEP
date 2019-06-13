@@ -50,7 +50,6 @@ public:
 
 public slots:
     void changeSize(int w, int h);
-    void removeRelationship(const QString &name);
     void changeTable(const QString &relationshipName, const QString &tableName, bool start);
 
 protected:

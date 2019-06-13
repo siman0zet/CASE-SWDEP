@@ -41,7 +41,6 @@ CModelView::CModelView(const QString &name, const QString &path, QWidget *parent
     QBrush brush (Qt::white, Qt::SolidPattern);
     _scene->setBackgroundBrush(brush);
 
-    connect(_dataModel, SIGNAL(relationshipRemoved(int)), this, SLOT(removeRelationship(int)));
     connect(_dataModel, SIGNAL(tableNameChanged(QString,QString)), this, SLOT(changeTableName(QString,QString)));
 }
 
@@ -130,19 +129,50 @@ void CModelView::removeItem(const QPoint &pos)
 
 void CModelView::removeItems(QList<QGraphicsItem *> items)
 {
-    QList<CObject *> objects;
+    // Sort objects so that any relationship that needs to be deleted (cascade included)
+    // is deleted before any table
+    QList<CObjectItem *> sortList;
     foreach (QGraphicsItem *item, items) {
-        CObjectItem *objectItem = (CObjectItem *)item;
+        CObjectItem *object = (CObjectItem *)item;
+        if(CTableItem::Type == object->type())
+        {
+            foreach (CRelationshipItem *relationship, _tables.value(object->name())->relationships()) {
+                int index = sortList.indexOf(relationship);
+                if(index != -1)
+                    sortList.removeAt(index);
+                sortList.push_front(relationship);
+            }
+            sortList.push_back(object);
+            continue;
+        }
+        if(CRelationshipItem::Type == object->type())
+        {
+            int index = sortList.indexOf(object);
+            if(index != -1)
+                sortList.removeAt(index);
+            sortList.push_front(object);
+            continue;
+        }
+    }
+    QList<CObject *> objects;
+    foreach (CObjectItem *objectItem, sortList) {
         switch (objectItem->type()) {
-        case CTableItem::Type:
-            _tables.remove(objectItem->name());
-            break;
         case CRelationshipItem::Type:
+            _relationships.value(objectItem->name())->startItem()->removeRelationship((CRelationshipItem *)objectItem);
+            _relationships.value(objectItem->name())->endItem()->removeRelationship((CRelationshipItem *)objectItem);
             _relationships.remove(objectItem->name());
+            break;
+        case CTableItem::Type:
+            foreach (CRelationshipItem *relationshipItem, _tables.value(objectItem->name())->relationships()) {
+                _relationships.remove(relationshipItem->name());
+                _scene->removeItem(relationshipItem);
+            }
+            _tables.value(objectItem->name())->removeRelationships();
+            _tables.remove(objectItem->name());
             break;
         }
         objects.append(objectItem->object());
-        _scene->removeItem(item);
+        _scene->removeItem(objectItem);
     }
     _dataModel->removeObjects(objects);
     returnToPointer();
@@ -184,20 +214,6 @@ void CModelView::changeSize(int w, int h)
     _height = h;
     this->setFixedSize(_width + 2 * this->frameWidth(), _height + 2 * this->frameWidth());
     this->setSceneRect(0, 0, _width, _height);
-}
-
-void CModelView::removeRelationship(const QString &name)
-{
-    foreach (CTableItem *tableItem, _tables.values()) {
-        tableItem->removeRelationship(_relationships.value(name));
-    }
-    // if relationship was already deleted in cascade
-    if(_relationships.value(name) != 0)
-    {
-        _scene->removeItem(_relationships.value(name));
-        delete _relationships.value(name);
-        _relationships.remove(name);
-    }
 }
 
 void CModelView::changeTable(const QString &relationshipName, const QString &tableName, bool start)

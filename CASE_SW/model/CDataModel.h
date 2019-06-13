@@ -55,7 +55,6 @@ private:
     void removeRelationship(const QString &name);
 
 signals:
-    void relationshipRemoved(const QString &name);
     void tableNameChanged(const QString &oldName, const QString &newName);
 };
 
