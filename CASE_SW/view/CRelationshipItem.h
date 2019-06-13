@@ -56,8 +56,8 @@ private:
     int findIntersectionSide(const QLineF &line, const CTableItem *item) const;
     QPolygonF createManyPolygon(const QLineF &line, const CTableItem *item, qreal delta = 6) const;
     QPolygonF createAggregatePolygon(const QLineF &line, const CTableItem *item, qreal delta = 6) const;
+    QPolygonF createArrowPolygon(const QLineF &line, const CTableItem *item, qreal delta = 6) const;
     QPointF findMinCenterPoint(const QLineF &line, const CTableItem *item, qreal delta = 6) const;
-//    QPolygonF createPhysicalPolygon(const QLineF &line, const CTableItem *item);
 };
 
 #endif // CRELATIONSHIPITEM_H

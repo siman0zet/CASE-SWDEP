@@ -1,8 +1,8 @@
 #include "CRelationship.h"
 #include "CTable.h"
 
-CRelationship::CRelationship(int id, CTable *startTable, CTable *endTable) :
-    CObject(id),
+CRelationship::CRelationship(CTable *startTable, CTable *endTable) :
+    CObject(QString("%1_%2").arg(startTable->name()).arg(endTable->name())),
     _startTable(startTable),
     _endTable(endTable),
     _startType(ONE),

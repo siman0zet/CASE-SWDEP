@@ -1,15 +1,9 @@
 #include "CObject.h"
 
-CObject::CObject(int id) :
-    _id(id),
-    _name("")
+CObject::CObject(const QString &name) :
+    _name(name)
 {
     
-}
-
-int CObject::id() const
-{
-    return _id;
 }
 
 int CObject::type() const

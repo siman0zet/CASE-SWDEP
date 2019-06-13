@@ -109,6 +109,9 @@ void CRelationshipItem::updatePolygons()
     case CRelationship::AGGREGATE:
         _startMaxPolygon = createAggregatePolygon(_line, _startItem, delta);
         break;
+    case CRelationship::ARROW:
+        _startMaxPolygon = createArrowPolygon(_line, _startItem, delta);
+        break;
     default:
         break;
     }
@@ -118,6 +121,9 @@ void CRelationshipItem::updatePolygons()
         break;
     case CRelationship::AGGREGATE:
         _endMaxPolygon = createAggregatePolygon(_line, _endItem, delta);
+        break;
+    case CRelationship::ARROW:
+        _endMaxPolygon = createArrowPolygon(_line, _endItem, delta);
         break;
     default:
         break;
@@ -195,29 +201,33 @@ void CRelationshipItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->drawPolygon(_startMaxPolygon);
     painter->drawPolygon(_endMaxPolygon);
 
-    qreal d = 3;
-    painter->setBrush(Qt::white);
-    if(_relationship->startMandatory())
+    if(_relationship->startType() != CRelationship::ARROW &&
+       _relationship->endType() != CRelationship::ARROW)
     {
-        painter->drawLine(QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() - d),
-                          QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() + d));
-        painter->drawLine(QPointF(_startMinCenterPoint.x() - d, _startMinCenterPoint.y()),
-                          QPointF(_startMinCenterPoint.x() + d, _startMinCenterPoint.y()));
-    }
-    else
-    {
-        painter->drawEllipse(_startMinCenterPoint, d, d);
-    }
-    if(_relationship->endMandatory())
-    {
-        painter->drawLine(QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() - d),
-                          QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() + d));
-        painter->drawLine(QPointF(_endMinCenterPoint.x() - d, _endMinCenterPoint.y()),
-                          QPointF(_endMinCenterPoint.x() + d, _endMinCenterPoint.y()));
-    }
-    else
-    {
-        painter->drawEllipse(_endMinCenterPoint, d, d);
+        qreal d = 3;
+        painter->setBrush(Qt::white);
+        if(_relationship->startMandatory())
+        {
+            painter->drawLine(QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() - d),
+                              QPointF(_startMinCenterPoint.x(), _startMinCenterPoint.y() + d));
+            painter->drawLine(QPointF(_startMinCenterPoint.x() - d, _startMinCenterPoint.y()),
+                              QPointF(_startMinCenterPoint.x() + d, _startMinCenterPoint.y()));
+        }
+        else
+        {
+            painter->drawEllipse(_startMinCenterPoint, d, d);
+        }
+        if(_relationship->endMandatory())
+        {
+            painter->drawLine(QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() - d),
+                              QPointF(_endMinCenterPoint.x(), _endMinCenterPoint.y() + d));
+            painter->drawLine(QPointF(_endMinCenterPoint.x() - d, _endMinCenterPoint.y()),
+                              QPointF(_endMinCenterPoint.x() + d, _endMinCenterPoint.y()));
+        }
+        else
+        {
+            painter->drawEllipse(_endMinCenterPoint, d, d);
+        }
     }
 }
 
@@ -351,6 +361,46 @@ QPolygonF CRelationshipItem::createAggregatePolygon(const QLineF &line, const CT
         break;
     }
     polygon << p2 << p3 << p1 << p2 << l1 << l2 << p3;
+    return polygon;
+}
+
+QPolygonF CRelationshipItem::createArrowPolygon(const QLineF &line, const CTableItem *item, qreal delta) const
+{
+    QPolygonF polygon;
+    QPointF p1, p2, p3;
+
+    QPointF intersectionPoint = findIntersectionPoint(line, item);
+    int intersectionSide = findIntersectionSide(line, item);
+
+    switch (intersectionSide) {
+    case 1:
+        //top
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() - 3 * delta);
+        p3 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() - 3 * delta);
+        break;
+    case 2:
+        //right
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() + 3 * delta, intersectionPoint.y() - delta);
+        p3 = QPointF(intersectionPoint.x() + 3 * delta, intersectionPoint.y() + delta);
+        break;
+    case 3:
+        //bot
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() - delta, intersectionPoint.y() + 3 * delta);
+        p3 = QPointF(intersectionPoint.x() + delta, intersectionPoint.y() + 3 * delta);
+        break;
+    case 4:
+        //left
+        p1 = QPointF(intersectionPoint.x(), intersectionPoint.y());
+        p2 = QPointF(intersectionPoint.x() - 3 * delta, intersectionPoint.y() - delta);
+        p3 = QPointF(intersectionPoint.x() - 3 * delta, intersectionPoint.y() + delta);
+        break;
+    default:
+        break;
+    }
+    polygon << p2 << p1 << p3 << p1 << p2;
     return polygon;
 }
 

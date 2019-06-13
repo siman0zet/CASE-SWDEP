@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "PModelWindow.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -72,7 +73,7 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
-    QString modelPath = _workspaceModels.value(modelName)->getPath();
+    QString modelPath = _workspaceModels.value(modelName)->path();
 
     // can't save model if no path specified
     if(modelPath.isEmpty())
@@ -128,7 +129,7 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     closeTab(index);
 }
 
-void MainWindow::activateEditAction(CModelView::cursorToolType type)
+void MainWindow::activateEditAction(const CModelView::cursorToolType &type)
 {
     deactivateEditActions();
     _editActions.value(type)->setChecked(true);
@@ -139,22 +140,18 @@ void MainWindow::closeEvent(QCloseEvent *)
     on_actionQuit_triggered();
 }
 
-bool MainWindow::addModelTab(QString modelName, QString modelPath)
+bool MainWindow::addModelTab(const QString &modelName, const QString &modelPath)
 {
-    CModelView *modelView = new CModelView(this);
+    CModelView *modelView = new CModelView(modelName, modelPath, this);
 //    if(!modelPath.isEmpty())
 //        modelView->loadFromFile(modelPath); // add return statement to load
-    modelView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QScrollArea* scroll = new QScrollArea();
     scroll->setWidgetResizable(true);
     scroll->setWidget(modelView);
     modelView->changeSize(1280, 720);
 
-    QSharedPointer<ModelInfo> model =
-            QSharedPointer<ModelInfo>(new ModelInfo(modelName, modelPath, modelView));
-
-    _workspaceModels.insert(modelName, model);
+    _workspaceModels.insert(modelName, modelView);
 
     ui->tabWidget->addTab(scroll, modelName);
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
@@ -190,47 +187,11 @@ void MainWindow::deactivateEditActions()
         _editActions.value((CModelView::cursorToolType)i)->setChecked(false);
 }
 
-MainWindow::ModelInfo::ModelInfo(QString name, QString path, CModelView *widget)
+void MainWindow::showModelPWindow(CModelView *model) const
 {
-    setName(name);
-    setPath(path);
-    setView(widget);
-}
-
-MainWindow::ModelInfo::~ModelInfo()
-{
-    if(view != NULL)
-        delete view;
-}
-
-void MainWindow::ModelInfo::setName(QString name)
-{
-    this->name = name;
-}
-
-void MainWindow::ModelInfo::setPath(QString path)
-{
-    this->path = path;
-}
-
-void MainWindow::ModelInfo::setView(CModelView *widget)
-{
-    this->view = widget;
-}
-
-QString MainWindow::ModelInfo::getName()
-{
-    return name;
-}
-
-QString MainWindow::ModelInfo::getPath()
-{
-    return path;
-}
-
-CModelView *MainWindow::ModelInfo::getView()
-{
-    return view;
+        PModelWindow *pWindow = new PModelWindow(model);
+        model->setPModelWindow(pWindow);
+        pWindow->show();
 }
 
 void MainWindow::on_actionPointer_triggered()
@@ -238,7 +199,7 @@ void MainWindow::on_actionPointer_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::POINTER);
+    _workspaceModels.value(modelName)->activateTool(CModelView::POINTER);
 }
 
 void MainWindow::on_actionCreate_Table_triggered()
@@ -246,7 +207,7 @@ void MainWindow::on_actionCreate_Table_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::CREATE);
+    _workspaceModels.value(modelName)->activateTool(CModelView::CREATE);
 }
 
 void MainWindow::on_actionDelete_triggered()
@@ -254,7 +215,7 @@ void MainWindow::on_actionDelete_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::DELETE);
+    _workspaceModels.value(modelName)->activateTool(CModelView::DELETE);
 }
 
 void MainWindow::on_actionOne_One_triggered()
@@ -262,7 +223,7 @@ void MainWindow::on_actionOne_One_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::ONE_ONE);
+    _workspaceModels.value(modelName)->activateTool(CModelView::ONE_ONE);
 }
 
 void MainWindow::on_actionOne_Many_triggered()
@@ -270,7 +231,7 @@ void MainWindow::on_actionOne_Many_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::ONE_MANY);
+    _workspaceModels.value(modelName)->activateTool(CModelView::ONE_MANY);
 }
 
 void MainWindow::on_actionMany_Many_triggered()
@@ -278,7 +239,7 @@ void MainWindow::on_actionMany_Many_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::MANY_MANY);
+    _workspaceModels.value(modelName)->activateTool(CModelView::MANY_MANY);
 }
 
 void MainWindow::on_actionAggregate_triggered()
@@ -286,7 +247,7 @@ void MainWindow::on_actionAggregate_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->activateTool(CModelView::AGGREGATE);
+    _workspaceModels.value(modelName)->activateTool(CModelView::AGGREGATE);
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -301,6 +262,7 @@ void MainWindow::on_actionTo_PDM_triggered()
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
 
+    showModelPWindow(_workspaceModels.value(modelName));
 }
 
 void MainWindow::on_actionScript_triggered()
@@ -315,5 +277,5 @@ void MainWindow::on_actionChange_Size_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
-    _workspaceModels.value(modelName)->getView()->showResizeDialog();
+    _workspaceModels.value(modelName)->showResizeDialog();
 }

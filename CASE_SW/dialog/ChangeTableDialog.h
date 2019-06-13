@@ -32,7 +32,7 @@ private slots:
     void collectData();
 
 signals:
-    void dialogFinished(int relationshipId, int tableId, bool start);
+    void dialogFinished(const QString &relationshipName, const QString &tableName, bool start);
 };
 
 #endif // CHANGETABLEDIALOG_H

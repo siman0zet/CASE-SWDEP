@@ -9,19 +9,21 @@ class CRow;
 class CForeignRow
 {
 public:
-    CForeignRow();
+    CForeignRow(CRow *row, const QString &tableName);
 
     QString name() const;
-    void setName(const QString &name);
+    QString typeAsString() const;
     CRow *row() const;
     void setRow(CRow *row);
-    int tableId() const;
-    void setTableId(int tableId);
+    QString tableName() const;
+    void setTableName(const QString &tableName);
+    bool primaryKey() const;
+    void setPrimaryKey(bool primaryKey);
 
 private:
-    QString _name;
     CRow *_row;
-    int _tableId;
+    QString _tableName;
+    bool _primaryKey;
 };
 
 #endif // CFOREIGNROW_H

@@ -21,14 +21,6 @@ int CObjectItem::type() const
     return Type;
 }
 
-int CObjectItem::id()
-{
-    if(_object != 0)
-        return _object->id();
-    else
-        return -1;
-}
-
 QString CObjectItem::name()
 {
     if(_object != 0)

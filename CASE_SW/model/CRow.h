@@ -20,6 +20,7 @@ public:
     };
 
     explicit CRow(const QString &name);
+    explicit CRow(const CRow *row);
 
     QString name() const;
     void setName(const QString &name);

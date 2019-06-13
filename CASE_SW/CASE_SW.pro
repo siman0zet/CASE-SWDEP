@@ -34,7 +34,9 @@ SOURCES += \
     editor/CTableEditor.cpp \
     dialog/ChangeTableDialog.cpp \
     dialog/CUniqueGroupDialog.cpp \
-    dialog/ResizeDialog.cpp
+    dialog/ResizeDialog.cpp \
+    main/PModelWindow.cpp \
+    view/PModelView.cpp
 
 HEADERS  += \
     main/MainWindow.h \
@@ -53,7 +55,9 @@ HEADERS  += \
     editor/CTableEditor.h \
     dialog/ChangeTableDialog.h \
     dialog/CUniqueGroupDialog.h \
-    dialog/ResizeDialog.h
+    dialog/ResizeDialog.h \
+    main/PModelWindow.h \
+    view/PModelView.h
 
 FORMS    += \
     main/MainWindow.ui \
@@ -61,7 +65,8 @@ FORMS    += \
     editor/CTableEditor.ui \
     dialog/ChangeTableDialog.ui \
     dialog/CUniqueGroupDialog.ui \
-    dialog/ResizeDialog.ui
+    dialog/ResizeDialog.ui \
+    main/PModelWindow.ui
 
 RESOURCES += \
     images.qrc

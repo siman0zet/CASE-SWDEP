@@ -106,28 +106,28 @@ void CRelationshipEditor::on_endTableMandatory_toggled(bool checked)
 
 void CRelationshipEditor::on_flipTables_clicked()
 {
-    _modelView->flipTables(_relationship->id());
+    _modelView->flipTables(_relationship->name());
     synchronizeData();
 }
 
 void CRelationshipEditor::on_startTableChange_clicked()
 {
-    _modelView->showChangeTableDialog(_relationship->id(), true);
+    _modelView->showChangeTableDialog(_relationship->name(), true);
     synchronizeData();
 }
 
 void CRelationshipEditor::on_endTableChange_clicked()
 {
-    _modelView->showChangeTableDialog(_relationship->id(), false);
+    _modelView->showChangeTableDialog(_relationship->name(), false);
     synchronizeData();
 }
 
 void CRelationshipEditor::on_startTableEdit_clicked()
 {
-    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->startTable()->id()));
+    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->startTable()->name()));
 }
 
 void CRelationshipEditor::on_endTableEdit_clicked()
 {
-    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->endTable()->id()));
+    _modelView->showObjectEditor((CObjectItem *)_modelView->tableItem(_relationship->endTable()->name()));
 }

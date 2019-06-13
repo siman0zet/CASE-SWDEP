@@ -24,7 +24,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void activateEditAction(CModelView::cursorToolType type);
+    void activateEditAction(const CModelView::cursorToolType &type);
 
 protected:
     void closeEvent(QCloseEvent *) override;
@@ -47,32 +47,13 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     void on_actionTo_PDM_triggered();
     void on_actionScript_triggered();
-
     void on_actionChange_Size_triggered();
 
 private:
     Ui::MainWindow *ui;
 
-    class ModelInfo
-    {
-    private:
-        QString     name;
-        QString     path;
-        CModelView *view;
-
-    public:
-        ModelInfo(QString name = "", QString path = "", CModelView* view = NULL);
-        ~ModelInfo();
-        void        setName(QString name);
-        void        setPath(QString path);
-        void        setView(CModelView *view);
-        QString     getName();
-        QString     getPath();
-        CModelView *getView();
-    };
-
     //! \brief Track down models/files currently open in application workspace.
-    QMap<QString, QSharedPointer<ModelInfo>> _workspaceModels;
+    QMap<QString, CModelView *> _workspaceModels;
 
     QMap<CModelView::cursorToolType, QSharedPointer<QAction>> _editActions;
 
@@ -80,9 +61,10 @@ private:
     //! Value increases only when new model is created.
     uint _countCreatedModels;
 
-    bool addModelTab(QString modelName, QString modelPath);
+    bool addModelTab(const QString &modelName, const QString &modelPath);
     void closeTab(int index);
     void deactivateEditActions();
+    void showModelPWindow(CModelView *model) const;
 };
 
 #endif // MAINWINDOW_H

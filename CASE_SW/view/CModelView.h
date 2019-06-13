@@ -31,11 +31,11 @@ public:
 
     void activateTool(const cursorToolType &type);
     void showResizeDialog();
-    void showChangeTableDialog(int relationshipId, bool end) const;
+    void showChangeTableDialog(const QString &relationshipName, bool end) const;
     void showObjectEditor(CObjectItem *objectItem);
-    void flipTables(int relationshipId);
+    void flipTables(const QString &relationshipName);
 
-    CTableItem *tableItem(int id) const;
+    CTableItem *tableItem(const QString &name) const;
     CDataModel *dataModel() const;
 
     QString name() const;
@@ -45,15 +45,13 @@ public:
     QMainWindow *pModelWindow() const;
     void setPModelWindow(QMainWindow *pModelWindow);
 
-    QList<CTableItem *> tables() const;
-    QList<CRelationshipItem *> relationships() const;
-
-    QGraphicsScene *scene() const;
+    QMap<QString, CTableItem *> tables() const;
+    QMap<QString, CRelationshipItem *> relationships() const;
 
 public slots:
     void changeSize(int w, int h);
-    void removeRelationship(int id);
-    void changeTable(int relationshipId, int tableId, bool start);
+    void removeRelationship(const QString &name);
+    void changeTable(const QString &relationshipName, const QString &tableName, bool start);
 
 protected:
     // QWidget interface
@@ -75,12 +73,12 @@ private:
     int   _height;    
 
     QMap<cursorToolType, bool> _tools;
-    QMap<int, CTableItem *> _tables;
-    QMap<int, CRelationshipItem *> _relationships;
-    QList<int> _tablesToRelate;
+    QMap<QString, CTableItem *> _tables;
+    QMap<QString, CRelationshipItem *> _relationships;
+    QList<QString> _tablesToRelate;
 
     void addTable(const QPoint &pos);
-    void addRelationship(int startId, int endId);
+    void addRelationship(const QString &startName, const QString &endName);
     void removeItem(const QPoint &pos);
     void removeItems(QList<QGraphicsItem *> items);
     void deactivateTools();
@@ -93,6 +91,7 @@ private slots:
     void addRelationship();
     void removeItems();
     void showObjectEditor();
+    void changeTableName(const QString &oldName, const QString &newName);
 
 };
 

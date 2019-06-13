@@ -4,10 +4,20 @@
 #include "CRelationship.h"
 #include "CUniqueGroup.h"
 
-CTable::CTable(int id) :
-    CObject(id)
+CTable::CTable(const QString &name) :
+    CObject(name)
 {
-    this->setName(QString("Table_%1").arg(id));
+}
+
+CTable::CTable(const CTable *table) :
+    CObject(table->name())
+{
+    foreach (const CRow *row, table->rows()) {
+        _rows.append(new CRow(row));
+    }
+    foreach (const CUniqueGroup *uGroup, table->uniqueGroups()) {
+        _uniqueGroups.append(new CUniqueGroup(uGroup));
+    }
 }
 
 CTable::~CTable()
@@ -57,23 +67,44 @@ void CTable::addRow(CRow *row)
 
 void CTable::removeRow(int index)
 {
-    _rows.removeAt(index);
+    if(index >= 0 && index < _rows.size())
+        _rows.removeAt(index);
 }
 
 CRow *CTable::row(int index)
 {
-    return _rows.at(index);
+    if(index >= 0 && index < _rows.size())
+        return _rows.at(index);
+    else
+        return NULL;
 }
 
-QString CTable::changeRowName(int index, const QString &name)
+QString CTable::changeRowName(int index, const QString &newName)
 {
-    foreach(CRow *row, _rows)
+    if(index >= 0 && index < _rows.size())
     {
-        if(row->name() == name)
-            return _rows.at(index)->name();
+        foreach (const CRow *row, _rows) {
+            if(row->name() == newName)
+                return _rows.at(index)->name();
+        }
+        _rows.at(index)->setName(newName);
+        return newName;
     }
-    _rows.at(index)->setName(name);
-    return name;
+    else
+        return "";
+}
+
+void CTable::addForeignRow(CForeignRow *fRow)
+{
+    _foreingRows.append(fRow);
+}
+
+CForeignRow *CTable::foreignRow(int index)
+{
+    if(index >= 0 && index < _foreingRows.size())
+        return _foreingRows.at(index);
+    else
+        return NULL;
 }
 
 int CTable::rowCount() const
@@ -101,6 +132,16 @@ QList<CRow *> CTable::rows() const
     return _rows;
 }
 
+QList<CRow *> CTable::primaryKey() const
+{
+    QList<CRow *> pkList;
+    foreach (CRow *row, _rows) {
+        if(row->primaryKey())
+            pkList.append(row);
+    }
+    return pkList;
+}
+
 QList<CUniqueGroup *> CTable::uniqueGroups() const
 {
     return _uniqueGroups;
@@ -110,4 +151,3 @@ void CTable::setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups)
 {
     _uniqueGroups = uniqueGroups;
 }
-

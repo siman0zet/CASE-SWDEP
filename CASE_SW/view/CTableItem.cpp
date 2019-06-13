@@ -2,6 +2,7 @@
 #include "CRelationshipItem.h"
 #include "../model/CTable.h"
 #include "../model/CRow.h"
+#include "../model/CForeignRow.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -103,7 +104,8 @@ void CTableItem::setColor(const QColor &color)
 
 void CTableItem::setSelectedForRelation(bool selectedForRelation)
 {
-    _selectedForRelation = selectedForRelation;
+    if(this != 0)
+        _selectedForRelation = selectedForRelation;
 }
 
 QRectF CTableItem::boundingRect() const
@@ -196,7 +198,14 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
     for(int i = 0; i < _table->foreignRowCount(); i++)
     {
-        painter->drawText(QRect(2, textHeight, _width + 2, 20), QString("[ ] frow %1 INT").arg(i));
+        QString constraint = "";
+        if(_table->foreignRow(i)->primaryKey())
+            constraint = "PK";
+        painter->drawText(QRect(2, textHeight, _width + 2, 20),
+                          QString("[%1] %2 %3")
+                          .arg(constraint)
+                          .arg(_table->foreignRow(i)->name())
+                          .arg(_table->foreignRow(i)->typeAsString()));
         textHeight += 20;
     }
 }

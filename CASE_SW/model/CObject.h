@@ -6,16 +6,14 @@
 class CObject
 {
 protected:
-    int _id;
     QString _name;
     static const int USER_TYPE = 65536;
 
 public:
     enum { Type = USER_TYPE};
 
-    explicit CObject(int id);
+    explicit CObject(const QString &name);
     virtual ~CObject() {}
-    int id() const;
     virtual int type() const;
     QString name() const;
     void setName(const QString &name);

@@ -204,6 +204,6 @@ void CTableEditor::on_pushUniques_clicked()
 void CTableEditor::on_lineTableName_editingFinished()
 {
     QString name = ui->lineTableName->text();
-    ui->lineTableName->setText(_dataModel->changeTabelName(_table->id(), name));
+    ui->lineTableName->setText(_dataModel->changeTabelName(_table->name(), name));
     emit dataChanged();
 }

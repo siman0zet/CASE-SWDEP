@@ -1,18 +1,21 @@
 #include "CForeignRow.h"
+#include "CRow.h"
 
-CForeignRow::CForeignRow()
+CForeignRow::CForeignRow(CRow *row, const QString &tableName) :
+    _row(row),
+    _tableName(tableName),
+    _primaryKey(false)
 {
-
 }
 
 QString CForeignRow::name() const
 {
-    return _name;
+    return QString("%1_%2").arg(_tableName).arg(_row->name());
 }
 
-void CForeignRow::setName(const QString &name)
+QString CForeignRow::typeAsString() const
 {
-    _name = name;
+    return _row->typeAsString();
 }
 
 CRow *CForeignRow::row() const
@@ -25,12 +28,22 @@ void CForeignRow::setRow(CRow *row)
     _row = row;
 }
 
-int CForeignRow::tableId() const
+QString CForeignRow::tableName() const
 {
-    return _tableId;
+    return _tableName;
 }
 
-void CForeignRow::setTableId(int tableId)
+void CForeignRow::setTableName(const QString &tableName)
 {
-    _tableId = tableId;
+    _tableName = tableName;
+}
+
+bool CForeignRow::primaryKey() const
+{
+    return _primaryKey;
+}
+
+void CForeignRow::setPrimaryKey(bool primaryKey)
+{
+    _primaryKey = primaryKey;
 }

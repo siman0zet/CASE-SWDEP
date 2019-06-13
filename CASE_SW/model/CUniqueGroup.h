@@ -8,7 +8,8 @@ class QString;
 class CUniqueGroup
 {
 public:
-    CUniqueGroup(QString name);
+    explicit CUniqueGroup(const QString &name);
+    explicit CUniqueGroup(const CUniqueGroup* uGroup);
 
     QString name() const;
     void setName(const QString &name);

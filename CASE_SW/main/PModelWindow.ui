@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PModelWindow</class>
+ <widget class="QMainWindow" name="PModelWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>670</width>
+    <height>430</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>670</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuModel">
+    <property name="locale">
+     <locale language="English" country="UnitedStates"/>
+    </property>
+    <property name="title">
+     <string>Model</string>
+    </property>
+    <addaction name="actionScript"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_Size"/>
+   </widget>
+   <addaction name="menuModel"/>
+  </widget>
+  <action name="actionScript">
+   <property name="text">
+    <string>Generate SQL CREATE Script...</string>
+   </property>
+  </action>
+  <action name="actionChange_Size">
+   <property name="text">
+    <string>Change Canvas Size...</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

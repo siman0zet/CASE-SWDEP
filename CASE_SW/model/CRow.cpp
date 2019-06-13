@@ -11,6 +11,16 @@ CRow::CRow(const QString &name) :
 
 }
 
+CRow::CRow(const CRow *row) :
+    _name(row->name()),
+    _type(row->type()),
+    _size(row->size()),
+    _primaryKey(row->primaryKey()),
+    _notNull(row->notNull()),
+    _unique(row->unique())
+{
+}
+
 QString CRow::name() const
 {
     return _name;

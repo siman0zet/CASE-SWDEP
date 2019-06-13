@@ -14,10 +14,10 @@ public:
         ONE,
         MANY,
         AGGREGATE,
-        PHYSICAL
+        ARROW
     };
 
-    CRelationship(int id, CTable *startTable, CTable *endTable);
+    CRelationship(CTable *startTable, CTable *endTable);
     ~CRelationship();
 
     int type() const override;

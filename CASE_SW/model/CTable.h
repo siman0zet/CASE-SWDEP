@@ -16,7 +16,8 @@ class CTable : public CObject
 public:
     enum { Type = USER_TYPE + 11 };
 
-    explicit CTable(int id);
+    explicit CTable(const QString &name);
+    explicit CTable(const CTable *table);
     ~CTable();
 
     int type() const override;
@@ -28,9 +29,10 @@ public:
     void addRow(CRow *row);
     void removeRow(int index);
     CRow *row(int index);
-    QString changeRowName(int index, const QString &name);
+    QString changeRowName(int index, const QString &newName);
 
-    void addForeignRow();
+    void addForeignRow(CForeignRow *fRow);
+    CForeignRow *foreignRow(int index);
 
     int rowCount() const;
     int foreignRowCount() const;
@@ -38,6 +40,7 @@ public:
 
     QList<CRelationship *> relationships() const;
     QList<CRow *> rows() const;
+    QList<CRow *> primaryKey() const;
 
     QList<CUniqueGroup *> uniqueGroups() const;
     void setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups);

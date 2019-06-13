@@ -1,10 +1,16 @@
 #include "CUniqueGroup.h"
 #include <QString>
 
-CUniqueGroup::CUniqueGroup(QString name) :
+CUniqueGroup::CUniqueGroup(const QString &name) :
     _name(name)
 {
 
+}
+
+CUniqueGroup::CUniqueGroup(const CUniqueGroup *uGroup) :
+    _name(uGroup->name()),
+    _rows(uGroup->rows())
+{
 }
 
 QString CUniqueGroup::name() const

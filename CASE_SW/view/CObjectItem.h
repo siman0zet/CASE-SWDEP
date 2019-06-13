@@ -15,7 +15,6 @@ public:
 
     int type() const override;
 
-    int id();
     QString name();
     CObject *object() const;
     QWidget *editor() const;

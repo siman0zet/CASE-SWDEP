@@ -42,6 +42,7 @@ CModelView::CModelView(const QString &name, const QString &path, QWidget *parent
     _scene->setBackgroundBrush(brush);
 
     connect(_dataModel, SIGNAL(relationshipRemoved(int)), this, SLOT(removeRelationship(int)));
+    connect(_dataModel, SIGNAL(tableNameChanged(QString,QString)), this, SLOT(changeTableName(QString,QString)));
 }
 
 CModelView::~CModelView()
@@ -61,7 +62,7 @@ void CModelView::addTable(const QPoint &pos)
 {
     CTable *table = _dataModel->addTable();
     CTableItem *tableItem = new CTableItem(table);
-    _tables.insert(table->id(), tableItem);
+    _tables.insert(table->name(), tableItem);
 
     tableItem->setPos(pos);
     _scene->addItem(tableItem);
@@ -69,9 +70,11 @@ void CModelView::addTable(const QPoint &pos)
     returnToPointer();
 }
 
-void CModelView::addRelationship(int startId, int endId)
+void CModelView::addRelationship(const QString &startName, const QString &endName)
 {
-    CRelationship *relationship = _dataModel->addRelationship(startId, endId);
+    if(startName == endName)
+        return;
+    CRelationship *relationship = _dataModel->addRelationship(startName, endName);
     if(relationship != NULL)
     {
         if(_tools.value(ONE_ONE))
@@ -102,14 +105,14 @@ void CModelView::addRelationship(int startId, int endId)
             relationship->setStartMandatory(true);
             relationship->setEndMandatory(true);
         }
-        CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startId),
-                                                                    _tables.value(endId),
+        CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startName),
+                                                                    _tables.value(endName),
                                                                     relationship);
-        _relationships.insert(relationship->id(), relationshipItem);
+        _relationships.insert(relationship->name(), relationshipItem);
         _scene->addItem(relationshipItem);
     }
-    _tables.value(startId)->setSelectedForRelation(false);
-    _tables.value(endId)->setSelectedForRelation(false);
+    _tables.value(startName)->setSelectedForRelation(false);
+    _tables.value(endName)->setSelectedForRelation(false);
     _tablesToRelate.clear();
     returnToPointer();
 }
@@ -132,10 +135,10 @@ void CModelView::removeItems(QList<QGraphicsItem *> items)
         CObjectItem *objectItem = (CObjectItem *)item;
         switch (objectItem->type()) {
         case CTableItem::Type:
-            _tables.remove(objectItem->id());
+            _tables.remove(objectItem->name());
             break;
         case CRelationshipItem::Type:
-            _relationships.remove(objectItem->id());
+            _relationships.remove(objectItem->name());
             break;
         }
         objects.append(objectItem->object());
@@ -152,27 +155,27 @@ void CModelView::showResizeDialog()
     dialog->exec();
 }
 
-void CModelView::showChangeTableDialog(int relationshipId, bool start) const
+void CModelView::showChangeTableDialog(const QString &relationshipName, bool start) const
 {
     ChangeTableDialog *dialog = new ChangeTableDialog(_dataModel->listTables(),
-                                                      (CRelationship *)_relationships.value(relationshipId)->object(),
+                                                      (CRelationship *)_relationships.value(relationshipName)->object(),
                                                       start);
     connect(dialog, SIGNAL(dialogFinished(int,int,bool)), this, SLOT(changeTable(int,int,bool)));
     dialog->exec();
 }
 
-void CModelView::flipTables(int relationshipId)
+void CModelView::flipTables(const QString &relationshipName)
 {
-    _dataModel->flipTables(relationshipId);
+    _dataModel->flipTables(relationshipName);
 
-    CTableItem *startItem = _relationships.value(relationshipId)->startItem();
-    _relationships.value(relationshipId)->setStartItem(_relationships.value(relationshipId)->endItem());
-    _relationships.value(relationshipId)->setEndItem(startItem);
+    CTableItem *startItem = _relationships.value(relationshipName)->startItem();
+    _relationships.value(relationshipName)->setStartItem(_relationships.value(relationshipName)->endItem());
+    _relationships.value(relationshipName)->setEndItem(startItem);
 }
 
-CTableItem *CModelView::tableItem(int id) const
+CTableItem *CModelView::tableItem(const QString &name) const
 {
-    return _tables.value(id);
+    return _tables.value(name);
 }
 
 void CModelView::changeSize(int w, int h)
@@ -183,31 +186,55 @@ void CModelView::changeSize(int w, int h)
     this->setSceneRect(0, 0, _width, _height);
 }
 
-void CModelView::removeRelationship(int id)
+void CModelView::removeRelationship(const QString &name)
 {
     foreach (CTableItem *tableItem, _tables.values()) {
-        tableItem->removeRelationship(_relationships.value(id));
+        tableItem->removeRelationship(_relationships.value(name));
     }
     // if relationship was already deleted in cascade
-    if(_relationships.value(id) != 0)
+    if(_relationships.value(name) != 0)
     {
-        _scene->removeItem(_relationships.value(id));
-        delete _relationships.value(id);
-        _relationships.remove(id);
+        _scene->removeItem(_relationships.value(name));
+        delete _relationships.value(name);
+        _relationships.remove(name);
     }
 }
 
-void CModelView::changeTable(int relationshipId, int tableId, bool start)
+void CModelView::changeTable(const QString &relationshipName, const QString &tableName, bool start)
 {
-    _dataModel->changeRelationshipTable(relationshipId, tableId, start);
+    _dataModel->changeRelationshipTable(relationshipName, tableName, start);
 
     if(start)
     {
-        _relationships.value(relationshipId)->setStartItem(_tables.value(tableId));
+        _relationships.value(relationshipName)->setStartItem(_tables.value(tableName));
     }
     else
     {
-        _relationships.value(relationshipId)->setEndItem(_tables.value(tableId));
+        _relationships.value(relationshipName)->setEndItem(_tables.value(tableName));
+    }
+}
+
+void CModelView::changeTableName(const QString &oldName, const QString &newName)
+{
+    _tables.insert(newName, _tables.value(oldName));
+    _tables.remove(oldName);
+    foreach (CRelationshipItem *relationshipItem, _tables.value(newName)->relationships()) {
+        if(relationshipItem->startItem() == _tables.value(newName))
+        {
+            _relationships.remove(relationshipItem->name());
+            _relationships.insert(QString("%1_%2")
+                                  .arg(newName)
+                                  .arg(relationshipItem->endItem()->name()),
+                                  relationshipItem);
+        }
+        if(relationshipItem->endItem() == _tables.value(newName))
+        {
+            _relationships.remove(relationshipItem->name());
+            _relationships.insert(QString("%1_%2")
+                                  .arg(relationshipItem->startItem()->name())
+                                  .arg(newName),
+                                  relationshipItem);
+        }
     }
 }
 
@@ -318,7 +345,7 @@ void CModelView::mousePressEvent(QMouseEvent *event)
             {
                 if(item->type() == CTableItem::Type)
                 {
-                    _tablesToRelate.append(item->id());
+                    _tablesToRelate.append(item->name());
                     item->setSelectedForRelation(true);
                     return;
                 }
@@ -359,19 +386,14 @@ void CModelView::mouseMoveEvent(QMouseEvent *event)
     QGraphicsView::mouseMoveEvent(event);
 }
 
-QGraphicsScene *CModelView::scene() const
+QMap<QString, CRelationshipItem *> CModelView::relationships() const
 {
-    return _scene;
+    return _relationships;
 }
 
-QList<CRelationshipItem *> CModelView::relationships() const
+QMap<QString, CTableItem *> CModelView::tables() const
 {
-    return _relationships.values();
-}
-
-QList<CTableItem *> CModelView::tables() const
-{
-    return _tables.values();
+    return _tables;
 }
 
 QMainWindow *CModelView::pModelWindow() const
@@ -417,8 +439,8 @@ void CModelView::deactivateTools()
     }
     if(_tablesToRelate.size())
     {
-        foreach (int id, _tablesToRelate) {
-            _tables.value(id)->setSelectedForRelation(false);
+        foreach (const QString &name, _tablesToRelate) {
+            _tables.value(name)->setSelectedForRelation(false);
         }
         _tablesToRelate.clear();
     }
@@ -530,9 +552,7 @@ void CModelView::addRelationship()
     CObjectItem *endItem = (CObjectItem *)_scene->selectedItems().last();
     if(startItem && endItem && startItem != endItem)
     {
-        int startId = startItem->id();
-        int endId = endItem->id();
-        addRelationship(startId, endId);
+        addRelationship(startItem->name(), endItem->name());
     }
 }
 

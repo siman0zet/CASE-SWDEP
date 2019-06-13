@@ -14,22 +14,22 @@ ChangeTableDialog::ChangeTableDialog(const QList<CTable *> &tableList, CRelation
 {
     ui->setupUi(this);
 
-    QString selectName = "";
-    int excludeId;
+    QString selectName;
+    QString excludeName;
     if(start)
     {
         selectName = _relationship->startTable()->name();
-        excludeId = _relationship->endTable()->id();
+        excludeName = _relationship->endTable()->name();
     }
     else
     {
         selectName = _relationship->endTable()->name();
-        excludeId = _relationship->startTable()->id();
+        excludeName = _relationship->startTable()->name();
     }
 
     QStringList list;
     foreach (CTable *table, _tableList) {
-        if(table->id() != excludeId)
+        if(table->name() != excludeName)
             list << table->name();
     }
 
@@ -55,7 +55,7 @@ void ChangeTableDialog::collectData()
     foreach (CTable *table, _tableList) {
         if(table->name() == tableName)
         {
-            emit dialogFinished(_relationship->id(), table->id(), _start);
+            emit dialogFinished(_relationship->name(), table->name(), _start);
             break;
         }
     }
