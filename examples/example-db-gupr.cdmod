@@ -1,40 +1,45 @@
-10
-5
-SPEC 19 21
-2
-id_spec 0 1 1 1 1
-n_spec 2 200 0 0 1
-1
-1
-n_spec 
-QUAL 254 21
-3
-id_qual 0 -1 1 1 1
-n_qual 2 200 0 0 1
-period 0 -1 0 0 0
-1
-1
-n_qual 
-YEAR 388 20
-2
-id_year 0 -1 1 1 1
-yearstart 4 1 0 0 1
-1
-1
-yearstart 
-ELEM 24 254
-2
-id_elem 2 1 1 1 1
-n_elem 2 200 0 0 1
-1
-1
-n_elem 
-GUPR 278 239
-2
-row 0 -1 1 1 1
-column 0 -1 1 1 1
-0
-3
-QUAL SPEC 1 0 0 1
-SPEC GUPR 1 1 0 2
-ELEM GUPR 1 0 0 1
+CASE-SWDEP CDM File: 'New_1.cdmod'
+model 1282 722
+
+table ELEM
+pos 22 284
+size 150 70
+row id_elem CHAR(1) PK
+row n_elem VARCHAR(200) UQ
+
+table GUPR
+pos 268 284
+size 150 70
+row row INTEGER PK
+row column INTEGER PK
+
+table QUAL
+pos 303 25
+size 150 90
+row id_qual INTEGER PK
+row n_qual VARCHAR(200) UQ
+row period INTEGER 
+
+table SPEC
+pos 27 36
+size 150 70
+row id_spec INTEGER PK
+row n_spec VARCHAR(200) UQ
+
+table YEAR
+pos 502 27
+size 150 70
+row id_year INTEGER PK
+row yearStart DATE UQ
+
+relationship ELEm GUPR
+type one-many
+m mandatory optional
+
+relationship QUAL SPEC
+type one-many
+m mandatory optional
+
+relationship SPEC GUPR
+type aggregate
+m mandatory mandatory

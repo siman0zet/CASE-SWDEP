@@ -1,47 +1,66 @@
-15
-8
-person11 20 13
-2
-id_person 0 1 1 1 1
-name_person 2 200 0 0 0
-0
-passport11 243 18
-2
-id_passport 0 1 1 1 1
-num_passport 0 1 0 0 1
-0
-person01 344 18
-2
-id_person 0 1 1 1 1
-name_person 2 200 0 0 0
-0
-passport01 599 19
-2
-id_passport 0 1 1 1 1
-num_passport 0 1 0 0 1
-0
-person00 350 235
-2
-id_person 0 1 1 1 1
-name_person 2 200 0 0 0
-0
-passport00 602 234
-2
-id_passport 0 1 1 1 1
-num_passport 0 1 0 0 1
-0
-person10 20 233
-2
-id_person 0 1 1 1 1
-name_person 2 200 0 0 0
-0
-passport10 243 234
-2
-id_passport 0 1 1 1 1
-num_passport 0 1 0 0 1
-0
-4
-person11 passport11 1 1 0 0
-person01 passport01 0 1 0 0
-person00 passport00 0 0 0 0
-person10 passport10 1 0 0 0
+CASE-SWDEP CDM File: 'New_3.cdmod'
+model 1282 722
+
+table passport00
+pos 338 353
+size 150 70
+row id_passpotr INTEGER PK
+row num_passport INTEGER UQ
+
+table passport01
+pos 339 239
+size 150 70
+row id_passport INTEGER PK
+row num_passport INTEGER UQ
+
+table passport10
+pos 337 140
+size 150 70
+row id_passport INTEGER PK
+row num_passport INTEGER UQ
+
+table passport11
+pos 336 48
+size 150 70
+row id_passport INTEGER PK
+row num_passport INTEGER UQ
+
+table person00
+pos 33 353
+size 150 70
+row id_person INTEGER PK
+row name_person VARCHAR(200) 
+
+table person01
+pos 33 244
+size 150 70
+row id_person INTEGER PK
+row name_person VARCHAR(200) 
+
+table person10
+pos 34 144
+size 150 70
+row id_person INTEGER PK
+row name_person VARCHAR(200) 
+
+table person11
+pos 31 48
+size 150 70
+row id_person INTEGER PK
+row name_person VARCHAR(200) 
+
+relationship person00 passport00
+type one-one
+m optional optional
+
+relationship person01 passport01
+type one-one
+m optional mandatory
+
+relationship person10 passport10
+type one-one
+m mandatory optional
+
+relationship person11 passport11
+type one-one
+m mandatory mandatory

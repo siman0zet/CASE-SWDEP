@@ -431,13 +431,13 @@ QString CModelView::convertToText() const
             .arg(this->width())
             .arg(this->height());
 
-    /*  newtable Table_name
+    /*  table Table_name
      *  pos x y
      *  size w h
      *  data_from_table
      */
     foreach (const CTableItem *tableItem, _tables) {
-        text += QString("\nnewtable %1\n"
+        text += QString("\ntable %1\n"
                         "pos %2 %3\n"
                         "size %4 %5\n")
                 .arg(tableItem->table()->name())

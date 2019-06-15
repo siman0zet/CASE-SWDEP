@@ -1,47 +1,66 @@
-23
-8
-author11 19 13
-2
-id_author 0 1 1 1 1
-name_author 2 200 0 0 1
-0
-book11 243 18
-2
-id_book 0 1 1 1 1
-title_book 2 200 0 0 0
-0
-author01 344 18
-2
-id_author 0 1 1 1 1
-name_author 2 200 0 0 1
-0
-book01 599 19
-2
-id_book 0 1 1 1 1
-title_book 2 200 0 0 0
-0
-author00 350 235
-2
-id_author 0 1 1 1 1
-name_author 2 200 0 0 1
-0
-book00 602 234
-2
-id_book 0 1 1 1 1
-title_book 2 200 0 0 0
-0
-author10 20 233
-2
-id_author 0 1 1 1 1
-name_author 2 200 0 0 1
-0
-book10 243 234
-2
-id_book 0 1 1 1 1
-title_book 2 200 0 0 0
-0
-4
-author11 book11 1 1 0 1
-author01 book01 0 1 0 1
-author00 book00 0 0 0 1
-author10 book10 1 0 0 1
+CASE-SWDEP CDM File: 'New_1.cdmod'
+model 1282 722
+
+table authoe10
+pos 40 120
+size 150 70
+row id_author INTEGER PK
+row name_author VARCHAR(200) UQ
+
+table author00
+pos 31 318
+size 150 70
+row id_author INTEGER PK
+row name_author VARCHAR(200) UQ
+
+table author01
+pos 37 213
+size 150 70
+row id_author INTEGER PK
+row name_author VARCHAR(200) UQ
+
+table author11
+pos 37 22
+size 150 70
+row id_author INTEGER PK
+row name_author VARCHAR(200) UQ
+
+table book00
+pos 351 318
+size 150 70
+row id_book INTEGER PK
+row title_book VARCHAR(200) 
+
+table book01
+pos 345 213
+size 150 70
+row id_book INTEGER PK
+row title_book VARCHAR(200) 
+
+table book10
+pos 344 119
+size 150 70
+row id_book INTEGER PK
+row title_book VARCHAR(200) 
+
+table book11
+pos 343 27
+size 150 70
+row id_book INTEGER PK
+row title_book VARCHAR(200) 
+
+relationship authoe10 book10
+type one-many
+m mandatory optional
+
+relationship author00 book00
+type one-many
+m optional optional
+
+relationship author01 book01
+type one-many
+m optional mandatory
+
+relationship author11 book11
+type one-many
+m mandatory mandatory

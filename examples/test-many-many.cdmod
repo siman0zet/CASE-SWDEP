@@ -1,47 +1,66 @@
-31
-8
-student11 19 13
-2
-id_student 0 1 1 1 1
-name_student 2 200 0 0 0
-0
-group11 243 18
-2
-id_group 0 1 1 1 1
-title_group 2 100 0 0 1
-0
-student01 344 18
-2
-id_student 0 1 1 1 1
-name_student 2 200 0 0 0
-0
-group01 599 19
-2
-id_group 0 1 1 1 1
-title_group 2 100 0 0 1
-0
-student00 350 235
-2
-id_student 0 1 1 1 1
-name_student 2 200 0 0 0
-0
-group00 602 234
-2
-id_group 0 1 1 1 1
-title_group 2 100 0 0 1
-0
-student10 20 233
-2
-id_student 0 1 1 1 1
-name_student 2 200 0 0 0
-0
-group10 243 234
-2
-id_group 0 1 1 1 1
-title_group 2 100 0 0 1
-0
-4
-student11 group11 1 1 1 1
-student01 group01 0 1 1 1
-student00 group00 0 0 1 1
-student10 group10 1 0 1 1
+CASE-SWDEP CDM File: 'New_2.cdmod'
+model 1282 722
+
+table group00
+pos 336 405
+size 150 70
+row id_group INTEGER PK
+row title_group VARCHAR(100) UQ
+
+table group01
+pos 341 285
+size 150 70
+row id_group INTEGER PK
+row title_group VARCHAR(100) UQ
+
+table group10
+pos 337 153
+size 150 70
+row id_group INTEGER PK
+row title_group VARCHAR(100) UQ
+
+table group11
+pos 339 39
+size 150 70
+row id_group INTEGER PK
+row title_group VARCHAR(100) UQ
+
+table student00
+pos 37 407
+size 150 70
+row id_student INTEGER PK
+row name_student VARCHAR(200) 
+
+table student01
+pos 32 279
+size 150 70
+row id_student INTEGER PK
+row name_student VARCHAR(200) 
+
+table student10
+pos 29 156
+size 150 70
+row id_student INTEGER PK
+row name_student VARCHAR(200) 
+
+table student11
+pos 33 35
+size 150 70
+row id_student INTEGER PK
+row name_student VARCHAR(200) 
+
+relationship student00 group00
+type many-many
+m optional optional
+
+relationship student01 group01
+type many-many
+m optional mandatory
+
+relationship student10 group10
+type many-many
+m mandatory optional
+
+relationship student11 group11
+type many-many
+m mandatory mandatory
