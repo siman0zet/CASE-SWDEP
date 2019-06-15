@@ -27,7 +27,7 @@ PModelView::PModelView(CModelView *cModelView, QWidget *parent) :
 
     this->changeSize(cModelView->width(), cModelView->height());
 
-    CDataModel *pModel = CDataModel::convertToPhysical(cModelView->dataModel());
+    CDataModel *pModel = cModelView->dataModel()->convertToPhysical();
     if(pModel != 0)
         populateScene(pModel, cModelView);
 

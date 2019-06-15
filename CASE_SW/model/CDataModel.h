@@ -15,7 +15,7 @@ class CDataModel : public QObject
 public:
     CDataModel();
 
-    static CDataModel *convertToPhysical(CDataModel *conceptual);
+    CDataModel *convertToPhysical();
 
     CTable *addTable();
     void addTable(const CTable *table);

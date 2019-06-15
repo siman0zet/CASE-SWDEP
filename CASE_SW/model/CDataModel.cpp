@@ -9,22 +9,22 @@ CDataModel::CDataModel() :
 {
 }
 
-CDataModel *CDataModel::convertToPhysical(CDataModel *conceptual)
+CDataModel *CDataModel::convertToPhysical()
 {
-    if(conceptual->isPhysical())
-        return conceptual;
+    if(this->isPhysical())
+        return this;
 
     CDataModel *physical = new CDataModel();
     physical->setPhysical(true);
 
-    foreach (const CTable *table, conceptual->tables()) {
+    foreach (const CTable *table, _tables) {
         if(table->relationships().count() == 0)
         {
             physical->addTable(table);
         }
     }
 
-    foreach (const CRelationship *relationship, conceptual->relationships()) {
+    foreach (const CRelationship *relationship, _relationships) {
         if(relationship->startType() == CRelationship::ONE &&
            relationship->endType() == CRelationship::ONE)
         {
