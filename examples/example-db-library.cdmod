@@ -1,0 +1,109 @@
+CASE-SWDEP CDM File: 'New_1.cdmod'
+model 1282 722
+
+table Addresses
+pos 361 24
+size 150 170
+row id INTEGER PK
+row country VARCHAR(100) 
+row city VARCHAR(100) 
+row street VARCHAR(100) 
+row building CHAR(5) 
+row postcode INTEGER 
+row details VARCHAR(1000) 
+
+table Authors
+pos 976 485
+size 150 70
+row id INTEGER PK
+row name VARCHAR(200) 
+
+table Books
+pos 372 269
+size 150 90
+row isbn INTEGER PK
+row title VARCHAR(200) 
+row publication DATE 
+
+table Books_at_Libraries
+pos 669 289
+size 150 50
+row stock INTEGER 
+
+table Books_by_Author
+pos 536 505
+size 150 30
+
+table Books_by_Category
+pos 276 510
+size 150 30
+
+table Categories
+pos 23 489
+size 150 70
+row id INTEGER PK
+row name VARCHAR(100) 
+
+table Libraries
+pos 670 63
+size 150 90
+row id INTEGER PK
+row name VARCHAR(100) 
+row details VARCHAR(1000) 
+
+table Member_Requests
+pos 43 269
+size 150 90
+row id INTEGER PK
+row requested DATE 
+row details VARCHAR(1000) 
+
+table Members
+pos 44 34
+size 150 150
+row id INTEGER PK
+row gender CHAR(1) 
+row name VARCHAR(200) 
+row phone CHAR(16) 
+row email VARCHAR(100) 
+row details VARCHAR(1000) 
+
+relationship Addresses Libraries
+type one-many
+m mandatory optional
+
+relationship Addresses Members
+type one-many
+m mandatory optional
+
+relationship Authors Books_by_Author
+type one-many
+m mandatory optional
+
+relationship Books Books_at_Libraries
+type one-many
+m mandatory optional
+
+relationship Books Books_by_Author
+type one-many
+m mandatory optional
+
+relationship Books Books_by_Category
+type one-many
+m mandatory optional
+
+relationship Books Member_Requests
+type one-many
+m mandatory optional
+
+relationship Categories Books_by_Category
+type one-many
+m mandatory optional
+
+relationship Libraries Books_at_Libraries
+type one-many
+m mandatory optional
+
+relationship Members Member_Requests
+type one-many
+m mandatory optional
