@@ -38,6 +38,61 @@ int CTable::type() const
     return Type;
 }
 
+QString CTable::getDataAsText() const
+{
+    QString text;
+    /*  r Row_name type[(size)] [PK/NN/UQ]
+     *  row ...
+     *  frow Row_name Table_Name [PK]
+     *  frow ...
+     *  ugroup uGroup_name Row_name1/Row_name2/...
+     *  ugroup ...
+     */
+    foreach (const CRow *row, this->rows()) {
+        QString constraint;
+        if(row->primaryKey())
+            constraint += "PK";
+        if(row->notNull())
+        {
+            if(constraint.size() > 0)
+                constraint += "/NN";
+            else
+                constraint += "NN";
+        }
+        if(row->unique())
+        {
+            if(constraint.size() > 0)
+                constraint += "/UQ";
+            else
+                constraint += "UQ";
+        }
+        text += QString("row %1 %2 %3\n")
+                .arg(row->name())
+                .arg(row->typeAsString())
+                .arg(constraint);
+    }
+    foreach (const CForeignRow *fRow, this->foreingRows()) {
+        text += QString("frow %1 %2")
+                .arg(fRow->row()->name())
+                .arg(fRow->tableName());
+        if(fRow->primaryKey())
+            text += " PK";
+        text += "\n";
+    }
+    foreach (const CUniqueGroup *uGroup, this->uniqueGroups()) {
+        QString rows;
+        foreach (QString rowName, uGroup->rows()) {
+            rows += rowName;
+            if(rowName != uGroup->rows().last())
+                rows += "/";
+        }
+        text += QString("ugroup %1 %2\n")
+                .arg(uGroup->name())
+                .arg(rows);
+    }
+    return text;
+}
+
 void CTable::addRelationship(CRelationship *relationship)
 {
     _relationships.append(relationship);
@@ -150,4 +205,9 @@ QList<CUniqueGroup *> CTable::uniqueGroups() const
 void CTable::setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups)
 {
     _uniqueGroups = uniqueGroups;
+}
+
+QList<CForeignRow *> CTable::foreingRows() const
+{
+    return _foreingRows;
 }

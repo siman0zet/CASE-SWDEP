@@ -11,6 +11,11 @@ int CObject::type() const
     return Type;
 }
 
+QString CObject::getDataAsText() const
+{
+    return "";
+}
+
 QString CObject::name() const
 {
     return _name;

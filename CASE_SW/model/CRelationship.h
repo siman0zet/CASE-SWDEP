@@ -21,6 +21,7 @@ public:
     ~CRelationship();
 
     int type() const override;
+    QString getDataAsText() const override;
 
     RELATIONSHIP_TYPE startType() const;
     void setStartType(const RELATIONSHIP_TYPE &startType);
@@ -48,6 +49,7 @@ private:
 
     bool _startMandatory;
     bool _endMandatory;
+
 };
 
 #endif // CRELATIONSHIP_H

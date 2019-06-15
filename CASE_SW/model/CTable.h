@@ -22,6 +22,8 @@ public:
 
     int type() const override;
 
+    QString getDataAsText() const override;
+
     void addRelationship(CRelationship *relationship);
     void removeRelationship(CRelationship *relationship);
     void removeRelationships();
@@ -40,10 +42,13 @@ public:
 
     QList<CRelationship *> relationships() const;
     QList<CRow *> rows() const;
+    QList<CForeignRow *> foreingRows() const;
     QList<CRow *> primaryKey() const;
 
     QList<CUniqueGroup *> uniqueGroups() const;
     void setUniqueGroups(const QList<CUniqueGroup *> &uniqueGroups);
+
+
 
 private:
     QList<CRelationship *> _relationships;

@@ -12,6 +12,7 @@
 
 #include <QMouseEvent>
 #include <QMenu>
+#include <QTextStream>
 
 CModelView::CModelView(const QString &name, const QString &path, QWidget *parent) :
     QGraphicsView(parent),
@@ -49,6 +50,22 @@ CModelView::~CModelView()
     delete _scene;
     delete _dataModel;
     _pModelWindow = NULL;
+}
+
+bool CModelView::saveToFile(const QString &path) const
+{
+    QFile file(path);
+    if(!file.open(QIODevice::WriteOnly))
+    {
+        return false;
+    }
+
+    QTextStream outputStream(&file);
+    QString text = this->convertToText();
+    text.replace("\n", "\r\n");
+    outputStream << text;
+    file.close();
+    return true;
 }
 
 void CModelView::activateTool(const cursorToolType &type)
@@ -400,6 +417,42 @@ void CModelView::mouseDoubleClickEvent(QMouseEvent *event)
 void CModelView::mouseMoveEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseMoveEvent(event);
+}
+
+QString CModelView::convertToText() const
+{
+    QString text;
+    /*# CASE-SWDEP CDM File: 'file_name.file_extension'
+     * model-size w h
+     */
+    text += QString("CASE-SWDEP CDM File: '%1.cdmod'\n"
+                    "model %2 %3\n")
+            .arg(this->name())
+            .arg(this->width())
+            .arg(this->height());
+
+    /*  newtable Table_name
+     *  pos x y
+     *  size w h
+     *  data_from_table
+     */
+    foreach (const CTableItem *tableItem, _tables) {
+        text += QString("\nnewtable %1\n"
+                        "pos %2 %3\n"
+                        "size %4 %5\n")
+                .arg(tableItem->table()->name())
+                .arg(tableItem->pos().x())
+                .arg(tableItem->pos().y())
+                .arg(tableItem->width())
+                .arg(tableItem->height());
+        text += tableItem->object()->getDataAsText();
+    }
+
+
+    foreach (const CRelationshipItem *relationshipItem, _relationships) {
+        text += relationshipItem->object()->getDataAsText();
+    }
+    return text;
 }
 
 QMap<QString, CRelationshipItem *> CModelView::relationships() const

@@ -27,6 +27,46 @@ int CRelationship::type() const
     return Type;
 }
 
+QString CRelationship::getDataAsText() const
+{
+    QString text;
+    /*  newrelationship startTable_name endTable_name
+     *  type type (e.g. one-one one-many many-many aggregate)
+     *  m   start_mandatory end_mandatory (e.g. mandatory optional)
+     */
+    text += QString("\nnewrelationship %1 %2\n")
+            .arg(startTable()->name())
+            .arg(endTable()->name());
+    QString type;
+    if(endType() == AGGREGATE)
+        type += "aggregate";
+    else
+    {
+        switch (startType()) {
+        case ONE:
+            type += "one-";
+            break;
+        case MANY:
+            type += "many-";
+            break;
+        }
+        switch (endType()) {
+        case ONE:
+            type += "one";
+            break;
+        case MANY:
+            type += "many";
+            break;
+        }
+    }
+    text += QString("type %1\n")
+            .arg(type);
+    text += QString("m %1 %2\n")
+            .arg((this->startMandatory()) ? "mandatory" : "optional")
+            .arg((this->endMandatory()) ? "mandatory" : "optional");
+    return text;
+}
+
 CRelationship::RELATIONSHIP_TYPE CRelationship::startType() const
 {
     return _startType;

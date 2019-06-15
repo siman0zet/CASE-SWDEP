@@ -29,6 +29,8 @@ public:
         AGGREGATE
     };
 
+    bool saveToFile(const QString &path) const;
+
     void activateTool(const cursorToolType &type);
     void showResizeDialog();
     void showChangeTableDialog(const QString &relationshipName, bool end) const;
@@ -76,6 +78,7 @@ private:
     QMap<QString, CRelationshipItem *> _relationships;
     QList<QString> _tablesToRelate;
 
+    QString convertToText() const;
     void addTable(const QPoint &pos);
     void addRelationship(const QString &startName, const QString &endName);
     void removeItem(const QPoint &pos);

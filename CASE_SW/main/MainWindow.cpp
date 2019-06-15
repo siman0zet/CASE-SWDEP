@@ -47,7 +47,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
-    QString modelName = "New " + QString::number(++_countCreatedModels);
+    QString modelName = QString("New_%1").arg(QString::number(++_countCreatedModels));
 
     if(!addModelTab(modelName, ""))
         qDebug() << "ERROR: MainWIndow::addModelTab";
@@ -82,8 +82,8 @@ void MainWindow::on_actionSave_triggered()
     }
     else
     {
-//        CViewModel* modelWidget = (CViewModel*)_workspaceModels.value(modelName)->getView();
-//        modelWidget->saveInFile(modelPath);
+        if(!_workspaceModels.value(modelName)->saveToFile(modelPath))
+            return;
     }
 }
 
@@ -104,8 +104,8 @@ void MainWindow::on_actionSave_as_triggered()
 
     QString oldModelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
 
-//    CViewModel* modelWidget = (CViewModel*)_workspaceModels.value(oldModelName)->getView();
-//    modelWidget->saveInFile(newModelPath);
+    if(!_workspaceModels.value(oldModelName)->saveToFile(newModelPath))
+        return;
 
     ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
     addModelTab(newModelName, newModelPath);
