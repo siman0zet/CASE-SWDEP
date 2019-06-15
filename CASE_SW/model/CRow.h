@@ -27,6 +27,7 @@ public:
     DATA_TYPE type() const;
     QString typeAsString() const;
     void setType(const DATA_TYPE &type);
+    void setTypeFromString(QString type);
     int size() const;
     void setSize(int size);
     bool primaryKey() const;

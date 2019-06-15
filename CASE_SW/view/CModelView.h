@@ -10,6 +10,7 @@ class CTableItem;
 class CRelationshipItem;
 class CObjectItem;
 class QMainWindow;
+class QTextStream;
 
 class CModelView : public QGraphicsView
 {
@@ -30,6 +31,7 @@ public:
     };
 
     bool saveToFile(const QString &path) const;
+    bool loadFromFile(const QString &path);
 
     void activateTool(const cursorToolType &type);
     void showResizeDialog();
@@ -78,7 +80,8 @@ private:
     QMap<QString, CRelationshipItem *> _relationships;
     QList<QString> _tablesToRelate;
 
-    QString convertToText() const;
+    QString exportToText() const;
+    void importFromTextStream(QTextStream &input);
     void addTable(const QPoint &pos);
     void addRelationship(const QString &startName, const QString &endName);
     void removeItem(const QPoint &pos);

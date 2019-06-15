@@ -18,6 +18,8 @@ public:
     void addRow(const QString &row);
     void removeRow(const QString &row);
 
+    void setRows(const QList<QString> &rows);
+
 private:
     QString _name;
     QList<QString> _rows;

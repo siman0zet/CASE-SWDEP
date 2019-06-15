@@ -64,10 +64,22 @@ void MainWindow::on_actionOpen_triggered()
     if(filePath.isEmpty())
         return;
 
-    // no need for file extension in model name
-    // because only one extention is possible
     QFileInfo fileInfo(filePath);
-    addModelTab(fileInfo.fileName().split(".")[0], filePath);
+    QString modelName = fileInfo.fileName().split(".").at(0);
+    if(_workspaceModels.contains(modelName))
+    {
+        for(int i = 0; i < ui->tabWidget->count(); i++)
+        {
+            QString tabName = ui->tabWidget->tabText(i);
+            if (modelName == tabName)
+            {
+                ui->tabWidget->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
+    else
+        addModelTab(modelName, filePath);
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -143,8 +155,9 @@ void MainWindow::closeEvent(QCloseEvent *)
 bool MainWindow::addModelTab(const QString &modelName, const QString &modelPath)
 {
     CModelView *modelView = new CModelView(modelName, modelPath, this);
-//    if(!modelPath.isEmpty())
-//        modelView->loadFromFile(modelPath); // add return statement to load
+    if(!modelPath.isEmpty())
+        if(!modelView->loadFromFile(modelPath))
+            return false;
 
     QScrollArea* scroll = new QScrollArea();
     scroll->setWidgetResizable(true);

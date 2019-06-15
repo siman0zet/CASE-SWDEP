@@ -20,7 +20,8 @@ CDataModel *CDataModel::convertToPhysical()
     foreach (const CTable *table, _tables) {
         if(table->relationships().count() == 0)
         {
-            physical->addTable(table);
+            CTable *copyTable = new CTable(table);
+            physical->addTable(copyTable);
         }
     }
 
@@ -88,10 +89,9 @@ CTable *CDataModel::addTable()
     return table;
 }
 
-void CDataModel::addTable(const CTable *table)
+void CDataModel::addTable(CTable *table)
 {
-    CTable *copyTable = new CTable(table);
-    _tables.insert(copyTable->name(), copyTable);
+    _tables.insert(table->name(), table);
 }
 
 CRelationship *CDataModel::addRelationship(const QString &startName, const QString &endName)
@@ -109,6 +109,11 @@ CRelationship *CDataModel::addRelationship(const QString &startName, const QStri
                                                     _tables.value(endName));
     _relationships.insert(relationship->name(), relationship);
     return relationship;
+}
+
+void CDataModel::addRelationship(CRelationship *relationship)
+{
+    _relationships.insert(relationship->name(), relationship);
 }
 
 void CDataModel::removeObjects(const QList<CObject *> &objects)

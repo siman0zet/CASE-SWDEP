@@ -39,3 +39,8 @@ void CUniqueGroup::removeRow(const QString &row)
     if(index != -1)
         _rows.removeAt(index);
 }
+
+void CUniqueGroup::setRows(const QList<QString> &rows)
+{
+    _rows = rows;
+}

@@ -10,6 +10,7 @@ class CRelationship;
 class CRow;
 class CForeignRow;
 class CUniqueGroup;
+class QTextStream;
 
 class CTable : public CObject
 {
@@ -22,7 +23,8 @@ public:
 
     int type() const override;
 
-    QString getDataAsText() const override;
+    QString exportDataToText() const override;
+    void importFromTextStream(QTextStream &input) override;
 
     void addRelationship(CRelationship *relationship);
     void removeRelationship(CRelationship *relationship);

@@ -1,6 +1,8 @@
 #include "CRelationship.h"
 #include "CTable.h"
 
+#include <QTextStream>
+
 CRelationship::CRelationship(CTable *startTable, CTable *endTable) :
     CObject(QString("%1_%2").arg(startTable->name()).arg(endTable->name())),
     _startTable(startTable),
@@ -27,7 +29,7 @@ int CRelationship::type() const
     return Type;
 }
 
-QString CRelationship::getDataAsText() const
+QString CRelationship::exportDataToText() const
 {
     QString text;
     /*  relationship startTable_name endTable_name
@@ -49,6 +51,8 @@ QString CRelationship::getDataAsText() const
         case MANY:
             type += "many-";
             break;
+        default:
+            break;
         }
         switch (endType()) {
         case ONE:
@@ -56,6 +60,8 @@ QString CRelationship::getDataAsText() const
             break;
         case MANY:
             type += "many";
+            break;
+        default:
             break;
         }
     }
@@ -65,6 +71,53 @@ QString CRelationship::getDataAsText() const
             .arg((this->startMandatory()) ? "mandatory" : "optional")
             .arg((this->endMandatory()) ? "mandatory" : "optional");
     return text;
+}
+
+void CRelationship::importFromTextStream(QTextStream &input)
+{
+    QStringList strList = input.readLine().split(" ");
+    /*  type type (e.g. one-one one-many many-many aggregate)
+     *  m   start_mandatory end_mandatory (e.g. mandatory optional)
+     */
+    if(strList.at(0) == "type")
+    {
+        if(strList.size() == 2)
+        {
+            QString t = strList.at(1);
+            QStringList list = t.split("-");
+            if(list.at(0) == "one")
+                this->setStartType(ONE);
+            if(list.at(0) == "many")
+                this->setStartType(MANY);
+            if(list.at(0) == "aggregate")
+            {
+                this->setStartType(ONE);
+                this->setEndType(AGGREGATE);
+            }
+            if(list.size() == 2)
+            {
+                if(list.at(1) == "one")
+                    this->setEndType(ONE);
+                if(list.at(1) == "many")
+                    this->setEndType(MANY);
+            }
+        }
+    }
+    strList = input.readLine().split(" ");
+    if(strList.at(0) == "m")
+    {
+        if(strList.size() == 3)
+        {
+            if(strList.at(1) == "mandatory")
+                this->setStartMandatory(true);
+            else
+                this->setStartMandatory(false);
+            if(strList.at(2) == "mandatory")
+                this->setEndMandatory(true);
+            else
+                this->setEndMandatory(false);
+        }
+    }
 }
 
 CRelationship::RELATIONSHIP_TYPE CRelationship::startType() const

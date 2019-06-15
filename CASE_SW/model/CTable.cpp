@@ -4,6 +4,8 @@
 #include "CRelationship.h"
 #include "CUniqueGroup.h"
 
+#include <QTextStream>
+
 CTable::CTable(const QString &name) :
     CObject(name)
 {
@@ -38,13 +40,11 @@ int CTable::type() const
     return Type;
 }
 
-QString CTable::getDataAsText() const
+QString CTable::exportDataToText() const
 {
     QString text;
-    /*  r Row_name type[(size)] [PK/NN/UQ]
+    /*  row Row_name type[(size)] [PK/NN/UQ]
      *  row ...
-     *  frow Row_name Table_Name [PK]
-     *  frow ...
      *  ugroup uGroup_name Row_name1/Row_name2/...
      *  ugroup ...
      */
@@ -71,14 +71,6 @@ QString CTable::getDataAsText() const
                 .arg(row->typeAsString())
                 .arg(constraint);
     }
-    foreach (const CForeignRow *fRow, this->foreingRows()) {
-        text += QString("frow %1 %2")
-                .arg(fRow->row()->name())
-                .arg(fRow->tableName());
-        if(fRow->primaryKey())
-            text += " PK";
-        text += "\n";
-    }
     foreach (const CUniqueGroup *uGroup, this->uniqueGroups()) {
         QString rows;
         foreach (QString rowName, uGroup->rows()) {
@@ -91,6 +83,63 @@ QString CTable::getDataAsText() const
                 .arg(rows);
     }
     return text;
+}
+
+void CTable::importFromTextStream(QTextStream &input)
+{
+    while(!input.atEnd())
+    {
+        QStringList strList = input.readLine().split(" ");
+        /*  row Row_name type[(size)] [PK/NN/UQ]
+         *  row ...
+         *  ugroup uGroup_name Row_name1/Row_name2/...
+         *  ugroup ...
+         */
+        if(strList.at(0) == "")
+            return;
+        if(strList.at(0) == "row")
+        {
+            if(strList.size() >= 3)
+            {
+                CRow *row = new CRow(strList.at(1));
+                row->setTypeFromString(strList.at(2));
+                if(strList.size() == 4)
+                {
+                    QString t = strList.at(3);
+                    QStringList list = t.split("/");
+                    foreach (const QString &str, list) {
+                        if(str == "PK")
+                        {
+                            row->setPrimaryKey(true);
+                            continue;
+                        }
+                        if(str == "NN")
+                        {
+                            row->setNotNull(true);
+                            continue;
+                        }
+                        if(str == "UQ")
+                        {
+                            row->setUnique(true);
+                            break;
+                        }
+                    }
+                }
+                _rows.append(row);
+            }
+        }
+        if(strList.at(0) == "ugroup")
+        {
+            if(strList.size() == 3)
+            {
+                CUniqueGroup *uGroup = new CUniqueGroup(strList.at(1));
+                QString t = strList.at(2);
+                QStringList rowList = t.split("/");
+                uGroup->setRows(rowList);
+                _uniqueGroups.append(uGroup);
+            }
+        }
+    }
 }
 
 void CTable::addRelationship(CRelationship *relationship)

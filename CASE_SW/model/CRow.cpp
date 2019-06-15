@@ -1,5 +1,7 @@
 #include "CRow.h"
 
+#include <QRegExpValidator>
+
 CRow::CRow(const QString &name) :
     _name(name),
     _type(CRow::INTEGER),
@@ -67,6 +69,65 @@ QString CRow::typeAsString() const
 void CRow::setType(const DATA_TYPE &type)
 {
     _type = type;
+}
+
+void CRow::setTypeFromString(QString type)
+{
+    QRegExpValidator validator;
+    int size = type.size();
+
+    validator.setRegExp(QRegExp("INTEGER", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        this->setType(INTEGER);
+        this->setSize(10);
+    }
+    validator.setRegExp(QRegExp("FLOAT", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        this->setType(FLOAT);
+        this->setSize(10);
+    }
+    validator.setRegExp(QRegExp("BOOLEAN", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        this->setType(BOOLEAN);
+        this->setSize(10);
+    }
+    validator.setRegExp(QRegExp("DATE", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        this->setType(DATE);
+        this->setSize(10);
+    }
+    validator.setRegExp(QRegExp("BLOB", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        this->setType(BLOB);
+        this->setSize(10);
+    }
+    validator.setRegExp(QRegExp("CHAR\\([0-9]+\\)", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        QRegExp regExp("\\((.+)\\)", Qt::CaseInsensitive);
+        if(regExp.indexIn(type))
+        {
+            int _size = regExp.cap(1).toInt();
+            this->setType(CHAR);
+            this->setSize(_size);
+        }
+    }
+    validator.setRegExp(QRegExp("VARCHAR\\([0-9]+\\)", Qt::CaseInsensitive));
+    if(validator.validate(type, size) == QValidator::Acceptable)
+    {
+        QRegExp regExp("\\((.+)\\)", Qt::CaseInsensitive);
+        if(regExp.indexIn(type))
+        {
+            int _size = regExp.cap(1).toInt();
+            this->setType(VARCHAR);
+            this->setSize(_size);
+        }
+    }
 }
 
 int CRow::size() const

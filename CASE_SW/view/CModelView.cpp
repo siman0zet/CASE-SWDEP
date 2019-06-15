@@ -61,9 +61,23 @@ bool CModelView::saveToFile(const QString &path) const
     }
 
     QTextStream outputStream(&file);
-    QString text = this->convertToText();
+    QString text = this->exportToText();
     text.replace("\n", "\r\n");
     outputStream << text;
+    file.close();
+    return true;
+}
+
+bool CModelView::loadFromFile(const QString &path)
+{
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        return false;
+    }
+
+    QTextStream inputStream(&file);
+    this->importFromTextStream(inputStream);
     file.close();
     return true;
 }
@@ -419,11 +433,11 @@ void CModelView::mouseMoveEvent(QMouseEvent *event)
     QGraphicsView::mouseMoveEvent(event);
 }
 
-QString CModelView::convertToText() const
+QString CModelView::exportToText() const
 {
     QString text;
     /*# CASE-SWDEP CDM File: 'file_name.file_extension'
-     * model-size w h
+     * model w h
      */
     text += QString("CASE-SWDEP CDM File: '%1.cdmod'\n"
                     "model %2 %3\n")
@@ -445,14 +459,80 @@ QString CModelView::convertToText() const
                 .arg(tableItem->pos().y())
                 .arg(tableItem->width())
                 .arg(tableItem->height());
-        text += tableItem->object()->getDataAsText();
+        text += tableItem->object()->exportDataToText();
     }
 
 
     foreach (const CRelationshipItem *relationshipItem, _relationships) {
-        text += relationshipItem->object()->getDataAsText();
+        text += relationshipItem->object()->exportDataToText();
     }
     return text;
+}
+
+void CModelView::importFromTextStream(QTextStream &input)
+{
+    while(!input.atEnd())
+    {
+        QStringList strList = input.readLine().split(" ");
+        /*# CASE-SWDEP CDM File: 'file_name.file_extension'
+         * model w h
+         *
+         *  table Table_name
+         *  pos x y
+         *  size w h
+         *  data_from_table
+         */
+        if(strList.at(0) == "model")
+        {
+            if(strList.size() == 3)
+                this->changeSize(strList.at(1).toInt(), strList.at(2).toInt());
+            continue;
+        }
+        if(strList.at(0) == "table")
+        {
+            if(strList.size() == 2)
+            {
+                CTable *table = new CTable(strList.at(1));
+                CTableItem *tableItem = new CTableItem(table);
+
+                strList = input.readLine().split(" ");
+                if(strList.at(0) == "pos")
+                    if(strList.size() == 3)
+                        tableItem->setPos(strList.at(1).toInt(), strList.at(2).toInt());
+
+                strList = input.readLine().split(" ");
+                if(strList.at(0) == "size")
+                    if(strList.size() == 3)
+                    {
+                        tableItem->setWidth(strList.at(1).toInt());
+                        tableItem->setHeight(strList.at(2).toInt());
+                    }
+                table->importFromTextStream(input);
+                _dataModel->addTable(table);
+                _tables.insert(table->name(), tableItem);
+                _scene->addItem(tableItem);
+            }
+            continue;
+        }
+        /*  relationship startTable_name endTable_name
+         */
+        if(strList.at(0) == "relationship")
+        {
+            if(strList.size() == 3)
+            {
+                CRelationship *relationship = new CRelationship(_tables.value(strList.at(1))->table(),
+                                                                _tables.value(strList.at(2))->table());
+                CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(relationship->startTable()->name()),
+                                                                            _tables.value(relationship->endTable()->name()),
+                                                                            relationship);
+                relationship->importFromTextStream(input);
+                _dataModel->addRelationship(relationship);
+                _relationships.insert(relationship->name(), relationshipItem);
+                _scene->addItem(relationshipItem);
+            }
+            continue;
+        }
+    }
 }
 
 QMap<QString, CRelationshipItem *> CModelView::relationships() const

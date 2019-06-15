@@ -11,7 +11,7 @@ int CObject::type() const
     return Type;
 }
 
-QString CObject::getDataAsText() const
+QString CObject::exportDataToText() const
 {
     return "";
 }

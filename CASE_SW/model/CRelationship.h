@@ -21,7 +21,8 @@ public:
     ~CRelationship();
 
     int type() const override;
-    QString getDataAsText() const override;
+    QString exportDataToText() const override;
+    void importFromTextStream(QTextStream &input) override;
 
     RELATIONSHIP_TYPE startType() const;
     void setStartType(const RELATIONSHIP_TYPE &startType);
@@ -48,8 +49,7 @@ private:
     RELATIONSHIP_TYPE _endType;
 
     bool _startMandatory;
-    bool _endMandatory;
-
+    bool _endMandatory;    
 };
 
 #endif // CRELATIONSHIP_H

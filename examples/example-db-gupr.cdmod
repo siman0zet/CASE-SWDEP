@@ -32,7 +32,7 @@ size 150 70
 row id_year INTEGER PK
 row yearStart DATE UQ
 
-relationship ELEm GUPR
+relationship ELEM GUPR
 type one-many
 m mandatory optional
 

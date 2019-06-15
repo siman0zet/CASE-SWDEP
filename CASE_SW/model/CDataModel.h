@@ -18,8 +18,9 @@ public:
     CDataModel *convertToPhysical();
 
     CTable *addTable();
-    void addTable(const CTable *table);
+    void addTable(CTable *table);
     CRelationship *addRelationship(const QString &startName, const QString &endName);
+    void addRelationship(CRelationship *relationship);
     void removeObjects(const QList<CObject *> &objects);
     void flipTables(const QString &relationshipName);
     void changeRelationshipTable(const QString &relationshipName,
