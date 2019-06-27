@@ -24,7 +24,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void activateEditAction(const CModelView::cursorToolType &type);
+    void activateEditAction(const CModelView::TOOL_TYPE &type);
 
 protected:
     void closeEvent(QCloseEvent *) override;
@@ -55,7 +55,7 @@ private:
     //! \brief Track down models/files currently open in application workspace.
     QMap<QString, CModelView *> _workspaceModels;
 
-    QMap<CModelView::cursorToolType, QSharedPointer<QAction>> _editActions;
+    QMap<CModelView::TOOL_TYPE, QSharedPointer<QAction>> _editActions;
 
     //! \brief Simple counter for newly created models.
     //! Value increases only when new model is created.
@@ -64,7 +64,6 @@ private:
     bool addModelTab(const QString &modelName, const QString &modelPath);
     void closeTab(int index);
     void deactivateEditActions();
-    void showModelPWindow(CModelView *model) const;
 };
 
 #endif // MAINWINDOW_H

@@ -1,4 +1,4 @@
-CASE-SWDEP CDM File: 'New_1.cdmod'
+CASE-SWDEP CDM File: 'example-db-gupr.cdmod'
 model 1282 722
 
 table ELEM
@@ -25,12 +25,6 @@ pos 27 36
 size 150 70
 row id_spec INTEGER PK
 row n_spec VARCHAR(200) UQ
-
-table YEAR
-pos 502 27
-size 150 70
-row id_year INTEGER PK
-row yearStart DATE UQ
 
 relationship ELEM GUPR
 type one-many

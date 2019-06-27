@@ -16,10 +16,10 @@ public:
     explicit CObject(const QString &name);
     virtual ~CObject() {}
     virtual int type() const;
-    virtual QString exportDataToText() const;
-    virtual void importFromTextStream(QTextStream &) {}
-    QString name() const;
-    void setName(const QString &name);
+    virtual QString exportDataToText() const = 0;
+    virtual void importFromTextStream(QTextStream &) = 0;
+    virtual QString name() const;
+    virtual void setName(const QString &name);
 };
 
 #endif // COBJECT_H

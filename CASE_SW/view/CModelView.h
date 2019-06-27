@@ -20,7 +20,7 @@ public:
     CModelView(const QString &name, const QString &path, QWidget *parent = nullptr);
     ~CModelView();
 
-    enum cursorToolType {
+    enum TOOL_TYPE {
         POINTER = 0,
         CREATE,
         DELETE,
@@ -33,7 +33,7 @@ public:
     bool saveToFile(const QString &path) const;
     bool loadFromFile(const QString &path);
 
-    void activateTool(const cursorToolType &type);
+    void activateTool(const TOOL_TYPE &type);
     void showResizeDialog();
     void showChangeTableDialog(const QString &relationshipName, bool end) const;
     void showObjectEditor(CObjectItem *objectItem);
@@ -46,8 +46,6 @@ public:
     void setName(const QString &name);
     QString path() const;
     void setPath(const QString &path);
-    QMainWindow *pModelWindow() const;
-    void setPModelWindow(QMainWindow *pModelWindow);
 
     QMap<QString, CTableItem *> tables() const;
     QMap<QString, CRelationshipItem *> relationships() const;
@@ -66,7 +64,6 @@ protected:
 private:
     QString _name;
     QString _path;
-    QMainWindow *_pModelWindow;
 
     MainWindow *_parent;
     QGraphicsScene *_scene;
@@ -75,7 +72,7 @@ private:
     int   _width;
     int   _height;    
 
-    QMap<cursorToolType, bool> _tools;
+    QMap<TOOL_TYPE, bool> _tools;
     QMap<QString, CTableItem *> _tables;
     QMap<QString, CRelationshipItem *> _relationships;
     QList<QString> _tablesToRelate;

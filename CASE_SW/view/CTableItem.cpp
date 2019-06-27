@@ -183,14 +183,14 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     {
         QString constraint = "";
         if(_table->row(i)->unique())
-            constraint = "UQ";
+            constraint = "[UQ]";
         if(_table->row(i)->notNull())
-            constraint = "NN";
+            constraint = "[NN]";
         if(_table->row(i)->primaryKey())
-            constraint = "PK";
+            constraint = "[PK]";
 
         painter->drawText(QRect(2, textHeight, _width - 2, 20),
-                          QString("[%1] %2 %3")
+                          QString("%1 %2 %3")
                           .arg(constraint)
                           .arg(_table->row(i)->name())
                           .arg(_table->row(i)->typeAsString()));
@@ -198,11 +198,11 @@ void CTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
     for(int i = 0; i < _table->foreignRowCount(); i++)
     {
-        QString constraint = "";
+        QString constraint = "[FK]";
         if(_table->foreignRow(i)->primaryKey())
-            constraint = "PK";
+            constraint = "[PF]";
         painter->drawText(QRect(2, textHeight, _width + 2, 20),
-                          QString("[%1] %2 %3")
+                          QString("%1 %2 %3")
                           .arg(constraint)
                           .arg(_table->foreignRow(i)->name())
                           .arg(_table->foreignRow(i)->typeAsString()));

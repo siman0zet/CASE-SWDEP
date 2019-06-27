@@ -18,7 +18,6 @@ CModelView::CModelView(const QString &name, const QString &path, QWidget *parent
     QGraphicsView(parent),
     _name(name),
     _path(path),
-    _pModelWindow(0),
     _parent((MainWindow *)parent),
     _scene(new QGraphicsScene(this)),
     _dataModel(new CDataModel()),
@@ -49,7 +48,6 @@ CModelView::~CModelView()
 {
     delete _scene;
     delete _dataModel;
-    _pModelWindow = NULL;
 }
 
 bool CModelView::saveToFile(const QString &path) const
@@ -82,7 +80,7 @@ bool CModelView::loadFromFile(const QString &path)
     return true;
 }
 
-void CModelView::activateTool(const cursorToolType &type)
+void CModelView::activateTool(const TOOL_TYPE &type)
 {
     deactivateTools();
     _tools.insert(type, true);
@@ -545,16 +543,6 @@ QMap<QString, CTableItem *> CModelView::tables() const
     return _tables;
 }
 
-QMainWindow *CModelView::pModelWindow() const
-{
-    return _pModelWindow;
-}
-
-void CModelView::setPModelWindow(QMainWindow *pModelWindow)
-{
-    _pModelWindow = pModelWindow;
-}
-
 QString CModelView::path() const
 {
     return _path;
@@ -584,7 +572,7 @@ void CModelView::deactivateTools()
 {
     for (int i = POINTER; i <= AGGREGATE; i++)
     {
-        _tools.insert(static_cast<cursorToolType>(i), false);
+        _tools.insert(static_cast<TOOL_TYPE>(i), false);
     }
     if(_tablesToRelate.size())
     {

@@ -11,11 +11,6 @@ int CObject::type() const
     return Type;
 }
 
-QString CObject::exportDataToText() const
-{
-    return "";
-}
-
 QString CObject::name() const
 {
     return _name;

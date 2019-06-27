@@ -116,7 +116,11 @@ void MainWindow::on_actionSave_as_triggered()
 
     QString oldModelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
 
-    if(!_workspaceModels.value(oldModelName)->saveToFile(newModelPath))
+    _workspaceModels.value(oldModelName)->setName(newModelName);
+    _workspaceModels.insert(newModelName, _workspaceModels.value(oldModelName));
+    _workspaceModels.remove(oldModelName);
+
+    if(!_workspaceModels.value(newModelName)->saveToFile(newModelPath))
         return;
 
     ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
@@ -141,7 +145,7 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     closeTab(index);
 }
 
-void MainWindow::activateEditAction(const CModelView::cursorToolType &type)
+void MainWindow::activateEditAction(const CModelView::TOOL_TYPE &type)
 {
     deactivateEditActions();
     _editActions.value(type)->setChecked(true);
@@ -175,9 +179,9 @@ bool MainWindow::addModelTab(const QString &modelName, const QString &modelPath)
      */
     for(int i = 0; i < _editActions.size(); i++)
     {
-        if(_editActions.value((CModelView::cursorToolType)i)->isChecked())
+        if(_editActions.value((CModelView::TOOL_TYPE)i)->isChecked())
         {
-            _editActions.value((CModelView::cursorToolType)i)->trigger();
+            _editActions.value((CModelView::TOOL_TYPE)i)->trigger();
             break;
         }
     }
@@ -197,14 +201,7 @@ void MainWindow::closeTab(int index)
 void MainWindow::deactivateEditActions()
 {
     for(int i = 0; i < _editActions.size(); i++)
-        _editActions.value((CModelView::cursorToolType)i)->setChecked(false);
-}
-
-void MainWindow::showModelPWindow(CModelView *model) const
-{
-        PModelWindow *pWindow = new PModelWindow(model);
-        model->setPModelWindow(pWindow);
-        pWindow->show();
+        _editActions.value((CModelView::TOOL_TYPE)i)->setChecked(false);
 }
 
 void MainWindow::on_actionPointer_triggered()
@@ -275,7 +272,8 @@ void MainWindow::on_actionTo_PDM_triggered()
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
 
-    showModelPWindow(_workspaceModels.value(modelName));
+    PModelWindow *pWindow = new PModelWindow(_workspaceModels.value(modelName));
+    pWindow->show();
 }
 
 void MainWindow::on_actionScript_triggered()
