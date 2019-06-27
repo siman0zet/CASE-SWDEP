@@ -1,14 +1,14 @@
 #ifndef CDATAMODEL_H
 #define CDATAMODEL_H
 
-#include <QObject>
+#include "IDataModel.h"
 #include <QMap>
 
 class CObject;
 class CTable;
 class CRelationship;
 
-class CDataModel : public QObject
+class CDataModel : public IDataModel
 {
     Q_OBJECT
 
@@ -39,7 +39,7 @@ public:
     bool isPhysical() const;
     void setPhysical(bool physical);
 
-    QMap<QString, CTable *> tables() const;
+    QMap<QString, CTable *> tables() const override;
     QMap<QString, CRelationship *> relationships() const;
 
 private:

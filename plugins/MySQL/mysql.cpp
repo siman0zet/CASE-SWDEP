@@ -1,23 +1,19 @@
 #include "mysql.h"
 
-
-MySQL::MySQL()
-{
-}
-
-QString MySQL::getName()
+QString MySQL::name()
 {
     return "MySQL";
 }
 
-QString MySQL::getVersion()
+QString MySQL::version()
 {
-    return "0.3";
+    return "8.0.13";
 }
 
-QString MySQL::getQuery(CDataModel *model)
+QString MySQL::query(IDataModel *dataModel)
 {
-    QVector<CTable*> tables = model->getTables();
+    _dataModel = dataModel;
+    QMap<QString, CTable *> tables = _dataModel->tables();
     QString script = "";
 
     /*
@@ -27,26 +23,24 @@ QString MySQL::getQuery(CDataModel *model)
      * ) ENGINE = InnoDB;
      */
 
-    for(int i = 0; i < tables.size(); i++)
-    {
+    foreach (CTable *table, tables) {
+        _table = (ITable *)table;
         QString columnList = "";
         QString primaryKey = "";
 
-        for (int j = 0; j < tables[i]->getRowCount(); j++)
-        {
-            QString indicators = "";
-            if(tables[i]->getRow(j)->isNotNull() && !(tables[i]->getRow(j)->isPrimaryKey()))
-                indicators += " NOT NULL";
-
-            if(tables[i]->getRow(j)->isPrimaryKey())
+        foreach (CRow *row, _table->rows()) {
+            _row = (IRow *)row;
+            QString constraint = "";
+            if(_row->notNull() && !(_row->primaryKey()))
+                constraint += " NOT NULL";
+            if(_row->primaryKey())
                 primaryKey += QString("`%1`, ")
-                        .arg(tables[i]->getRow(j)->getName());
-
+                        .arg(_row->name());
             columnList += QString("    `%1` %2%3,\n")
-                    .arg(tables[i]->getRow(j)->getName())
-                    .arg(tables[i]->getRow(j)->getStringType())
-                    .arg(indicators);
-        }        
+                    .arg(_row->name())
+                    .arg(_row->typeAsString())
+                    .arg(constraint);
+        }
         if(primaryKey != "")
         {
             primaryKey.remove(primaryKey.size() - 2, 2);
@@ -60,12 +54,11 @@ QString MySQL::getQuery(CDataModel *model)
         {
             script += QString("CREATE TABLE IF NOT EXIST `%1` (\n"
                       "%2"
-                      ") ENGINE = InnoDB;\n\n")
-                    .arg(tables[i]->getName())
+                      ");\n\n")
+                    .arg(_table->name())
                     .arg(columnList)
                     .arg(primaryKey);
         }
     }
-
     return script;
 }

@@ -10,13 +10,11 @@ TARGET = SQLite3
 TEMPLATE = lib
 CONFIG += static
 
-INCLUDEPATH += ../../CASE_SW/
+INCLUDEPATH += ../../CASE_SW
 
-SOURCES += \
-        SQLite3.cpp
+SOURCES += SQLite3.cpp
 
-HEADERS += \
-        SQLite3.h
+HEADERS += SQLite3.h
 
 unix {
     target.path = /usr/lib

@@ -10,11 +10,9 @@ class MySQL : public CPluginInterface
     Q_INTERFACES(CPluginInterface)
 
 public:
-    MySQL();
-
-    QString getName() override;
-    QString getVersion() override;
-    QString getQuery(CDataModel *model) override;
+    QString name() override;
+    QString version() override;
+    QString query(IDataModel *dataModel) override;
 };
 
 #endif // MYSQL_H

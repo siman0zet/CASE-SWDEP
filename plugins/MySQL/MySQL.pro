@@ -10,15 +10,14 @@ TARGET = MySQL
 TEMPLATE = lib
 CONFIG += static
 
-INCLUDEPATH += ../../CASE_SW/
+INCLUDEPATH += ../../CASE_SW
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += \
-        mysql.cpp
+SOURCES += mysql.cpp
 
-HEADERS += \
-        mysql.h
+HEADERS += mysql.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target

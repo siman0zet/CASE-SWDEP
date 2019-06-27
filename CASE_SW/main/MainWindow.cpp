@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "PModelWindow.h"
+#include "CPluginWindow.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -281,6 +282,9 @@ void MainWindow::on_actionScript_triggered()
     QString modelName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
+
+    CPluginWindow *sWindow = new CPluginWindow(_workspaceModels.value(modelName));
+    sWindow->show();
 }
 
 void MainWindow::on_actionChange_Size_triggered()

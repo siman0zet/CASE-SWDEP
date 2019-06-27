@@ -7,12 +7,12 @@
 #include <QTextStream>
 
 CTable::CTable(const QString &name) :
-    CObject(name)
+    ITable(name)
 {
 }
 
 CTable::CTable(const CTable *table) :
-    CObject(table->name())
+    ITable(table->name())
 {
     foreach (const CRow *row, table->rows()) {
         _rows.append(new CRow(row));

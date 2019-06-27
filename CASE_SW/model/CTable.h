@@ -1,7 +1,7 @@
 #ifndef CTABLE_H
 #define CTABLE_H
 
-#include "CObject.h"
+#include "ITable.h"
 
 #include <QMap>
 #include <QString>
@@ -12,7 +12,7 @@ class CForeignRow;
 class CUniqueGroup;
 class QTextStream;
 
-class CTable : public CObject
+class CTable : public ITable
 {
 public:
     enum { Type = USER_TYPE + 11 };
@@ -43,7 +43,7 @@ public:
     int totalRowCount() const;
 
     QList<CRelationship *> relationships() const;
-    QList<CRow *> rows() const;
+    QList<CRow *> rows() const override;
     QList<CForeignRow *> foreingRows() const;
     QList<CRow *> primaryKey() const;
 

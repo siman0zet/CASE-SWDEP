@@ -1,20 +1,16 @@
 #include "postgresql.h"
 
-Postgresql::Postgresql()
+QString Postgresql::version()
 {
+    return "11.2";
 }
 
-QString Postgresql::getVersion()
+QString Postgresql::name()
 {
-    return "1.0";
+    return "PostgreSQL";
 }
 
-QString Postgresql::getName()
-{
-    return "Postgresql";
-}
-
-QString Postgresql::getQuery(CDataModel *model)
+QString Postgresql::query(IDataModel *dataModel)
 {
     QVector<CTable*> tables = model->getTables();
     QVector<CTable*> tablesf;

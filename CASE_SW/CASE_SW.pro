@@ -36,9 +36,11 @@ SOURCES += \
     dialog/CUniqueGroupDialog.cpp \
     dialog/ResizeDialog.cpp \
     main/PModelWindow.cpp \
-    view/PModelView.cpp
+    view/PModelView.cpp \
+    main/CPluginWindow.cpp
 
 HEADERS  += \
+    CPluginInterface.h \
     main/MainWindow.h \
     model/CDataModel.h \
     model/CForeignRow.h \
@@ -57,7 +59,11 @@ HEADERS  += \
     dialog/CUniqueGroupDialog.h \
     dialog/ResizeDialog.h \
     main/PModelWindow.h \
-    view/PModelView.h
+    view/PModelView.h \
+    model/IDataModel.h \
+    model/ITable.h \
+    model/IRow.h \
+    main/CPluginWindow.h
 
 FORMS    += \
     main/MainWindow.ui \
@@ -66,7 +72,8 @@ FORMS    += \
     dialog/ChangeTableDialog.ui \
     dialog/CUniqueGroupDialog.ui \
     dialog/ResizeDialog.ui \
-    main/PModelWindow.ui
+    main/PModelWindow.ui \
+    main/CPluginWindow.ui
 
 RESOURCES += \
     images.qrc

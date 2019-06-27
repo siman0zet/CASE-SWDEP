@@ -10,13 +10,11 @@ TARGET = Postgresql
 TEMPLATE = lib
 CONFIG += static
 
-INCLUDEPATH += ../../CASE_SW/
+INCLUDEPATH += ../../CASE_SW
 
-SOURCES += \
-        postgresql.cpp
+SOURCES += postgresql.cpp
 
-HEADERS += \
-        postgresql.h
+HEADERS += postgresql.h
 
 unix {
     target.path = /usr/lib
