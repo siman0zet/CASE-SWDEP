@@ -273,7 +273,7 @@ void MainWindow::on_actionTo_PDM_triggered()
     if(_workspaceModels.find(modelName) == _workspaceModels.end())
         return;
 
-    PModelWindow *pWindow = new PModelWindow(_workspaceModels.value(modelName));
+    PModelWindow *pWindow = new PModelWindow(_workspaceModels.value(modelName), this);
     pWindow->show();
 }
 

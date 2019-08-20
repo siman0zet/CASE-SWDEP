@@ -18,6 +18,11 @@ public:
     PModelWindow(CModelView *cModel, QWidget *parent = 0);
     ~PModelWindow();
 
+private slots:
+    void on_actionScript_triggered();
+
+    void on_actionChange_Size_triggered();
+
 private:
     Ui::PModelWindow *ui;
 

@@ -9,6 +9,7 @@ class CPluginWindow;
 }
 
 class CModelView;
+class PModelView;
 class CDataModel;
 class CPluginInterface;
 
@@ -18,6 +19,7 @@ class CPluginWindow : public QMainWindow
 
 public:
     CPluginWindow(CModelView *model, QWidget *parent = 0);
+    CPluginWindow(PModelView *model, QWidget *parent = 0);
     ~CPluginWindow();
 
 private slots:

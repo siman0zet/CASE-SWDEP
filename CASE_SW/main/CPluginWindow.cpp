@@ -7,8 +7,20 @@
 #include <CPluginInterface.h>
 
 #include <view/CModelView.h>
+#include <view/PModelView.h>
 
 CPluginWindow::CPluginWindow(CModelView *model, QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::CPluginWindow),
+    _dataModel(model->dataModel())
+{
+    ui->setupUi(this);
+    this->setWindowTitle(QString("%1 - Generate SQL CREATE script")
+                         .arg(model->name()));
+    this->loadPlugins();
+}
+
+CPluginWindow::CPluginWindow(PModelView *model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CPluginWindow),
     _dataModel(model->dataModel())

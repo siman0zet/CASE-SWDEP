@@ -11,9 +11,15 @@ class CRelationshipItem;
 
 class PModelView : public QGraphicsView
 {
+    Q_OBJECT
+
 public:
     PModelView(CModelView *cModelView, QWidget *parent = nullptr);
     ~PModelView();
+
+    CDataModel *dataModel() const;
+    QString name() const;
+    void showResizeDialog();
 
 public slots:
     void changeSize(int w, int h);
@@ -26,6 +32,10 @@ private:
 
     QMap<QString, CTableItem *> _tables;
     QMap<QString, CRelationshipItem *> _relationships;
+
+    CDataModel *_dataModel;
+
+    QString _name;
 
     void populateScene(CDataModel *pModel, CModelView *cModelView);
     QPointF calculateConduitPoint(CTableItem *startItem, CTableItem *endItem);

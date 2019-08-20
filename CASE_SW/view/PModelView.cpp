@@ -7,11 +7,15 @@
 #include <model/CRelationship.h>
 #include <model/CTable.h>
 
+#include <dialog/ResizeDialog.h>
+
 PModelView::PModelView(CModelView *cModelView, QWidget *parent) :
     QGraphicsView(parent),
     _scene(new QGraphicsScene(this)),
     _width(400),
-    _height(300)
+    _height(300),
+    _dataModel(0),
+    _name(cModelView->name())
 {
     this->setCacheMode(QGraphicsView::CacheBackground);
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -29,7 +33,10 @@ PModelView::PModelView(CModelView *cModelView, QWidget *parent) :
 
     CDataModel *pModel = cModelView->dataModel()->convertToPhysical();
     if(pModel != 0)
+    {
         populateScene(pModel, cModelView);
+        _dataModel = pModel;
+    }
 
     this->setScene(_scene);
     QBrush brush (Qt::white, Qt::SolidPattern);
@@ -47,6 +54,23 @@ void PModelView::changeSize(int w, int h)
     _height = h;
     this->setFixedSize(_width + 2 * this->frameWidth(), _height + 2 * this->frameWidth());
     this->setSceneRect(0, 0, _width, _height);
+}
+
+QString PModelView::name() const
+{
+    return _name;
+}
+
+void PModelView::showResizeDialog()
+{
+    ResizeDialog *dialog = new ResizeDialog(_width, _height, this);
+    connect(dialog, SIGNAL(dialogFinished(int,int)), this, SLOT(changeSize(int,int)));
+    dialog->exec();
+}
+
+CDataModel *PModelView::dataModel() const
+{
+    return _dataModel;
 }
 
 void PModelView::populateScene(CDataModel *pModel, CModelView *cModelView)

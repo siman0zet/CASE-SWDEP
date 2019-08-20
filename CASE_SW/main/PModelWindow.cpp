@@ -1,3 +1,4 @@
+#include "CPluginWindow.h"
 #include "PModelWindow.h"
 #include "ui_PModelWindow.h"
 
@@ -24,4 +25,15 @@ PModelWindow::PModelWindow(CModelView *cModel, QWidget *parent) :
 PModelWindow::~PModelWindow()
 {
     delete ui;
+}
+
+void PModelWindow::on_actionScript_triggered()
+{
+    CPluginWindow *sWindow = new CPluginWindow(_model);
+    sWindow->show();
+}
+
+void PModelWindow::on_actionChange_Size_triggered()
+{
+    _model->showResizeDialog();
 }
