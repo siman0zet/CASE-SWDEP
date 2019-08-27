@@ -24,12 +24,14 @@ public:
 
 private slots:
     void on_pushRefresh_clicked();
+    void on_pushGenerate_clicked();
 
 private:
     Ui::CPluginWindow *ui;
 
     CDataModel *_dataModel;
-    QMap<QString, CPluginInterface *> _plugins;
+    QMap<QString, QString> _plugins;
+
     void loadPlugins();
 };
 
