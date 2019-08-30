@@ -288,6 +288,31 @@ QMap<QString, CRelationship *> CDataModel::relationships() const
     return _relationships;
 }
 
+QList<CTable *> CDataModel::tablesSortedByReference() const
+{
+    QList<CTable *> sortedTables;
+    foreach (CTable *table, _tables.values()) {
+        sortTablesByReference(table, sortedTables);
+    }
+    return sortedTables;
+}
+
+void CDataModel::sortTablesByReference(CTable *table, QList<CTable *> &list) const
+{
+    if(!list.contains(table))
+    {
+        if(table->foreignRowCount() == 0)
+            list.append(table);
+        else
+        {
+            foreach (CForeignRow *foreignRow, table->foreingRows()) {
+                sortTablesByReference(_tables.value(foreignRow->tableName()), list);
+            }
+            list.append(_tables.value(table->name()));
+        }
+    }
+}
+
 void CDataModel::removeTable(const QString &name)
 {
     delete _tables.value(name);

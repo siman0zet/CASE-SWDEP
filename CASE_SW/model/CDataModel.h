@@ -41,6 +41,8 @@ public:
 
     QMap<QString, CTable *> tables() const override;
     QMap<QString, CRelationship *> relationships() const;
+    QList<CTable *> tablesSortedByReference() const override;
+    void sortTablesByReference(CTable *table, QList<CTable *> &list) const;
 
 private:
     bool _physical;

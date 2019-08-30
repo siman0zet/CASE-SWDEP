@@ -10,11 +10,21 @@
 #include "model/IDataModel.h"
 #include "model/ITable.h"
 #include "model/IRow.h"
+#include "model/IForeingRow.h"
 #include "model/CDataModel.h"
 
 class CPluginInterface : public QObject
 {
-public:   
+public:
+    CPluginInterface() :
+        _dataModel(0),
+        _table(0),
+        _row(0),
+        _foreignRow(0)
+    {
+
+    }
+
     virtual QString name() = 0;
     virtual QString version() = 0;
     virtual QString query(IDataModel *dataModel) = 0;
@@ -23,6 +33,7 @@ protected:
     IDataModel *_dataModel;
     ITable *_table;
     IRow *_row;
+    IForeingRow *_foreignRow;
 
 };
 

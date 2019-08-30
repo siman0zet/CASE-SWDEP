@@ -63,7 +63,8 @@ HEADERS  += \
     model/IDataModel.h \
     model/ITable.h \
     model/IRow.h \
-    main/CPluginWindow.h
+    main/CPluginWindow.h \
+    model/IForeingRow.h
 
 FORMS    += \
     main/MainWindow.ui \

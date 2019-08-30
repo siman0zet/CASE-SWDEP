@@ -108,7 +108,7 @@ void CPluginWindow::on_pushGenerate_clicked()
     ui->textBrowser->clear();
     if(plugin)
     {
-        QString query = plugin->query(_dataModel);
+        QString query = plugin->query(_dataModel->convertToPhysical());
         ui->textBrowser->setText(query);
     }
     loader->unload();

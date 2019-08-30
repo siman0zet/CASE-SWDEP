@@ -5,6 +5,7 @@
 #include "CObject.h"
 
 class CRow;
+class CForeignRow;
 
 class ITable : public CObject
 {
@@ -14,6 +15,7 @@ public:
     { }
 
     virtual QList<CRow *> rows() const = 0;
+    virtual QList<CForeignRow *> foreingRows() const = 0;
 };
 
 #endif // ITABLE_H

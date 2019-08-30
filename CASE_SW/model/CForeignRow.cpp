@@ -28,6 +28,11 @@ void CForeignRow::setRow(CRow *row)
     _row = row;
 }
 
+QString CForeignRow::tableRowName() const
+{
+    return _row->name();
+}
+
 QString CForeignRow::tableName() const
 {
     return _tableName;

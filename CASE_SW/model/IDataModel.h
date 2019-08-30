@@ -11,6 +11,7 @@ class IDataModel : public QObject
 
 public:
     virtual QMap<QString, CTable *> tables() const = 0;
+    virtual QList<CTable *> tablesSortedByReference() const = 0;
 
 };
 #endif // IDATAMODEL_H
