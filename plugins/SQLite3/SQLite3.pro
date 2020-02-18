@@ -8,17 +8,17 @@ QT       -= gui
 
 TARGET = SQLite3
 TEMPLATE = lib
-CONFIG += static
 
 INCLUDEPATH += ../../CASE_SW
 
-SOURCES += SQLite3.cpp
+SOURCES += \
+    sqlite3.cpp
 
-HEADERS += SQLite3.h
+HEADERS += \
+    sqlite3.h
 
 unix {
-    target.path = /usr/lib
-    INSTALLS += headers target
+    CONFIG += plugin
     DESTDIR = $$PWD/../../build/lib/
 }
 

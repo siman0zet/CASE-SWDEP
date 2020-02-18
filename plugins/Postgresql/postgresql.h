@@ -1,7 +1,7 @@
 #ifndef POSTGRESQL_H
 #define POSTGRESQL_H
 
-#include <CPluginInterface.h>
+#include <cplugininterface.h>
 
 class Postgresql : public CPluginInterface
 {

@@ -8,7 +8,6 @@ QT       -= gui
 
 TARGET = Postgresql
 TEMPLATE = lib
-CONFIG += static
 
 INCLUDEPATH += ../../CASE_SW
 
@@ -17,8 +16,7 @@ SOURCES += postgresql.cpp
 HEADERS += postgresql.h
 
 unix {
-    target.path = /usr/lib
-    INSTALLS += headers target
+    CONFIG += plugin
     DESTDIR = $$PWD/../../build/lib/
 }
 

@@ -1,9 +1,9 @@
-#ifndef MYSQL_H
-#define MYSQL_H
+#ifndef POSTGRESQL_H
+#define POSTGRESQL_H
 
 #include <cplugininterface.h>
 
-class MySQL : public CPluginInterface
+class SQLite : public CPluginInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "CPluginInterface/Plugin/1.0")
@@ -15,4 +15,4 @@ public:
     QString query(IDataModel *dataModel) override;
 };
 
-#endif // MYSQL_H
+#endif // POSTGRESQL_H

@@ -17,64 +17,64 @@ DEFINES += \
     LANG_PATH=\"\\\"$$PWD/../build/languages/\\\"\"
 
 SOURCES += \
+    dialog/changetabledialog.cpp \
+    dialog/cuniquegroupdialog.cpp \
+    dialog/resizedialog.cpp \
+    editor/crelationshipeditor.cpp \
+    editor/ctableeditor.cpp \
     main.cpp \
-    main/MainWindow.cpp \
-    model/CDataModel.cpp \
-    model/CForeignRow.cpp \
-    model/CObject.cpp \
-    model/CRelationship.cpp \
-    model/CRow.cpp \
-    model/CTable.cpp \
-    model/CUniqueGroup.cpp \
-    view/CModelView.cpp \
-    view/CObjectItem.cpp \
-    view/CRelationshipItem.cpp \
-    view/CTableItem.cpp \
-    editor/CRelationshipEditor.cpp \
-    editor/CTableEditor.cpp \
-    dialog/ChangeTableDialog.cpp \
-    dialog/CUniqueGroupDialog.cpp \
-    dialog/ResizeDialog.cpp \
-    main/PModelWindow.cpp \
-    view/PModelView.cpp \
-    main/CPluginWindow.cpp
+    main/cpluginwindow.cpp \
+    main/mainwindow.cpp \
+    main/pmodelwindow.cpp \
+    model/cdatamodel.cpp \
+    model/cforeignrow.cpp \
+    model/cobject.cpp \
+    model/crelationship.cpp \
+    model/crow.cpp \
+    model/ctable.cpp \
+    model/cuniquegroup.cpp \
+    view/cmodelview.cpp \
+    view/cobjectitem.cpp \
+    view/crelationshipitem.cpp \
+    view/ctableitem.cpp \
+    view/pmodelview.cpp
 
 HEADERS  += \
-    CPluginInterface.h \
-    main/MainWindow.h \
-    model/CDataModel.h \
-    model/CForeignRow.h \
-    model/CObject.h \
-    model/CRelationship.h \
-    model/CRow.h \
-    model/CTable.h \
-    model/CUniqueGroup.h \
-    view/CModelView.h \
-    view/CObjectItem.h \
-    view/CRelationshipItem.h \
-    view/CTableItem.h \
-    editor/CRelationshipEditor.h \
-    editor/CTableEditor.h \
-    dialog/ChangeTableDialog.h \
-    dialog/CUniqueGroupDialog.h \
-    dialog/ResizeDialog.h \
-    main/PModelWindow.h \
-    view/PModelView.h \
-    model/IDataModel.h \
-    model/ITable.h \
-    model/IRow.h \
-    main/CPluginWindow.h \
-    model/IForeingRow.h
+    cplugininterface.h \
+    dialog/changetabledialog.h \
+    dialog/cuniquegroupdialog.h \
+    dialog/resizedialog.h \
+    editor/crelationshipeditor.h \
+    editor/ctableeditor.h \
+    main/cpluginwindow.h \
+    main/mainwindow.h \
+    main/pmodelwindow.h \
+    model/cdatamodel.h \
+    model/cforeignrow.h \
+    model/cobject.h \
+    model/crelationship.h \
+    model/crow.h \
+    model/ctable.h \
+    model/cuniquegroup.h \
+    model/idatamodel.h \
+    model/iforeingrow.h \
+    model/irow.h \
+    model/itable.h \
+    view/cmodelview.h \
+    view/cobjectitem.h \
+    view/crelationshipitem.h \
+    view/ctableitem.h \
+    view/pmodelview.h
 
 FORMS    += \
-    main/MainWindow.ui \
-    editor/CRelationshipEditor.ui \
-    editor/CTableEditor.ui \
-    dialog/ChangeTableDialog.ui \
-    dialog/CUniqueGroupDialog.ui \
-    dialog/ResizeDialog.ui \
-    main/PModelWindow.ui \
-    main/CPluginWindow.ui
+    dialog/changetabledialog.ui \
+    dialog/cuniquegroupdialog.ui \
+    dialog/resizedialog.ui \
+    editor/crelationshipeditor.ui \
+    editor/ctableeditor.ui \
+    main/cpluginwindow.ui \
+    main/mainwindow.ui \
+    main/pmodelwindow.ui
 
 RESOURCES += \
     images.qrc

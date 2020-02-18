@@ -8,7 +8,6 @@ QT       -= gui
 
 TARGET = MySQL
 TEMPLATE = lib
-CONFIG += static
 
 INCLUDEPATH += ../../CASE_SW
 
@@ -19,8 +18,7 @@ SOURCES += mysql.cpp
 HEADERS += mysql.h
 
 unix {
-    target.path = /usr/lib
-    INSTALLS += target
+    CONFIG += plugin
     DESTDIR = $$PWD/../../build/lib/
 }
 
