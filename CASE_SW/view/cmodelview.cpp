@@ -219,7 +219,7 @@ void CModelView::showChangeTableDialog(const QString &relationshipName, bool sta
     ChangeTableDialog *dialog = new ChangeTableDialog(_dataModel->listTables(),
                                                       (CRelationship *)_relationships.value(relationshipName)->object(),
                                                       start);
-    connect(dialog, SIGNAL(dialogFinished(int,int,bool)), this, SLOT(changeTable(int,int,bool)));
+    connect(dialog, SIGNAL(dialogFinished(QString,QString,bool)), this, SLOT(changeTable(QString,QString,bool)));
     dialog->exec();
 }
 
