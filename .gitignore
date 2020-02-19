@@ -45,3 +45,5 @@ Makefile
 
 # Other files
 *.sql
+*.docx
+*.odt
