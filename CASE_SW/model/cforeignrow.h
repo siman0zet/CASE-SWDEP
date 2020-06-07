@@ -10,6 +10,9 @@ class CForeignRow : public IForeingRow
 {
 public:
     CForeignRow(CRow *row, const QString &tableName);
+    //-----------------------------------------------
+    CForeignRow(const CForeignRow *fRow);
+    //-----------------------------------------------
 
     QString name() const;
     QString typeAsString() const override;
@@ -24,6 +27,7 @@ public:
 private:
     CRow *_row;
     QString _tableName;
+    QString _cuurTableName;
     bool _primaryKey;
 };
 

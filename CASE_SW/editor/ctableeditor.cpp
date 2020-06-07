@@ -2,7 +2,7 @@
 #include "../model/ctable.h"
 #include "ctableeditor.h"
 #include "../model/cdatamodel.h"
-#include "ui_CTableEditor.h"
+#include "ui_ctableeditor.h"
 #include "../dialog/cuniquegroupdialog.h"
 
 #include <QCheckBox>

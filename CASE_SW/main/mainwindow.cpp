@@ -60,7 +60,9 @@ void MainWindow::on_actionOpen_triggered()
                 this,
                 QObject::tr("Open Model"),
                 QString(),
-                QObject::tr("Model Files (*.cdmod);;All Files (*.*)")
+                QObject::tr("Model Files (*.cdmod);;All Files (*.*)"),
+                nullptr,
+                QFileDialog::DontUseNativeDialog
     );
     if(filePath.isEmpty())
         return;
@@ -106,7 +108,9 @@ void MainWindow::on_actionSave_as_triggered()
         this,
         QObject::tr("Save as CDMOD"),
         QString(),
-        QObject::tr("Model Files (*.cdmod)")
+        QObject::tr("Model Files (*.cdmod)"),
+        nullptr,
+        QFileDialog::DontUseNativeDialog
     );
     if (newModelPath.isEmpty()) {
         return;

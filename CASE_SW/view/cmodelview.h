@@ -11,6 +11,9 @@ class CRelationshipItem;
 class CObjectItem;
 class QMainWindow;
 class QTextStream;
+//----------------
+class CTable;
+//----------------
 
 class CModelView : public QGraphicsView
 {
@@ -88,6 +91,10 @@ private:
     void showTableContextMenu(const QPoint &pos, QString tableName);
     void showRelationshipContextMenu(const QPoint &pos);
     void returnToPointer();
+    //-------------
+    void addForeginRows(CTable *startT, CTable *endT, bool PK);
+    void RemoveForeginRows(CTable *startTable, CTable *endTable);
+    //-------------
 
 private slots:
     void addRelationship();

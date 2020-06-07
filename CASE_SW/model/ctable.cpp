@@ -17,6 +17,11 @@ CTable::CTable(const CTable *table) :
     foreach (const CRow *row, table->rows()) {
         _rows.append(new CRow(row));
     }
+    //------------------------------------------------------------
+    foreach (const CForeignRow *fRow, table->foreingRows()) {
+        _foreingRows.append(new CForeignRow(fRow));
+    }
+    //------------------------------------------------------------
     foreach (const CUniqueGroup *uGroup, table->uniqueGroups()) {
         _uniqueGroups.append(new CUniqueGroup(uGroup));
     }
@@ -84,6 +89,43 @@ QString CTable::exportDataToText() const
     }
     return text;
 }
+
+//----------------------------------------------------------
+QString CTable::exportForeginKeysToText()
+{
+    QString text;
+    foreach(CForeignRow *fRow, this->foreingRows()){
+
+        if(fRow->primaryKey())
+            text += QString("frow %1 %2 %3 %4\n")
+                    .arg(fRow->tableName())
+                    .arg(fRow->row()->name())
+                    .arg(this->name())
+                    .arg("PK");
+
+        else
+            text += QString("frow %1 %2 %3\n")
+                    .arg(fRow->tableName())
+                    .arg(fRow->row()->name())
+                    .arg(this->name());
+    }
+    return text;
+}
+
+void CTable::importForeginKeysFromTS(QStringList strList, CTable *fgTable)
+{
+    foreach(CRow *fgRow, fgTable->rows()){
+        if(fgRow->name() == strList.at(2))
+        {
+            CForeignRow *addRow = new CForeignRow(fgRow,fgTable->name());
+            if(strList.size() == 5)
+                addRow->setPrimaryKey(true);
+            this->addForeignRow(addRow);
+            return;
+        }
+    }
+}
+//----------------------------------------------------------
 
 void CTable::importFromTextStream(QTextStream &input)
 {
@@ -202,7 +244,26 @@ void CTable::addForeignRow(CForeignRow *fRow)
 {
     _foreingRows.append(fRow);
 }
+//----------------------------------------------------------
+void CTable::removeForeginRow(CForeignRow *fRow)
+{
+    _foreingRows.removeOne(fRow);
+}
 
+void CTable::removeForeginRow(int index)
+{
+    _foreingRows.removeAt(index);
+}
+
+bool CTable::SearchFROnName(QString nameFR)
+{
+    foreach(CForeignRow *fRow, _foreingRows) {
+        if(fRow->name() == nameFR)
+            return true;
+    }
+    return false;
+}
+//----------------------------------------------------------
 CForeignRow *CTable::foreignRow(int index)
 {
     if(index >= 0 && index < _foreingRows.size())

@@ -18,15 +18,13 @@ CDataModel *CDataModel::convertToPhysical()
     physical->setPhysical(true);
 
     foreach (const CTable *table, _tables) {
-        if(table->relationships().count() == 0)
-        {
-            CTable *copyTable = new CTable(table);
-            physical->addTable(copyTable);
-        }
+        CTable *copyTable = new CTable(table);
+        physical->addTable(copyTable);
     }
 
     foreach (const CRelationship *relationship, _relationships) {
-        if(relationship->startType() == CRelationship::ONE &&
+        /*
+           if(relationship->startType() == CRelationship::ONE &&
            relationship->endType() == CRelationship::ONE)
         {
             if(relationship->endMandatory())
@@ -56,17 +54,34 @@ CDataModel *CDataModel::convertToPhysical()
                                                 relationship->endTable());
         }
 
-        if(relationship->startType() == CRelationship::MANY &&
-           relationship->endType() == CRelationship::MANY)
-            physical->addConduitTableConnection(relationship->startTable(),
-                                                relationship->endTable(),
-                                                true);
-
         if(relationship->startType() == CRelationship::ONE &&
            relationship->endType() == CRelationship::AGGREGATE)
             physical->addForeingTableConnection(relationship->endTable(),
                                                 relationship->startTable(),
                                                 true);
+        */
+        if(relationship->startType() == CRelationship::MANY &&
+           relationship->endType() == CRelationship::MANY)
+            physical->addConduitTableConnection(relationship->startTable(),
+                                                relationship->endTable(),
+                                                true);
+        else  if(relationship->startType() == CRelationship::ONE &&
+                 relationship->endType() == CRelationship::ONE && !relationship->endMandatory()
+                 && !relationship->startMandatory())
+        {
+            physical->addConduitTableConnection(relationship->startTable(),
+                                                relationship->endTable());
+        }
+        else
+        {
+            if(physical->_relationships.find(QString("%1_%2")
+                                   .arg(relationship->startTable()->name())
+                                   .arg(relationship->endTable()->name())) != physical->_relationships.end()) continue;
+            CRelationship *relationship_new = new CRelationship(physical->tables().value(relationship->startTable()->name()),
+                                                                physical->tables().value(relationship->endTable()->name()));
+            relationship_new->setEndType(CRelationship::ARROW);
+            physical->_relationships.insert(relationship_new->name(), relationship_new);
+        }
     }
 
     return physical;
@@ -178,7 +193,7 @@ QString CDataModel::changeTabelName(const QString &oldName, const QString &newNa
     }
     return newName;
 }
-
+/*
 void CDataModel::addForeingTableConnection(const CTable *startTable, const CTable *endTable, bool identifying)
 {
     if(_relationships.find(QString("%1_%2")
@@ -192,16 +207,25 @@ void CDataModel::addForeingTableConnection(const CTable *startTable, const CTabl
         _startTable = _tables.value(startTable->name());
     if(_tables.find(endTable->name()) != _tables.end())
         _endTable = _tables.value(endTable->name());
-
-    QList<CRow *> endTablePK = _endTable->primaryKey();
-    if(endTablePK.isEmpty())
-        return;
-    foreach (CRow *row, endTablePK) {
-        CForeignRow *fRow = new CForeignRow(row, _endTable->name());
-        if(identifying)
-            fRow->setPrimaryKey(true);
-        _startTable->addForeignRow(fRow);
+    //-----------------------------------------------------------------
+    QList<CRow *> endTablePK = _endTable->primaryKey();    
+    QList<CForeignRow *> endTableFK = _endTable->foreingRows();
+    if(!endTablePK.isEmpty()) {
+        foreach (CRow *row, endTablePK) {
+            CForeignRow *fRow = new CForeignRow(row, _endTable->name());
+            if(identifying)
+                fRow->setPrimaryKey(true);
+            _startTable->addForeignRow(fRow);
+        }
     }
+    else if(!endTableFK.isEmpty())
+    {
+        foreach (CForeignRow *frow, endTableFK) {
+            _startTable->addForeignRow(frow);
+        }
+    }
+    else return;
+    //-----------------------------------------------------------------
 
     _tables.insert(_startTable->name(), _startTable);
     _tables.insert(_endTable->name(), _endTable);
@@ -210,7 +234,7 @@ void CDataModel::addForeingTableConnection(const CTable *startTable, const CTabl
     relationship->setEndType(CRelationship::ARROW);
     _relationships.insert(relationship->name(), relationship);
 }
-
+*/
 void CDataModel::addConduitTableConnection(const CTable *startTable, const CTable *endTable, bool identifying)
 {
     CTable *_startTable = new CTable(startTable);
@@ -232,24 +256,36 @@ void CDataModel::addConduitTableConnection(const CTable *startTable, const CTabl
                            .arg(_conduitTable->name())
                            .arg(_endTable->name())) != _relationships.end())
         return;
-
+    //-----------------------------------------------------------------
     QList<CRow *> endTablePK = _endTable->primaryKey();
-    if(endTablePK.isEmpty())
-        return;
-    foreach (CRow *row, endTablePK) {
-        CForeignRow *fRow = new CForeignRow(row, _endTable->name());
-        fRow->setPrimaryKey(true);
-        _conduitTable->addForeignRow(fRow);
-    }
-    QList<CRow *> startTablePK = _startTable->primaryKey();
-    if(startTablePK.isEmpty())
-        return;
-    foreach (CRow *row, startTablePK) {
-        CForeignRow *fRow = new CForeignRow(row, _startTable->name());
-        if(identifying)
+    QList<CForeignRow *> endTableFK = _endTable->foreingRows();
+    if(!endTablePK.isEmpty())
+        foreach (CRow *row, endTablePK) {
+            CForeignRow *fRow = new CForeignRow(row, _endTable->name());
             fRow->setPrimaryKey(true);
-        _conduitTable->addForeignRow(fRow);
-    }
+            _conduitTable->addForeignRow(fRow);
+        }
+    else if(!endTableFK.isEmpty())
+        foreach (CForeignRow *frow, endTableFK) {
+            _conduitTable->addForeignRow(frow);
+        }
+    else return;
+    //-----------------------------------------------------------------
+    QList<CRow *> startTablePK = _startTable->primaryKey();
+    QList<CForeignRow *> startTableFK = _startTable->foreingRows();
+    if(!startTablePK.isEmpty())
+        foreach (CRow *row, startTablePK) {
+            CForeignRow *fRow = new CForeignRow(row, _startTable->name());
+            if(identifying)
+                fRow->setPrimaryKey(true);
+            _conduitTable->addForeignRow(fRow);
+        }
+    else if(!startTableFK.isEmpty())
+        foreach (CForeignRow *frow, startTableFK) {
+            _conduitTable->addForeignRow(frow);
+        }
+    else return;
+    //-----------------------------------------------------------------
     _tables.insert(_startTable->name(), _startTable);
     _tables.insert(_endTable->name(), _endTable);
     _tables.insert(_conduitTable->name(), _conduitTable);

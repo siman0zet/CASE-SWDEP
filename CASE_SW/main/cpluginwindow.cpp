@@ -1,5 +1,11 @@
 #include "cpluginwindow.h"
-#include "ui_CPluginWindow.h"
+#include "ui_cpluginwindow.h"
+
+//add header
+#include <QMessageBox>
+#include <QFileDialog>
+
+//
 
 #include <QDir>
 #include <QDebug>
@@ -58,14 +64,16 @@ void CPluginWindow::loadPlugins()
                   .arg(extension);
 
     //qDebug() << LIB_PATH;
-    QDir libDir(LIB_PATH);
+    QString currdir = QApplication::applicationDirPath() + "/lib/";
+    QDir libDir(currdir);
+
     QStringList files = libDir.entryList(nameFilter);
     foreach (QString file, files) {
         // We load each file with plugin loader to check if it is indeed the right plugin
         // Then we unload that file because it is not needed yet
         //qDebug() << file;
         QPluginLoader loader(QString("%1/%2")
-                             .arg(LIB_PATH)
+                             .arg(currdir)
                              .arg(file));
         loader.load();
         if(!loader.isLoaded())
@@ -83,7 +91,7 @@ void CPluginWindow::loadPlugins()
                     .arg(plugin->version());
             ui->comboBox->addItem(pluginName);
             _plugins.insert(pluginName, QString("%1/%2")
-                            .arg(LIB_PATH)
+                            .arg(currdir)
                             .arg(file));
         }
         loader.unload();
@@ -113,4 +121,68 @@ void CPluginWindow::on_pushGenerate_clicked()
         ui->textBrowser->setText(query);
     }
     loader->unload();
+}
+
+void CPluginWindow::on_actionExport_as_triggered()
+{
+    //
+    QString dirPath = QFileDialog::getExistingDirectory(this, tr("Open Directory lib"), "",
+                                                        QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks
+                                                        | QFileDialog::DontUseNativeDialog);
+    if(dirPath.isEmpty())
+        return;
+    //-------------------------------------------------------------
+    ui->comboBox->clear();
+    QString extension = "";
+    QString prefix = "";
+
+#ifdef Q_OS_WIN
+    extension = "dll";
+    prefix = "";
+#endif
+
+#ifdef Q_OS_LINUX
+    extension = "so";
+    prefix = "lib";
+#endif
+
+    QStringList nameFilter;
+    nameFilter << QString("%1*.%2")
+                  .arg(prefix)
+                  .arg(extension);
+
+    //qDebug() << LIB_PATH;
+    dirPath += '/';
+    QDir libDir(dirPath);
+
+    QStringList files = libDir.entryList(nameFilter);
+    foreach (QString file, files) {
+        // We load each file with plugin loader to check if it is indeed the right plugin
+        // Then we unload that file because it is not needed yet
+        //qDebug() << file;
+        QPluginLoader loader(QString("%1/%2")
+                             .arg(dirPath)
+                             .arg(file));
+        loader.load();
+        if(!loader.isLoaded())
+        {
+            qDebug() << "Can't load plugin!";
+            qDebug() << "Error @ " + file + ": " + loader.errorString();
+            continue;
+        }
+        QObject *obj = loader.instance();
+        CPluginInterface *plugin = qobject_cast<CPluginInterface *>(obj);
+        if(plugin)
+        {
+            QString pluginName = QString("%1 (%2)")
+                    .arg(plugin->name())
+                    .arg(plugin->version());
+            ui->comboBox->addItem(pluginName);
+            _plugins.insert(pluginName, QString("%1/%2")
+                            .arg(dirPath)
+                            .arg(file));
+        }
+        loader.unload();
+    }
 }

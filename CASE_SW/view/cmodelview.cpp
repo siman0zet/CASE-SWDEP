@@ -9,6 +9,7 @@
 #include "../editor/crelationshipeditor.h"
 #include "../dialog/changetabledialog.h"
 #include "../editor/ctableeditor.h"
+#include "../model/cforeignrow.h"
 
 #include <QMouseEvent>
 #include <QMenu>
@@ -111,6 +112,7 @@ void CModelView::addRelationship(const QString &startName, const QString &endNam
             relationship->setEndType(CRelationship::ONE);
             relationship->setStartMandatory(true);
             relationship->setEndMandatory(true);
+            addForeginRows(relationship->startTable(), relationship->endTable(),false);    //+
         }
         if(_tools.value(ONE_MANY))
         {
@@ -118,6 +120,7 @@ void CModelView::addRelationship(const QString &startName, const QString &endNam
             relationship->setEndType(CRelationship::MANY);
             relationship->setStartMandatory(true);
             relationship->setEndMandatory(true);
+            addForeginRows(relationship->startTable(), relationship->endTable(), false);    //+
         }
         if(_tools.value(MANY_MANY))
         {
@@ -132,7 +135,10 @@ void CModelView::addRelationship(const QString &startName, const QString &endNam
             relationship->setEndType(CRelationship::AGGREGATE);
             relationship->setStartMandatory(true);
             relationship->setEndMandatory(true);
+            addForeginRows(relationship->startTable(), relationship->endTable(), true);    //+
         }
+
+
         CRelationshipItem *relationshipItem = new CRelationshipItem(_tables.value(startName),
                                                                     _tables.value(endName),
                                                                     relationship);
@@ -144,6 +150,25 @@ void CModelView::addRelationship(const QString &startName, const QString &endNam
     _tablesToRelate.clear();
     returnToPointer();
 }
+
+//----------------
+void CModelView::addForeginRows(CTable *startTable, CTable *endTable, bool PK)
+{
+    QList<CRow *> startTablePK = startTable->primaryKey();
+    QList<CForeignRow *> startTableFK = startTable->foreingRows();
+    if(startTablePK.isEmpty() && startTableFK.isEmpty())
+        return;
+    foreach (CRow *row, startTablePK) {
+        CForeignRow *fRow = new CForeignRow(row, startTable->name());
+        if(PK)
+            fRow->setPrimaryKey(true);
+        endTable->addForeignRow(fRow);
+    }
+    foreach (CForeignRow *frow, startTableFK) {
+        endTable->addForeignRow(frow);
+    }
+}
+//----------------
 
 void CModelView::removeItem(const QPoint &pos)
 {
@@ -184,9 +209,58 @@ void CModelView::removeItems(QList<QGraphicsItem *> items)
         }
     }
     QList<CObject *> objects;
+    //----------------------------------------
+    //QList<CForeignRow *> TableFRows;
+    //CTable *tmpTable;
+    //----------------------------------------
     foreach (CObjectItem *objectItem, sortList) {
         switch (objectItem->type()) {
         case CRelationshipItem::Type:
+            //----------------------------------------
+            if(_relationships.value(objectItem->name())->relationship()->startType() == CRelationship::ONE &&
+                    _relationships.value(objectItem->name())->relationship()->endType() == CRelationship::ONE)
+            {
+                if(_relationships.value(objectItem->name())->relationship()->endMandatory())
+                {
+                    RemoveForeginRows(_tables.value(_relationships.value(objectItem->name())->startItem()->name())->table(),
+                                      _tables.value(_relationships.value(objectItem->name())->endItem()->name())->table());
+                }
+                else
+                {
+                       if(_relationships.value(objectItem->name())->relationship()->startMandatory())
+                           RemoveForeginRows(_tables.value(_relationships.value(objectItem->name())->endItem()->name())->table(),
+                                             _tables.value(_relationships.value(objectItem->name())->startItem()->name())->table());
+                       else break;
+                }
+            }
+            if(_relationships.value(objectItem->name())->relationship()->startType() == CRelationship::ONE &&
+               _relationships.value(objectItem->name())->relationship()->endType() == CRelationship::MANY)
+            {
+                if(_relationships.value(objectItem->name())->relationship()->startMandatory())
+                    RemoveForeginRows(_tables.value(_relationships.value(objectItem->name())->startItem()->name())->table(),
+                                      _tables.value(_relationships.value(objectItem->name())->endItem()->name())->table());
+                else
+                    RemoveForeginRows(_tables.value(_relationships.value(objectItem->name())->endItem()->name())->table(),
+                                      _tables.value(_relationships.value(objectItem->name())->startItem()->name())->table());
+            }
+            if(_relationships.value(objectItem->name())->relationship()->startType() == CRelationship::ONE &&
+               _relationships.value(objectItem->name())->relationship()->endType() == CRelationship::AGGREGATE)
+            {
+                if(_relationships.value(objectItem->name())->relationship()->startMandatory())
+                    RemoveForeginRows(_tables.value(_relationships.value(objectItem->name())->startItem()->name())->table(),
+                                      _tables.value(_relationships.value(objectItem->name())->endItem()->name())->table());
+            }
+            /*tmpTable = _tables.value(_relationships.value(objectItem->name())->endItem()->name())->table();
+            TableFRows = tmpTable->foreingRows();
+            foreach(CForeignRow *fRowET,TableFRows)
+            {
+                // поиск и удаление foreginRow по исходной тиблице (откуда берётся внешний ключ,
+                // или проверка на соответствие внешних ключей с и сходной таблицей если идёт n-ая агрегация)
+                if(fRowET->tableName() == _relationships.value(objectItem->name())->startItem()->name() || _tables.value(_relationships.value(objectItem->name())->startItem()->name())->table()->SearchFROnName(fRowET->name()))
+                    tmpTable->removeForeginRow(fRowET);
+            }
+            TableFRows.clear();*/
+            //----------------------------------------
             _relationships.value(objectItem->name())->startItem()->removeRelationship((CRelationshipItem *)objectItem);
             _relationships.value(objectItem->name())->endItem()->removeRelationship((CRelationshipItem *)objectItem);
             _relationships.remove(objectItem->name());
@@ -206,6 +280,23 @@ void CModelView::removeItems(QList<QGraphicsItem *> items)
     _dataModel->removeObjects(objects);
     returnToPointer();
 }
+
+//----------------------------------------
+void CModelView::RemoveForeginRows(CTable *startTable, CTable *endTable)
+{
+    QList<CForeignRow *> TableFRows;
+
+    TableFRows = endTable->foreingRows();
+    foreach(CForeignRow *fRowET,TableFRows)
+    {
+        // поиск и удаление foreginRow по исходной тиблице (откуда берётся внешний ключ,
+        // или проверка на соответствие внешних ключей с и сходной таблицей если идёт n-ая агрегация)
+        if(fRowET->tableName() == startTable->name() || startTable->SearchFROnName(fRowET->name()))
+            endTable->removeForeginRow(fRowET);
+    }
+    TableFRows.clear();
+}
+//----------------------------------------
 
 void CModelView::showResizeDialog()
 {
@@ -459,11 +550,15 @@ QString CModelView::exportToText() const
                 .arg(tableItem->height());
         text += tableItem->object()->exportDataToText();
     }
-
-
     foreach (const CRelationshipItem *relationshipItem, _relationships) {
         text += relationshipItem->object()->exportDataToText();
     }
+    //----------------------------------------------------------
+    text += '\n';
+    foreach (CTableItem *tableItem, _tables) {
+        text += tableItem->table()->exportForeginKeysToText();
+    }
+    //----------------------------------------------------------
     return text;
 }
 
@@ -512,8 +607,6 @@ void CModelView::importFromTextStream(QTextStream &input)
             }
             continue;
         }
-        /*  relationship startTable_name endTable_name
-         */
         if(strList.at(0) == "relationship")
         {
             if(strList.size() == 3)
@@ -530,6 +623,11 @@ void CModelView::importFromTextStream(QTextStream &input)
             }
             continue;
         }
+        //-----------------------------------------
+        if(strList.at(0) == "frow")
+            if(strList.size() >= 4)
+                this->tables().value(strList.at(3))->table()->importForeginKeysFromTS(strList,this->tables().value(strList.at(1))->table());
+        //-----------------------------------------
     }
 }
 

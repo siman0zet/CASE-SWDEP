@@ -13,7 +13,7 @@ TEMPLATE = app
 
 DESTDIR = $$PWD/../build/case/
 DEFINES += \
-    LIB_PATH=\"\\\"$$PWD/../build/lib/\\\"\" \
+    LIB_PATH=\"\\\"$$PWD/../build/case/lib/\\\"\" \
     LANG_PATH=\"\\\"$$PWD/../build/languages/\\\"\"
 
 SOURCES += \
