@@ -27,9 +27,9 @@ public:
                                  const QString &tableName,
                                  bool start = false);
     QString changeTabelName(const QString &oldName, const QString &newName);
-    void addForeingTableConnection(const CTable *startTable,
+    /*void addForeingTableConnection(const CTable *startTable,
                                    const CTable *endTable,
-                                   bool identifying = false);
+                                   bool identifying = false);*/
     void addConduitTableConnection(const CTable *startTable,
                                    const CTable *endTable,
                                    bool identifying = false);

@@ -26,6 +26,8 @@ private slots:
     void on_pushRefresh_clicked();
     void on_pushGenerate_clicked();
 
+    void on_actionExport_as_triggered();
+
 private:
     Ui::CPluginWindow *ui;
 

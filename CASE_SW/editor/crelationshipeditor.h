@@ -5,6 +5,7 @@
 
 class CRelationship;
 class CModelView;
+class CTable;
 
 namespace Ui {
 class CRelationshipEditor;
@@ -19,6 +20,15 @@ public:
     ~CRelationshipEditor();
 
     CRelationship *relationship() const;
+    //-----------------------
+    void CheckAndUpdateForeginRows(bool PK);
+    void DeleteOldForeginRows(CTable *startTable, CTable *endTable);
+    void UpdateTable(CTable *startTable, CTable *endTable, bool PK);
+    void ClearOldFR();
+    int CheckRelationship();
+    void ChooseClearTables(int numRel);
+    void ChooseUpdateTables(int numRel);
+    //-----------------------
 
 private slots:
     void on_radioOneOne_toggled(bool checked);

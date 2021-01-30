@@ -1,6 +1,6 @@
 #include "cpluginwindow.h"
 #include "pmodelwindow.h"
-#include "ui_PModelWindow.h"
+#include "ui_pmodelwindow.h"
 
 #include <view/cmodelview.h>
 #include <view/ctableitem.h>

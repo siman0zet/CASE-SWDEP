@@ -17,10 +17,10 @@ HEADERS += postgresql.h
 
 unix {
     CONFIG += plugin
-    DESTDIR = $$PWD/../../build/lib/
+    DESTDIR = $$PWD/../../build/case/lib/
 }
 
 win32 {
     CONFIG += dll
-    DLLDESTDIR = $$PWD/../../build/lib/
+    DLLDESTDIR = $$PWD/../../build/case/lib/
 }

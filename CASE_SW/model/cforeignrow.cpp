@@ -8,6 +8,14 @@ CForeignRow::CForeignRow(CRow *row, const QString &tableName) :
 {
 }
 
+//-------------------------------
+CForeignRow::CForeignRow(const CForeignRow *fRow) :
+    _row(fRow->row()),
+    _tableName(fRow->tableName()),
+    _primaryKey(fRow->primaryKey())
+{
+}
+//-------------------------------
 QString CForeignRow::name() const
 {
     return QString("%1_%2").arg(_tableName).arg(_row->name());

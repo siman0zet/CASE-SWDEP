@@ -37,6 +37,13 @@ public:
 
     void addForeignRow(CForeignRow *fRow);
     CForeignRow *foreignRow(int index);
+    //---------------------------------------------------
+    void removeForeginRow(CForeignRow *fRow);
+    void removeForeginRow(int indexFRow);
+    QString exportForeginKeysToText();
+    void importForeginKeysFromTS(QStringList strList, CTable *fgTable);
+    bool SearchFROnName(QString nameFR);
+    //---------------------------------------------------
 
     int rowCount() const;
     int foreignRowCount() const;
